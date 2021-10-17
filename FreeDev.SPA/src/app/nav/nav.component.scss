@@ -1,0 +1,18 @@
+@import "~bootswatch/dist/zephyr/variables";
+@import "~bootstrap/scss/bootstrap";
+@import "~bootswatch/dist/zephyr/bootswatch";
+
+
+.navbar {
+    padding-top: .4rem;
+    padding-bottom: .4rem;
+    h3.navbar-brand {
+        margin: 0;
+        img {
+            width: 4% !important;
+        }
+        span {
+            padding-left: .5rem;
+        }
+    }
+}
