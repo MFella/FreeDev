@@ -1,0 +1,30 @@
+<div class="container-fluid">
+  <div class="row py-4">
+    <div class="col-md-12">
+      <div class="card mx-auto w-50">
+        <div class="card-header text-center">
+          <h4>Login here</h4>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="loginForm">
+            <div class="form-label-group mb-3">
+              <input type="text" name="login" class="form-control input_user" id="login"
+              value="" placeholder="" formControlName="login" (keydown.enter)="login()" required>
+              <label for="login">Login</label>
+            </div>
+            <div class="form-label-group mb-2">
+              <input type="password" name="password" id="password" required
+              class="form-control input_pass" value="" placeholder="" formControlName="password" (keydown.enter)="login()">
+              <label for="password">Password</label>
+            </div>
+            <div class="w-100 text-center pt-4">
+              <button class="btn btn-info login-btn" [disabled]="this.loginForm.invalid" (click)="login()"> 
+                <span>Login</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

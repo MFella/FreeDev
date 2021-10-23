@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <h3 class="navbar-brand" href="#">
+      <h3 class="navbar-brand">
         <img class="w-25" src="../../assets/heart-shake.png" alt="Shake Hand">
         <span>FreeDev</span>
     </h3>
@@ -9,20 +9,20 @@
       </button>
   
       <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">Home
-              <span class="visually-hidden">(current)</span>
-            </a>
+        <ul class="navbar-nav d-flex justify-content-around">
+          <li class="nav-item" [routerLink]="['home']" [routerLinkActive]="['is-active']">
+            <fa-icon [icon]="icons[0]"></fa-icon>
+            <span>Home</span>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
+          <li class="nav-item" [routerLink]="['login']" [routerLinkActive]="['is-active']">
+            <fa-icon [icon]="icons[1]"></fa-icon>
+            <span>Login</span>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Sign Up</a>
+          <li class="nav-item" [routerLink]="['register']" [routerLinkActive]="['is-active']">
+            <div>
+              <fa-icon [icon]="icons[2]"></fa-icon>
+              <span>Sign up</span>
+          </div>
           </li>
           <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>

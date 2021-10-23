@@ -1,0 +1,71 @@
+
+
+.form-label-group {
+    padding-top: 1.2rem;
+
+    label
+    {
+        position: absolute;
+        transform: translateX(.8rem) translateY(-2.2rem);
+        transition: all .4s;
+        font-size: 1.3rem;
+        pointer-events: none;
+        cursor: text;
+        opacity: .6;
+        
+    }
+
+    label.reversed-label,
+    label.normal-label {
+        transform: translate(0rem, -5.5rem);
+        padding-left: .5rem;
+        padding-top: .3rem;
+    }
+
+    textarea:focus,
+    input:focus {
+        border-color: rgba(0,0,0,.3);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    input:focus ~ label,
+    input:valid ~ label
+    {
+        transform: translateX(0rem) translateY(0rem);
+        font-size: 1rem;
+        cursor: default;
+        opacity: 1;
+    }
+
+    textarea:focus ~ label.reversed-label,
+    textarea:valid ~ label.reversed-label {
+        font-size: 1rem;
+        opacity: 1;
+        transform: translate(0, -7.1rem);
+        padding: 0;
+    }
+
+    textarea:focus ~ label.normal-label,
+    textarea:valid ~ label.normal-label {
+        font-size: 1rem;
+        opacity: 1;
+        transform: translate(0);
+        padding: 0;
+    }
+}
+
+input[type="radio"],
+input[type="radio"] + label {
+    transition: all .2s;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+input[type="radio"]:checked + label {
+
+    transition: all .2s;
+    padding-left: 1rem;
+
+}

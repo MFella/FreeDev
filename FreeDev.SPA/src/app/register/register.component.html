@@ -1,0 +1,159 @@
+<div class="container-fluid">
+  <form [formGroup]="registerForm" (ngSubmit)="register()">
+    <div class="row py-4">
+      <div class="col-md-12">
+        <div class="card mx-auto w-75">
+          <div class="card-header">
+            asdsadas
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4 col-xs-6">
+                <div class="form-label-group">
+                  <input type="text" class="form-control" placeholder="" name="name" formControlName="name"
+                  [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
+                  'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
+                  && this.registerForm.controls.name.value.length !== 0}" required>
+                  <label for="name">Name</label>
+                </div>
+                <div class="valid-feedback">
+                  Looks good!
+                </div>
+                <div class="invalid-feedback">
+                  Only letters are allowed
+                  Min length 2, and max length - 16
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-label-group">
+                  <input type="text" class="form-control" placeholder="" name="surname" formControlName="surname"
+                  [ngClass]="{'is-valid': this.registerForm.controls.surname.status === 'VALID',
+                  'is-invalid': this.registerForm.controls.surname.status === 'INVALID' && this.registerForm.controls.surname.touched
+                  && this.registerForm.controls.surname.value.length !== 0}" required>
+                  <label for="surname">Surname</label>
+                </div>
+                <div class="valid-feedback">
+                  Looks good!
+                </div>
+                <div class="invalid-feedback">
+                  Only letters are allowed
+                  Min length 2, and max length - 32
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-label-group">
+                  <input type="email" class="form-control" placeholder="" name="email" formControlName="email"
+                  [ngClass]="{'is-valid': this.registerForm.controls.email.status === 'VALID',
+                  'is-invalid': this.registerForm.controls.email.status === 'INVALID' && this.registerForm.controls.email.touched
+                  && this.registerForm.controls.email.value.length !== 0}" required>
+                  <label for="email">Email</label>
+                </div>
+
+                <div class="valid-feedback">
+                  Looks good!
+                </div>
+                <div class="invalid-feedback">
+                  Please provide a valid email.
+                </div>
+              </div>
+              <div class="col-md-4 py-4">
+                <div class="form-label-group">
+                  <input type="password" class="form-control" placeholder="" name="password" formControlName="password"
+                  [ngClass]="{'is-valid': this.registerForm.controls.surname.status === 'VALID',
+                  'is-invalid': this.registerForm.controls.surname.status === 'INVALID' && this.registerForm.controls.surname.touched
+                  && this.registerForm.controls.surname.value.length !== 0}" required>
+                  <label for="password">Password</label>
+                </div>
+                <div class="valid-feedback">
+                  Looks good!
+                </div>
+                <div class="invalid-feedback">
+                  Only letters are allowed
+                  Min length 2, and max length - 32
+                </div>
+              </div>
+              <div class="col-md-4 py-4">
+                <div class="form-label-group">
+                  <input type="password" class="form-control" placeholder="" name="repeatPassword" formControlName="repeatPassword"
+                  [ngClass]="{'is-valid': this.registerForm.controls.surname.status === 'VALID',
+                  'is-invalid': this.registerForm.controls.surname.status === 'INVALID' && this.registerForm.controls.surname.touched
+                  && this.registerForm.controls.surname.value.length !== 0}" required>
+                  <label for="repeatPassword">Repeat Password</label>
+                </div>
+                <div class="valid-feedback">
+                  Looks good!
+                </div>
+                <div class="invalid-feedback">
+                  Only letters are allowed
+                  Min length 2, and max length - 32
+                </div>
+              </div>
+              <div class="col-md-4 py-4 d-flex flex-column justify-content-center">
+                <span><strong>What</strong> do you want here?</span>
+                <div class="form-check pt-2">
+                  <input class="form-check-input" type="radio" name="contractName" formControlName="contractName" id="jobRadio" value="contract-job">
+                  <label class="form-check-label" for="jobRadio">Find a job</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="contractName" formControlName="contractName" id="emplRadio" value="contract-empl">
+                  <label class="form-check-label" for="emplRadio">Find an employee</label>
+                </div>
+              </div>
+            </div>
+            <hr>
+
+            <div class="col-md-12 pt-4">
+              <div class="form-label-group">
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formCotrnolName="bio" required></textarea>               
+                <label class="reversed-label" for="bio">Write down somethig about yourself</label>
+              </div>
+            </div>
+            
+
+            <div class="row pb-4" *ngIf="this.isContractJob()">
+                <div class="col-md-6 col-xs-6">
+                  <div class="form-label-group">
+                    <input type="text" class="form-control" placeholder="" name="originCountry" formControlName="originCountry"
+                    [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
+                    'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
+                    && this.registerForm.controls.name.value.length !== 0}" required>
+                    <label for="name">Country</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-xs-6">
+                  <div class="form-label-group">
+                    <input type="text" class="form-control" placeholder="" name="originCity" formControlName="originCity"
+                    [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
+                    'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
+                    && this.registerForm.controls.name.value.length !== 0}" required>
+                    <label for="name">City</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-xs-6 pt-4">
+                  <div class="form-label-group">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" required></textarea>  
+                    <label class="normal-label" for="technologies">Technologies</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-xs-6 pt-4">
+                  <div class="form-label-group">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="hobbies" required></textarea>  
+                    <label class="normal-label" for="hobbies">Hobbies</label>
+                  </div>
+                </div>
+            </div>
+
+            <div *ngIf="!this.isContractJob()">
+              <!--nameOfCompany, large(200+ empl)/medium(50-200)/small(-50), city-->
+            </div>
+            <div class="w-100 text-center pt-4">
+              <button class="btn btn-info login-btn" [disabled]="this.registerForm.invalid" (click)="register()"> 
+                <span>Register</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

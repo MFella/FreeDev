@@ -1,0 +1,37 @@
+
+
+button.login-btn {
+    transition: all .3s;
+    width: 10rem;
+}
+
+.form-label-group {
+    padding-top: 1.2rem;
+
+    label
+    {
+        position: absolute;
+        transform: translateX(.8rem) translateY(-2.2rem);
+        transition: all .4s;
+        font-size: 1.3rem;
+        pointer-events: none;
+        cursor: text;
+        opacity: .6;
+        
+    }
+
+    input:focus {
+        border-color: rgba(0,0,0,.3);
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+
+    input:focus ~ label,
+    input:valid ~ label
+    {
+        transform: translateX(0rem) translateY(0rem);
+        font-size: 1rem;
+        cursor: default;
+        opacity: 1;
+    }
+}

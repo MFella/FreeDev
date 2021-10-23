@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { faHome, faPlusCircle, faUserEdit, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-nav',
@@ -7,9 +8,10 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavComponent implements OnInit {
 
+  icons: Array<IconDefinition> = [faHome, faUserEdit, faPlusCircle];
+
   constructor() { }
 
   ngOnInit(): void {
   }
-
 }
