@@ -1,7 +1,27 @@
+.container-fluid {
+    overflow: hidden;
+}
 
+.padding-with-offset {
+    padding-top: 3.4rem;
+    padding-bottom: 1rem;
+}
+
+hr {
+    margin-top: 2rem;
+}
 
 .form-label-group {
     padding-top: 1.2rem;
+
+    textarea {
+        resize: none;
+    }
+
+    .invalid-feedback {
+        position: absolute;
+        padding-top: 1.3rem;
+    }
 
     label
     {
@@ -53,6 +73,18 @@
         transform: translate(0);
         padding: 0;
     }
+
+    select {
+        border: 1px solid rgba(0,0,0, .3);
+        border-radius: .2rem;
+    }
+
+    .label-static {
+        transform: translateY(2.5rem);
+        font-size: 1rem;
+        opacity: 1;
+    }
+
 }
 
 input[type="radio"],
