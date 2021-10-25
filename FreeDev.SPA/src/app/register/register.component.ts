@@ -22,7 +22,8 @@ export class RegisterComponent implements OnInit {
   register(): void {
     console.log(this.registerForm);
     const contractToRegisterDto = this.convertToRegisterDto(this.registerForm.get('contractName')?.value);
-    console.log('contract', contractToRegisterDto);
+    console.log('contract', Object.values(this.registerForm.controls));
+    console.log('dasdasdas', Object.values(this.registerForm.controls).map(control => control.errors).filter((error: any) => !error?.required && error !== null));
   }
 
   
@@ -54,6 +55,11 @@ export class RegisterComponent implements OnInit {
     {
       'mismatchPassword': true
     };
+  }
+
+  isFormValid(): boolean {
+    return this.registerForm.touched && 
+    Object.values(this.registerForm.controls).map(control => control.errors).filter((error: any) => !error?.required && error !== null).length === 0;
   }
 
   private convertToRegisterDto(contractType: string): EmployerToRegisterDto | EmployeeToRegisterDto | null {
