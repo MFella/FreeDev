@@ -11,6 +11,14 @@ hr {
     margin-top: 2rem;
 }
 
+.card-header {
+    height: 4rem;
+    background-color: rgba(32, 201, 151, .4);
+    .register-header {
+        padding-left: .4rem;
+    }
+}
+
 .form-label-group {
     padding-top: 1.2rem;
 

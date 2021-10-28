@@ -5,8 +5,32 @@ button.login-btn {
     width: 10rem;
 }
 
+.login-btn-container {
+    margin-top: 5rem;
+}
+
+.card-header {
+    height: 6rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 193, 7, .6);
+
+    border-bottom-left-radius: .4rem;
+    border-bottom-right-radius: .4rem;
+
+    span {
+        padding-left: 2rem;
+    }
+}
+
 .form-label-group {
-    padding-top: 1.2rem;
+    padding-top: 4rem;
+
+    .invalid-feedback {
+        position: absolute;
+        padding-top: 1.3rem;
+    }
 
     label
     {
@@ -33,5 +57,9 @@ button.login-btn {
         font-size: 1rem;
         cursor: default;
         opacity: 1;
+    }
+    
+    input:focus {
+        box-shadow: 1px 1px rgba(0,0,0,.2);
     }
 }

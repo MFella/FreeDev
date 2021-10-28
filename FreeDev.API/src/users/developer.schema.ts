@@ -19,9 +19,6 @@ export class Developer {
     password: string;
 
     @Prop({ required: true })
-    repeatPassword: string;
-
-    @Prop({ required: true })
     bio: string;
 
     @Prop({ required: true })

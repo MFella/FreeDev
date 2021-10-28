@@ -1,5 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
+import { NotyService } from '../services/noty.service';
 import { EmployeeToRegisterDto } from '../types/employeeToRegisterDto';
 import { EmployerToRegisterDto } from '../types/employerToRegisterDto';
 import { ContractConverter } from '../utils/contractConverter';
@@ -13,17 +17,24 @@ export class RegisterComponent implements OnInit {
 
   registerForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private router: Router,
+    private authServ: AuthService, private noty: NotyService) { }
 
   ngOnInit() {
     this.initForm();
   }
 
   register(): void {
-    console.log(this.registerForm);
-    const contractToRegisterDto = this.convertToRegisterDto(this.registerForm.get('contractName')?.value);
-    console.log('contract', Object.values(this.registerForm.controls));
-    console.log('dasdasdas', Object.values(this.registerForm.controls).map(control => control.errors).filter((error: any) => !error?.required && error !== null));
+    const contractType: string = this.registerForm.get('contractName')?.value;
+    const contractToRegisterDto = this.convertToRegisterDto(contractType);
+    this.authServ.createUser(contractToRegisterDto, contractType)
+      .subscribe((res: any) => {
+        this.noty.success('You have been registered!');
+        this.registerForm.reset();
+        this.router.navigate(['home']);
+      }, (err: HttpErrorResponse) => {
+        this.noty.error('Something happened during saving data');
+      });
   }
 
   
@@ -42,7 +53,7 @@ export class RegisterComponent implements OnInit {
       bio: ['', { validators: []}],
       technologies: ['', { validators: []}],
       companyName: ['', { validators: [Validators.pattern(/^[0-9A-Za-zÀ-ÿ\s,._+;()*~'#@!?&-]+$/)]}],
-      bussinessOffice: ['', { validators: []}],
+      businessOffice: ['', { validators: []}],
       originCountry: ['', { validators: [Validators.minLength(2), Validators.pattern(/^[A-Za-z]+$/)]}],
       originCity: ['', { validators: [Validators.minLength(2), Validators.pattern(/^[A-Za-z]+$/)]}],
       hobbies: ['', { validators: []}],

@@ -30,7 +30,7 @@ export class ContractConverter {
             email: rawEmployerToRegisterData.email,
             password: rawEmployerToRegisterData.password,
             bio: rawEmployerToRegisterData.bio,
-            nameOfCompany: rawEmployerToRegisterData.nameOfCompany,
+            companyName: rawEmployerToRegisterData.companyName,
             businessOffice: rawEmployerToRegisterData.businessOffice,
             sizeOfCompany: rawEmployerToRegisterData.sizeOfCompany
         };

@@ -4,7 +4,7 @@
       <div class="col-md-12">
         <div class="card mx-auto w-75">
           <div class="card-header">
-            Register Yourself
+           <h4 class="d-flex h-100 align-items-center register-header">Register Yourself</h4>
           </div>
           <div class="card-body">
             <div class="row">
@@ -86,7 +86,7 @@
 
             <div class="col-md-12 pt-4">
               <div class="form-label-group">
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formCotrnolName="bio"></textarea>               
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="bio"></textarea>               
                 <label class="reversed-label" for="bio">Write down somethig about yourself(*)</label>
               </div>
             </div>
@@ -121,7 +121,7 @@
                 </div>
                 <div class="col-md-6 col-xs-6 padding-with-offset">
                   <div class="form-label-group">
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>  
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="technologies"></textarea>  
                     <label class="normal-label" for="technologies">Technologies*</label>
                   </div>
                 </div>
@@ -143,13 +143,13 @@
               </div>
               <div class="col-md-4">
                 <div class="form-label-group">
-                  <input type="text" class="form-control" placeholder="" name="bussinessOffice" formControlName="bussinessOffice">
-                  <label for="bussinessOffice">Business Office(*)</label>
+                  <input type="text" class="form-control" placeholder="" name="businessOffice" formControlName="businessOffice">
+                  <label for="businessOffice">Business Office(*)</label>
                 </div>
               </div>
               <div class="col-md-4">
                 <div class="form-label-group d-flex flex-column">
-                  <select class="custom-select custom-select-lg">
+                  <select class="custom-select custom-select-lg" formControlName="sizeOfCompany">
                     <option value="small" selected>Small(less than 50 employees)</option>
                     <option value="medium">Medium(between 50 and 200 employees)</option>
                     <option value="large">Large(more than 200 employees)</option>

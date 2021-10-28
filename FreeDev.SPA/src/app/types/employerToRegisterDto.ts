@@ -1,7 +1,7 @@
 import { BasicUserDataToRegisterDto } from "./basicUserDataToRegisterDto";
 
 export interface EmployerToRegisterDto extends BasicUserDataToRegisterDto{
-    nameOfCompany: string;
+    companyName: string;
     businessOffice: string;
     sizeOfCompany: SizeOfCompany;
 }
