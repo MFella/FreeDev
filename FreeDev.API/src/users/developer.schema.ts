@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
+import { Roles } from "src/types/roles";
 
 
 export type DeveloperDocument = Developer & Document;
@@ -15,8 +16,11 @@ export class Developer {
     @Prop({ required: true })
     email: string;
 
-    @Prop({ required: true })
-    password: string;
+    @Prop({ required: true, type: Buffer })
+    passwordHash: Buffer;
+
+    @Prop({ required: true, type: Buffer})
+    passwordSalt: Buffer;
 
     @Prop({ required: true })
     bio: string;
@@ -32,6 +36,9 @@ export class Developer {
 
     @Prop({ required: true })
     hobbies: string;
+
+    @Prop({ required: true })
+    role: Roles;
 }
 
 export const DeveloperSchema = SchemaFactory.createForClass(Developer);

@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Roles } from "src/types/roles";
 
 
 export type HunterDocument = Hunter & Document;
@@ -31,6 +32,9 @@ export class Hunter {
 
     @Prop({ required: true })
     sizeOfCompany: number;
+
+    @Prop({ required: true })
+    role: Roles;
 }
 
 export const HunterSchema = SchemaFactory.createForClass(Hunter);
