@@ -14,15 +14,21 @@
             <fa-icon [icon]="icons[0]"></fa-icon>
             <span>Home</span>
           </li>
-          <li class="nav-item" [routerLink]="['login']" [routerLinkActive]="['is-active']">
+          <li *ngIf="!this.localStorageService.getUser()" class="nav-item" [routerLink]="['login']" [routerLinkActive]="['is-active']">
             <fa-icon [icon]="icons[1]"></fa-icon>
             <span>Login</span>
           </li>
-          <li class="nav-item" [routerLink]="['register']" [routerLinkActive]="['is-active']">
+          <li *ngIf="!this.localStorageService.getUser()" class="nav-item" [routerLink]="['register']" [routerLinkActive]="['is-active']">
             <div>
               <fa-icon [icon]="icons[2]"></fa-icon>
               <span>Sign up</span>
-          </div>
+            </div>
+          </li>
+          <li *ngIf="this.localStorageService.getUser()" class="nav-item" (click)="logout()">
+            <div>
+              <fa-icon [icon]="icons[3]"></fa-icon>
+              <span>Logout</span>
+            </div>
           </li>
           <!-- <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>

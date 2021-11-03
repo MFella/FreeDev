@@ -5,13 +5,23 @@ import { environment as env } from 'src/environments/environment';
 import { HunterToCreateDto } from '../dtos/hunterToCreateDto';
 import { UserToCreateDto } from '../dtos/userToCreateDto';
 import { Observable, of } from 'rxjs';
+import { UserToLoginDto } from '../dtos/userToLoginDto';
+import { AfterLoginInfoDto } from '../dtos/afterLoginInfoDto';
+import { tap } from 'rxjs/operators';
+import * as moment from 'moment';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  constructor( private http: HttpClient) { }
+  constructor( 
+    private readonly http: HttpClient,
+    private readonly localStorageService: LocalStorageService
+    ) { }
+
+  storedUser: any = null;
 
 
   createUser(userToCreateDto: UserToCreateDto | null, contractType: string): Observable<any> {
@@ -26,16 +36,34 @@ export class AuthService {
     }
   }
 
+  login(userToLoginDto: UserToLoginDto): Observable<AfterLoginInfoDto> {
+    return this.http.post<AfterLoginInfoDto>(this.getRestUrl() + 'auth/login', userToLoginDto)
+      .pipe(
+        tap((authResult: AfterLoginInfoDto) => this.setSession(authResult))
+        )
+  }
+
+  logout(): void {
+    this.storedUser = null;
+    this.localStorageService.removeAuthCredentials();
+  }
+
   private createDeveloper(developerToCreateDto: DeveloperToCreateDto | null): Observable<any> {
-    console.log(developerToCreateDto);
-    return this.http.post(this.getRestUrl() + 'users/developer', developerToCreateDto);
+    return this.http.post(this.getRestUrl() + 'auth/developer', developerToCreateDto);
   }
 
   private createHunter(hunterToCreateDto: HunterToCreateDto | null): Observable<any> {
-    return this.http.post(this.getRestUrl() + 'users/hunter', hunterToCreateDto);
+    return this.http.post(this.getRestUrl() + 'auth/hunter', hunterToCreateDto);
   }
 
   private getRestUrl(): string {
     return env.backendUrl;
   }
+
+  private setSession(authResult: AfterLoginInfoDto): void {
+    this.storedUser = authResult.user;
+    const expirationDate = moment().add(authResult.expiresIn, 'second');
+    this.localStorageService.setAuthCredentials(JSON.stringify(this.storedUser), authResult.access_token, JSON.stringify(expirationDate.valueOf()));
+  }
 }
+

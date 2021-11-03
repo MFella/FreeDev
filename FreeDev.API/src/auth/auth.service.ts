@@ -17,13 +17,13 @@ export class AuthService {
     const userFromModel: any = await this.userServ.findUser(email);
 
     if (!Object.keys(userFromModel).length) {
-      throw new UnauthorizedException('User with that combination doesnt exist.');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const isHashMatchesPassword = await bcrypt.compare(password, userFromModel.passwordHash.toString());
 
     if (!isHashMatchesPassword) {
-      throw new UnauthorizedException('Password is invalid.');
+      throw new UnauthorizedException('Invalid email or password');
     }
 
     const { passwordHash, passwordSalt, ...userToReturn } = userFromModel;
@@ -51,7 +51,7 @@ export class AuthService {
   async getUserByEmail(email: string): Promise<any> {
     const userFromModel = await this.userServ.findUser(email);
 
-    if (!userFromModel) return new UnauthorizedException('User with that email doesnt exists');
+    if (!userFromModel) return new UnauthorizedException('Invalid email or password');
 
     return userFromModel;
   }

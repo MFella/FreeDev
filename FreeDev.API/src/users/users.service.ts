@@ -58,11 +58,11 @@ export class UsersService {
 
     async findUser(email: string): Promise<any> {
 
-        const hipoDeveloper = await (await this.developerModel.findOne({email}).exec()).toObject();
+        const hipoDeveloper = await (await this.developerModel.findOne({email}).exec())?.toObject();
         
         if (hipoDeveloper) return hipoDeveloper;
 
-        const hipoHunter = (await this.hunterModel.findOne({email}).exec()).toObject();
+        const hipoHunter = (await this.hunterModel.findOne({email}).exec())?.toObject();
 
         if (hipoHunter) return hipoHunter;
 

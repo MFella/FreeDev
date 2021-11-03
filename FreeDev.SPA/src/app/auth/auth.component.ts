@@ -1,6 +1,11 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { faGem, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { UserToLoginDto } from '../dtos/userToLoginDto';
+import { AuthService } from '../services/auth.service';
+import { NotyService } from '../services/noty.service';
 
 @Component({
   selector: 'app-auth',
@@ -12,7 +17,12 @@ export class AuthComponent implements OnInit {
   icons: Array<IconDefinition> = [faGem];
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(
+    private readonly fb: FormBuilder,
+    private readonly authService: AuthService,
+    private readonly router: Router,
+    private readonly noty: NotyService
+    ) { }
 
   ngOnInit() {
     this.initForm();
@@ -20,6 +30,15 @@ export class AuthComponent implements OnInit {
 
   login(): void {
     console.log(this.loginForm);
+    const userToLoginDto: UserToLoginDto = { ...this.loginForm.getRawValue() };
+    this.authService.login(userToLoginDto)
+      .subscribe((response: any) => {
+        this.loginForm.reset();
+        this.noty.success('You have been logged in successfully!');
+        this.router.navigate(['/home']);
+      }, (error: HttpErrorResponse) => {
+        this.noty.error(error.error.message);
+      })
   }
 
   private initForm(): void {

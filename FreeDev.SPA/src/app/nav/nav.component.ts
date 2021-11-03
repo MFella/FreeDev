@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { faHome, faPlusCircle, faUserEdit, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faPlusCircle, faSignOutAlt, faUserEdit, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../services/auth.service';
+import { LocalStorageService } from '../services/local-storage.service';
+import { NotyService } from '../services/noty.service';
 
 @Component({
   selector: 'app-nav',
@@ -8,10 +11,19 @@ import { faHome, faPlusCircle, faUserEdit, IconDefinition } from '@fortawesome/f
 })
 export class NavComponent implements OnInit {
 
-  icons: Array<IconDefinition> = [faHome, faUserEdit, faPlusCircle];
+  icons: Array<IconDefinition> = [faHome, faUserEdit, faPlusCircle, faSignOutAlt];
 
-  constructor() { }
+  constructor(
+    readonly localStorageService: LocalStorageService,
+    private readonly authServ: AuthService,
+    private readonly noty: NotyService
+  ) { }
 
   ngOnInit(): void {
   }
+
+  logout(): void {
+    this.authServ.logout();
+    this.noty.success('You have been logged out');
+  }  
 }
