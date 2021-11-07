@@ -12,7 +12,7 @@
           <form [formGroup]="loginForm">
             <div class="form-label-group mb-3">
               <input type="text" name="email" class="form-control input_user" id="email"
-              value="" placeholder="" formControlName="email" (keydown.enter)="login()"
+              value="" placeholder="" formControlName="email" (keydown.enter)="login($event)"
               [ngClass]="{'is-valid': this.loginForm.controls.email.status === 'VALID',
                   'is-invalid': this.loginForm.controls.email.status === 'INVALID' && this.loginForm.controls.email.touched
                   && this.loginForm.controls.email.value.length !== 0}">
@@ -25,7 +25,7 @@
             </div>
             <div class="form-label-group mb-2">
               <input type="password" name="password" id="password"
-              class="form-control input_pass" value="" placeholder="" formControlName="password" (keydown.enter)="login()"
+              class="form-control input_pass" value="" placeholder="" formControlName="password" (keydown.enter)="login($event)"
               [ngClass]="{'is-valid': this.loginForm.controls.password.status === 'VALID' && !this.loginForm.errors?.mismatchPassword,
               'is-invalid': this.loginForm.controls.password.status === 'INVALID' && this.loginForm.controls.password.touched
               && this.loginForm.controls.password.value.length !== 0 || this.loginForm.errors?.mismatchPassword}">
@@ -36,7 +36,7 @@
               </div>
             </div>
             <div class="w-100 text-center login-btn-container">
-              <button class="btn btn-info login-btn" [disabled]="this.loginForm.invalid" (click)="login()"> 
+              <button class="btn btn-info login-btn" [disabled]="this.loginForm.invalid" (click)="login($event)"> 
                 <span>Login</span>
               </button>
             </div>

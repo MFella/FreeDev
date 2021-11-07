@@ -7,26 +7,26 @@ import { UserToCreateDto } from '../dtos/userToCreateDto';
 import { Observable, of } from 'rxjs';
 import { UserToLoginDto } from '../dtos/userToLoginDto';
 import { AfterLoginInfoDto } from '../dtos/afterLoginInfoDto';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
-
-  constructor( 
+  constructor(
     private readonly http: HttpClient,
     private readonly localStorageService: LocalStorageService
-    ) { }
+  ) {}
 
   storedUser: any = null;
 
-
-  createUser(userToCreateDto: UserToCreateDto | null, contractType: string): Observable<any> {
-
-    switch(contractType) {
+  createUser(
+    userToCreateDto: UserToCreateDto | null,
+    contractType: string
+  ): Observable<any> {
+    switch (contractType) {
       case 'contract-job':
         return this.createDeveloper(userToCreateDto);
       case 'contract-empl':
@@ -37,10 +37,12 @@ export class AuthService {
   }
 
   login(userToLoginDto: UserToLoginDto): Observable<AfterLoginInfoDto> {
-    return this.http.post<AfterLoginInfoDto>(this.getRestUrl() + 'auth/login', userToLoginDto)
+    return this.http
+      .post<AfterLoginInfoDto>(this.getRestUrl() + 'auth/login', userToLoginDto)
       .pipe(
+        take(1),
         tap((authResult: AfterLoginInfoDto) => this.setSession(authResult))
-        )
+      );
   }
 
   logout(): void {
@@ -48,11 +50,18 @@ export class AuthService {
     this.localStorageService.removeAuthCredentials();
   }
 
-  private createDeveloper(developerToCreateDto: DeveloperToCreateDto | null): Observable<any> {
-    return this.http.post(this.getRestUrl() + 'auth/developer', developerToCreateDto);
+  private createDeveloper(
+    developerToCreateDto: DeveloperToCreateDto | null
+  ): Observable<any> {
+    return this.http.post(
+      this.getRestUrl() + 'auth/developer',
+      developerToCreateDto
+    );
   }
 
-  private createHunter(hunterToCreateDto: HunterToCreateDto | null): Observable<any> {
+  private createHunter(
+    hunterToCreateDto: HunterToCreateDto | null
+  ): Observable<any> {
     return this.http.post(this.getRestUrl() + 'auth/hunter', hunterToCreateDto);
   }
 
@@ -63,7 +72,10 @@ export class AuthService {
   private setSession(authResult: AfterLoginInfoDto): void {
     this.storedUser = authResult.user;
     const expirationDate = moment().add(authResult.expiresIn, 'second');
-    this.localStorageService.setAuthCredentials(JSON.stringify(this.storedUser), authResult.access_token, JSON.stringify(expirationDate.valueOf()));
+    this.localStorageService.setAuthCredentials(
+      JSON.stringify(this.storedUser),
+      authResult.access_token,
+      JSON.stringify(expirationDate.valueOf())
+    );
   }
 }
-

@@ -1,0 +1,11 @@
+button {
+  font-size: 12px;
+  padding: 2px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  fa-icon {
+    padding-left: 0.3rem;
+  }
+}

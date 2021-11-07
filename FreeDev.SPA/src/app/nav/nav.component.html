@@ -1,18 +1,26 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <h3 class="navbar-brand">
+      <span class="navbar-brand">
         <img class="w-25" src="../../assets/heart-shake.png" alt="Shake Hand">
         <span>FreeDev</span>
-    </h3>
+      </span>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
   
-      <div class="collapse navbar-collapse" id="navbarColor01">
-        <ul class="navbar-nav d-flex justify-content-around">
+      <div class="collapse navbar-collapse justify-content-center" id="navbarColor01">
+        <ul class="navbar-nav d-flex justify-content-around w-100">
           <li class="nav-item" [routerLink]="['home']" [routerLinkActive]="['is-active']">
             <fa-icon [icon]="icons[0]"></fa-icon>
             <span>Home</span>
+          </li>
+          <li class="nav-item" [routerLink]="['add-offer']" [routerLinkActive]="['is-active']">
+            <fa-icon [icon]="icons[4]"></fa-icon>
+            <span>Add offer</span>
+          </li>
+          <li class="nav-item" [routerLink]="['search-offers']" [routerLinkActive]="['is-active']">
+            <fa-icon [icon]="icons[5]"></fa-icon>
+            <span>Search offers</span>
           </li>
           <li *ngIf="!this.localStorageService.getUser()" class="nav-item" [routerLink]="['login']" [routerLinkActive]="['is-active']">
             <fa-icon [icon]="icons[1]"></fa-icon>
@@ -24,22 +32,32 @@
               <span>Sign up</span>
             </div>
           </li>
-          <li *ngIf="this.localStorageService.getUser()" class="nav-item" (click)="logout()">
-            <div>
-              <fa-icon [icon]="icons[3]"></fa-icon>
-              <span>Logout</span>
-            </div>
-          </li>
-          <!-- <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+          <li class="nav-item dropdown">
+            <div class="nav-link dropdown-toggle config-user-toggle" data-bs-toggle="dropdown" role="button" 
+            aria-haspopup="true" aria-expanded="false">Dropdown</div>
+            <ul class="dropdown-menu config-user-dropdown">
+              <li class="nav-item" (click)="logout()">
+                <div class="w-100 d-flex flex-row justify-content-between">
+                  <strong class="text-secondary">Profile</strong>
+                  <fa-icon [icon]="icons[6]"></fa-icon>
+                </div>
+              </li>
+              <li class="nav-item" (click)="logout()">
+                <div class="w-100 d-flex flex-row justify-content-between">
+                  <strong class="text-secondary">Config</strong>
+                  <fa-icon [icon]="icons[7]"></fa-icon>
+                </div>
+              </li>
+              
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Separated link</a>
-            </div>
-          </li> -->
+              <li class="nav-item" (click)="logout()">
+                <div class="w-100 d-flex flex-row justify-content-between">
+                  <strong class="text-secondary">Logout</strong>
+                  <fa-icon [icon]="icons[3]"></fa-icon>
+                </div>
+              </li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>

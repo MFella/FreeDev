@@ -1,3 +1,4 @@
+import { SelectedBadgeComponent } from './generics/selected-badge/selected-badge.component';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
@@ -14,32 +15,37 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { AuthInterceptor } from './auth/auth.interceptor';
+import { AddOfferComponent } from './add-offer/add-offer.component';
+import { SearchOffersComponent } from './search-offers/search-offers.component';
 
 @NgModule({
-  declarations: [			
+  declarations: [
     AppComponent,
     NavComponent,
-      HomeComponent,
-      RegisterComponent,
-      AuthComponent
-   ],
+    HomeComponent,
+    RegisterComponent,
+    AuthComponent,
+    AddOfferComponent,
+    SearchOffersComponent,
+    SelectedBadgeComponent,
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    FontAwesomeModule, 
+    FontAwesomeModule,
     ReactiveFormsModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
   ],
   providers: [
     NotyService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

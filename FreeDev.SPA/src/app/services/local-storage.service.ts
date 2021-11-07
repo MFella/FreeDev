@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { AfterLoginInfoDto } from '../dtos/afterLoginInfoDto';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LocalStorageService {
+  private static readonly USER_CREDENTIAL_FIELDS: Array<string> = [
+    'user',
+    'token',
+    'expiration',
+  ];
 
-  private static readonly USER_CREDENTIAL_FIELDS: Array<string> = ['user', 'token', 'expiration']
-
-  constructor() { }
+  constructor() {}
 
   getUser(): string | null {
     return localStorage.getItem('user');
@@ -29,6 +32,4 @@ export class LocalStorageService {
   getToken(): string | null {
     return localStorage.getItem('token');
   }
-
-
 }

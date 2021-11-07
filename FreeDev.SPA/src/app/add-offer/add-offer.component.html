@@ -1,0 +1,91 @@
+<div class="container pt-4">
+  <form [formGroup]="offerForm" (ngSubmit)="addOffer()" novalidate>
+  <div class="row"> 
+    <div class="col-md-12">
+      <div class="card mx-auto">
+        <h5 class="card-header bg-info offer-heading">
+          <fa-icon [icon]="icons[0]"></fa-icon> 
+          <span class="ml-2">Add an offer</span>
+        </h5>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="form-label-group">
+                <label for="name">Title</label>
+                <input type="text" class="form-control" placeholder="" name="name" formControlName="title"
+                [ngClass]="{'is-valid': this.offerForm.controls.title.status === 'VALID',
+                'is-invalid': this.offerForm.controls.title.status === 'INVALID' && this.offerForm.controls.title.touched
+                && this.offerForm.controls.title.value.length !== 0}">
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.offerForm.get('title')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.offerForm.get('title')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-label-group">
+                <label for="name">Salary</label>
+                <div class="d-flex justify-content-between">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">$</div>
+                  </div>
+                  <input type="number" class="form-control offer-salary" placeholder="" name="salary" formControlName="salary"
+                  [ngClass]="{'is-valid': this.offerForm.controls.salary.status === 'VALID',
+                  'is-invalid': this.offerForm.controls.salary.status === 'INVALID' && this.offerForm.controls.salary.touched
+                  && this.offerForm.controls.salary.value.length !== 0}">
+                </div>
+
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.offerForm.get('salary')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.offerForm.get('salary')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-12 pt-4">
+              <div class="form-label-group">
+                <label for="name">Description</label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="description"
+                [ngClass]="{'is-valid': this.offerForm.controls.description.status === 'VALID',
+                  'is-invalid': this.offerForm.controls.description.status === 'INVALID' && this.offerForm.controls.description.touched
+                  && this.offerForm.controls.description.value.length !== 0}"></textarea>
+                <div class="invalid-feedback">
+                  <p *ngIf="this.offerForm.get('description')?.errors?.minlength">&#x2192; Min length 40</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8 invalid-feedback-offset">
+              <div class="form-label-group">
+                <label for="name">Skills</label>
+                <input type="text" class="form-control" placeholder="" name="tags" formControlName="tags" #skillInputRef
+                (keydown.space)="handleAddingNewSkill()"
+                >
+                <selected-badge [label]="'dasdsa'"></selected-badge>
+              </div>
+            </div>
+            <div class="col-md-4 invalid-feedback-offset">
+              <div class="form-label-group">
+                <label for="name">Experience level</label>
+                <select class="form-control" formControlName="experienceLevel">
+                  <option value="entry" selected>Entry</option>
+                  <option value="junior">Junior</option>
+                  <option value="mid">Mid</option>
+                  <option value="senior">Senior</option>
+                  <option value="expert">Expert</option>
+                </select>
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.offerForm.get('experienceLevel')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.offerForm.get('experienceLevel')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+            <div class="action-button-container">
+              <button class="btn btn-danger">Leave</button>
+              <button class="btn btn-success" type="submit">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </form>
+</div>
