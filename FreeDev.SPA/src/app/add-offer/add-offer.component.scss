@@ -1,3 +1,7 @@
+.container {
+  overflow: hidden;
+}
+
 .card {
   width: 75%;
 }
@@ -8,6 +12,12 @@ label {
 
 textarea {
   resize: none;
+}
+
+.badge-container {
+  padding-top: 0.9rem;
+  height: 6rem;
+  align-content: flex-start;
 }
 
 .offer-heading {
@@ -52,4 +62,8 @@ textarea {
 
 .invalid-feedback-offset {
   padding-top: 3rem;
+}
+
+input[type="number"] + .invalid-feedback {
+  transform: translateY(2.5rem);
 }

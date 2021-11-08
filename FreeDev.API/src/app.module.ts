@@ -1,3 +1,4 @@
+import { OfferModule } from './offers/offer.module';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
@@ -9,7 +10,8 @@ import { UsersModule } from './users/users.module';
   imports: [
     MongooseModule.forRoot('mongodb://localhost/freeDev'),
     UsersModule,
-    AuthModule
+    AuthModule,
+    OfferModule,
   ],
   controllers: [AppController],
   providers: [AppService],

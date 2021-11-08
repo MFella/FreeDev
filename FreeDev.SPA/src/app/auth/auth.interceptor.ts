@@ -5,7 +5,7 @@ import {
   HttpEvent,
   HttpInterceptor,
   HttpHeaders,
-  HttpErrorResponse
+  HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { LocalStorageService } from '../services/local-storage.service';
@@ -16,7 +16,6 @@ import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-
   constructor(
     private readonly localStorageService: LocalStorageService,
     private readonly authService: AuthService,
@@ -24,22 +23,28 @@ export class AuthInterceptor implements HttpInterceptor {
     private readonly noty: NotyService
   ) {}
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+  intercept(
+    request: HttpRequest<unknown>,
+    next: HttpHandler
+  ): Observable<HttpEvent<unknown>> {
     const token = this.localStorageService.getToken();
     if (token) {
       const clonedReq = request.clone({
         headers: new HttpHeaders({
-          'Authorization': 'Bearer ' + token
-        })
+          Authorization: 'Bearer ' + token,
+        }),
       });
-      return next.handle(clonedReq)
-        .pipe(catchError((response: HttpErrorResponse) => {
-          this.router.navigate(['']);
-          this.authService.logout();
-          this.noty.error('Session expired - try to log again');
+      return next.handle(clonedReq).pipe(
+        catchError((response: HttpErrorResponse) => {
+          if (response.status === 401) {
+            this.router.navigate(['']);
+            this.authService.logout();
+            this.noty.error('Session expired - try to log again');
+          }
 
           return throwError(response);
-        }))
+        })
+      );
     }
 
     return next.handle(request);
