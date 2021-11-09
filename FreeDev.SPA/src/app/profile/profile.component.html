@@ -1,0 +1,160 @@
+<div class="container pt-4">
+  <form [formGroup]="profileForm">
+  <div class="row pt-4">
+    <div class="col-md-8">
+      <div class="card">
+        <h4 class="card-header">
+          <span>Account Details</span>
+          <div class="header-button-group">
+            <button class="btn btn-warning" (click)="this.isReadonly = !this.isReadonly">
+              <fa-icon [icon]="icons[0]"></fa-icon>
+              <span>Edit</span>
+            </button>
+          </div>
+        </h4>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="name" formControlName="name"
+                [ngClass]="{'is-valid': this.profileForm.controls.name.status === 'VALID' && !isReadonly,
+                'is-invalid': this.profileForm.controls.name.status === 'INVALID' && this.profileForm.controls.name.touched
+                && this.profileForm.controls.name.value.length !== 0 && !isReadonly}" [readonly]="isReadonly">
+                <label for="name">Name</label>
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.profileForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.profileForm.get('name')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="surname" formControlName="surname"
+                [ngClass]="{'is-valid': this.profileForm.controls.surname.status === 'VALID' && !isReadonly,
+                'is-invalid': this.profileForm.controls.surname.status === 'INVALID' && this.profileForm.controls.surname.touched
+                && this.profileForm.controls.surname.value.length !== 0 && !isReadonly}" [readonly]="isReadonly"
+                >
+                <label for="surname">Surname</label>
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.profileForm.get('surname')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.profileForm.get('surname')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 padding-with-offset">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="email" formControlName="email"
+                [ngClass]="{'is-valid': this.profileForm.controls.email.status === 'VALID' && !isReadonly,
+                'is-invalid': this.profileForm.controls.email.status === 'INVALID' && this.profileForm.controls.email.touched
+                && this.profileForm.controls.email.value.length !== 0 && !isReadonly}" readonly>
+                <label for="email">Email</label>
+                <div class="invalid-feedback">
+                  Please provide a valid email.
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-xs-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="country" formControlName="country"
+                [ngClass]="{'is-valid': this.profileForm.controls.country.status === 'VALID' && this.profileForm.controls.country.value.length && !isReadonly,
+                'is-invalid': this.profileForm.controls.country.status === 'INVALID' && this.profileForm.controls.country.touched && !isReadonly
+                && this.profileForm.controls.country.value.length !== 0}" [readonly]="isReadonly">
+                <label for="name">Country</label>
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.profileForm.get('country')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.profileForm.get('country')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4 col-xs-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="city" formControlName="city"
+                [ngClass]="{'is-valid': this.profileForm.controls.city.status === 'VALID' && this.profileForm.controls.city.value.length && !isReadonly,
+                'is-invalid': this.profileForm.controls.city.status === 'INVALID' && this.profileForm.controls.city.touched && !isReadonly
+                && this.profileForm.controls.city.value.length !== 0}" [readonly]="isReadonly">
+                <label for="name">City</label>
+                <div class="invalid-feedback">
+                  <p class="m-0" *ngIf="this.profileForm.get('city')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p *ngIf="this.profileForm.get('city')?.errors?.minlength">&#x2192; Min length 2</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-4 col-xs-6" *ngIf="this.userProfile.role === 'HUNTER'">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="companyName" formControlName="companyName" [readonly]="isReadonly">
+                <label for="companyName">Name of Company</label>
+              </div>
+            </div>
+            <div class="col-md-4" *ngIf="this.userProfile.role === 'HUNTER'">
+              <div class="form-label-group">
+                <input type="text" class="form-control" placeholder="" name="businessOffice" formControlName="businessOffice" [readonly]="isReadonly">
+                <label for="businessOffice">Business Office</label>
+              </div>
+            </div>
+
+            <div class="col-md-12 pt-4">
+              <div class="form-label-group">
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="bio" [readonly]="isReadonly"></textarea>               
+                <label class="reversed-label" for="bio">Few sentences about you.</label>
+              </div>
+            </div>
+
+              <div class="row pb-4" *ngIf="this.userProfile.role === 'DEVELOPER'">
+                <div class="col-md-6 col-xs-6 padding-with-offset">
+                  <div class="form-label-group">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="technologies" [readonly]="isReadonly"></textarea>  
+                    <label class="normal-label" for="technologies">Technologies*</label>
+                  </div>
+                </div>
+                <div class="col-md-6 col-xs-6 padding-with-offset">
+                  <div class="form-label-group">
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="hobbies" [readonly]="isReadonly"></textarea>  
+                    <label class="normal-label" for="hobbies">Hobbies*</label>
+                  </div>
+                </div>
+            </div>
+
+            <div class="row pb-4" *ngIf="this.userProfile.role === 'HUNTER'">
+              <div class="col-md-4">
+                <div class="form-label-group d-flex flex-column">
+                  <select class="custom-select custom-select-lg" formControlName="sizeOfCompany" [disabled]="isReadonly">
+                    <option value="small" selected>Small(less than 50 employees)</option>
+                    <option value="medium">Medium(between 50 and 200 employees)</option>
+                    <option value="large">Large(more than 200 employees)</option>
+                  </select>
+                  <label class="label-static" for="email">Size of Company</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="profile-photo-container">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png"
+            alt="Some Placeholder"
+            class="profile-photo">
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="photo-button-group">
+            <button class="btn btn-danger">
+              <fa-icon [icon]="icons[2]"></fa-icon>
+              <span>Delete</span>
+            </button>
+            <button class="btn btn-info">
+              <fa-icon [icon]="icons[1]"></fa-icon>
+              <span>Upload</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+</div>

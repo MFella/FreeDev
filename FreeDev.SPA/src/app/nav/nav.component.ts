@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import {
   faCog,
@@ -33,7 +34,8 @@ export class NavComponent implements OnInit {
   constructor(
     readonly localStorageService: LocalStorageService,
     private readonly authServ: AuthService,
-    private readonly noty: NotyService
+    private readonly noty: NotyService,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {}
@@ -41,5 +43,10 @@ export class NavComponent implements OnInit {
   logout(): void {
     this.authServ.logout();
     this.noty.success('You have been logged out');
+    this.router.navigate(['home']);
+  }
+
+  getUserId(): string {
+    return this.authServ.storedUser?._id;
   }
 }

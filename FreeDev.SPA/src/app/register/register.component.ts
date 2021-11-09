@@ -11,14 +11,17 @@ import { ContractConverter } from '../utils/contractConverter';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.scss']
+  styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
-
   registerForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private router: Router,
-    private authServ: AuthService, private noty: NotyService) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authServ: AuthService,
+    private noty: NotyService
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -27,60 +30,148 @@ export class RegisterComponent implements OnInit {
   register(): void {
     const contractType: string = this.registerForm.get('contractName')?.value;
     const contractToRegisterDto = this.convertToRegisterDto(contractType);
-    this.authServ.createUser(contractToRegisterDto, contractType)
-      .subscribe((res: any) => {
+    this.authServ.createUser(contractToRegisterDto, contractType).subscribe(
+      (res: any) => {
         this.noty.success('You have been registered!');
         this.registerForm.reset();
         this.router.navigate(['home']);
-      }, (err: HttpErrorResponse) => {
-        this.noty.error('Something happened during saving data');
-      });
+      },
+      (error: HttpErrorResponse) => {
+        this.noty.error(error.error?.message);
+      }
+    );
   }
 
-  
   isContractJob(): boolean {
     return this.registerForm.get('contractName')?.value === 'contract-job';
   }
 
   private initForm(): void {
-    this.registerForm = this.fb.group({
-      name: ['', { validators: [Validators.required, Validators.minLength(2), Validators.pattern(/^[A-Za-z]+$/)] }],
-      surname: ['', { validators: [Validators.required, Validators.minLength(2), Validators.pattern(/^[A-Za-z]+$/)] }],
-      email: ['', { validators: [Validators.required, Validators.pattern(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/)]} ],
-      password: ['', { validators: [Validators.required, Validators.pattern(/^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/)]}],
-      repeatPassword: ['', { validators: [Validators.required, Validators.pattern(/^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/)]}],
-      contractName: ['contract-job', { validators: [Validators.required]} ],
-      bio: ['', { validators: []}],
-      technologies: ['', { validators: []}],
-      companyName: ['', { validators: [Validators.pattern(/^[0-9A-Za-zÀ-ÿ\s,._+;()*~'#@!?&-]+$/)]}],
-      businessOffice: ['', { validators: []}],
-      originCountry: ['', { validators: [Validators.minLength(2), Validators.pattern(/^[A-Za-z]+$/)]}],
-      originCity: ['', { validators: [Validators.minLength(2), Validators.pattern(/^[A-Za-z]+$/)]}],
-      hobbies: ['', { validators: []}],
-      sizeOfCompany: ['small', { validators: []}]
-    }, { validators: [this.passwordMatch] })
+    this.registerForm = this.fb.group(
+      {
+        name: [
+          '',
+          {
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.pattern(/^[A-Za-z]+$/),
+            ],
+          },
+        ],
+        surname: [
+          '',
+          {
+            validators: [
+              Validators.required,
+              Validators.minLength(2),
+              Validators.pattern(/^[A-Za-z]+$/),
+            ],
+          },
+        ],
+        email: [
+          '',
+          {
+            validators: [
+              Validators.required,
+              Validators.pattern(
+                /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+              ),
+            ],
+          },
+        ],
+        password: [
+          '',
+          {
+            validators: [
+              Validators.required,
+              Validators.pattern(
+                /^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/
+              ),
+            ],
+          },
+        ],
+        repeatPassword: [
+          '',
+          {
+            validators: [
+              Validators.required,
+              Validators.pattern(
+                /^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/
+              ),
+            ],
+          },
+        ],
+        contractName: ['contract-job', { validators: [Validators.required] }],
+        bio: ['', { validators: [] }],
+        technologies: ['', { validators: [] }],
+        companyName: [
+          '',
+          {
+            validators: [
+              Validators.pattern(/^[0-9A-Za-zÀ-ÿ\s,._+;()*~'#@!?&-]+$/),
+            ],
+          },
+        ],
+        businessOffice: ['', { validators: [] }],
+        originCountry: [
+          '',
+          {
+            validators: [
+              Validators.minLength(2),
+              Validators.pattern(/^[A-Za-z]+$/),
+            ],
+          },
+        ],
+        originCity: [
+          '',
+          {
+            validators: [
+              Validators.minLength(2),
+              Validators.pattern(/^[A-Za-z]+$/),
+            ],
+          },
+        ],
+        hobbies: ['', { validators: [] }],
+        sizeOfCompany: ['small', { validators: [] }],
+      },
+      { validators: [this.passwordMatch] }
+    );
   }
 
   passwordMatch(formGroup: FormGroup): Object | null {
-    return formGroup.get('password')!.value === formGroup.get('repeatPassword')!.value ? null : 
-    {
-      'mismatchPassword': true
-    };
+    return formGroup.get('password')!.value ===
+      formGroup.get('repeatPassword')!.value
+      ? null
+      : {
+          mismatchPassword: true,
+        };
   }
 
   isFormValid(): boolean {
-    return this.registerForm.touched && 
-    Object.values(this.registerForm.controls).map(control => control.errors).filter((error: any) => !error?.required && error !== null).length === 0;
+    return (
+      this.registerForm.touched &&
+      Object.values(this.registerForm.controls)
+        .map((control) => control.errors)
+        .filter((error: any) => !error?.required && error !== null).length === 0
+    );
   }
 
-  private convertToRegisterDto(contractType: string): EmployerToRegisterDto | EmployeeToRegisterDto | null {
-  
-    switch(contractType) {
+  private convertToRegisterDto(
+    contractType: string
+  ): EmployerToRegisterDto | EmployeeToRegisterDto | null {
+    switch (contractType) {
       case 'contract-job':
-        const employeeContractToRegisterDto: EmployeeToRegisterDto = ContractConverter.convertEmployeeToRegisterDto(this.registerForm.getRawValue());
+        const employeeContractToRegisterDto: EmployeeToRegisterDto =
+          ContractConverter.convertEmployeeToRegisterDto(
+            this.registerForm.getRawValue()
+          );
         return employeeContractToRegisterDto;
       case 'contract-empl':
-        const employerContractToRegisterDto: EmployerToRegisterDto = ContractConverter.convertEmployerToRegisterDto(this.registerForm.getRawValue());
+        const employerContractToRegisterDto: EmployerToRegisterDto =
+          ContractConverter.convertEmployerToRegisterDto(
+            this.registerForm.getRawValue()
+          );
         return employerContractToRegisterDto;
       default:
         return null;

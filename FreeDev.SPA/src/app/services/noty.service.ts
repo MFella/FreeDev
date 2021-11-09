@@ -21,6 +21,10 @@ export class NotyService {
     this.toastr.error(msg);
   }
 
+  info(msg: string): void {
+    this.toastr.info(msg);
+  }
+
   confirm(message: string): void {
     alertify
       .confirm(message, () => this.router.navigate(['']))

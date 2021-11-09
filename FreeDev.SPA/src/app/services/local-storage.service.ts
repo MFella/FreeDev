@@ -13,10 +13,6 @@ export class LocalStorageService {
 
   constructor() {}
 
-  getUser(): string | null {
-    return localStorage.getItem('user');
-  }
-
   setAuthCredentials(user: string, token: string, expiration: string): void {
     localStorage.setItem('user', user);
     localStorage.setItem('token', token);
@@ -31,5 +27,11 @@ export class LocalStorageService {
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  getUser(): any {
+    const userFromLS = localStorage?.getItem('user');
+    if (!userFromLS) return null;
+    return JSON.parse(userFromLS ?? '');
   }
 }

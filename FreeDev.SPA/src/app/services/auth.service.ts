@@ -10,6 +10,7 @@ import { AfterLoginInfoDto } from '../dtos/afterLoginInfoDto';
 import { take, tap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { LocalStorageService } from './local-storage.service';
+import { UserToProfileDto } from '../dtos/userToProfileDto';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,12 @@ export class AuthService {
   constructor(
     private readonly http: HttpClient,
     private readonly localStorageService: LocalStorageService
-  ) {}
+  ) {
+    const userFromLS: any = this.localStorageService.getUser();
+    if (userFromLS) {
+      this.storedUser = userFromLS;
+    }
+  }
 
   storedUser: any = null;
 
@@ -48,6 +54,12 @@ export class AuthService {
   logout(): void {
     this.storedUser = null;
     this.localStorageService.removeAuthCredentials();
+  }
+
+  getUserProfile(userId: string): Observable<UserToProfileDto> {
+    return this.http.get<UserToProfileDto>(
+      this.getRestUrl() + `auth/profile/${userId}`
+    );
   }
 
   private createDeveloper(

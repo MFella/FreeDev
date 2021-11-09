@@ -36,7 +36,7 @@
             <div class="nav-link dropdown-toggle config-user-toggle" data-bs-toggle="dropdown" role="button" 
             aria-haspopup="true" aria-expanded="false">Dropdown</div>
             <ul class="dropdown-menu config-user-dropdown">
-              <li class="nav-item" (click)="logout()">
+              <li class="nav-item" [routerLink]="['profile']" [queryParams]="{id: getUserId()}">
                 <div class="w-100 d-flex flex-row justify-content-between">
                   <strong class="text-secondary">Profile</strong>
                   <fa-icon [icon]="icons[6]"></fa-icon>

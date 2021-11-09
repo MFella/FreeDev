@@ -17,9 +17,10 @@ import { ToastrModule } from 'ngx-toastr';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { AddOfferComponent } from './add-offer/add-offer.component';
 import { SearchOffersComponent } from './search-offers/search-offers.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
     NavComponent,
     HomeComponent,
@@ -28,7 +29,8 @@ import { SearchOffersComponent } from './search-offers/search-offers.component';
     AddOfferComponent,
     SearchOffersComponent,
     SelectedBadgeComponent,
-  ],
+      ProfileComponent
+   ],
   imports: [
     BrowserModule,
     HttpClientModule,
