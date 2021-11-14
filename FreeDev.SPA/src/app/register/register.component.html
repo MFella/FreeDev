@@ -42,7 +42,12 @@
                   && this.registerForm.controls.email.value.length !== 0}">
                   <label for="email">Email</label>
                   <div class="invalid-feedback">
+                    <p class="m-0" *ngIf="this.registerForm.get('email')?.errors?.emailTaken">
+                      &#x2192; This email is already registered
+                    </p>
+                    <p *ngIf="this.registerForm.get('email')?.errors?.pattern">
                     Please provide a valid email.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -121,13 +126,13 @@
                 </div>
                 <div class="col-md-6 col-xs-6 padding-with-offset">
                   <div class="form-label-group">
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="technologies"></textarea>  
+                    <textarea class="form-control" id="exampleFormControlTextarea2" rows="3" formControlName="technologies"></textarea>  
                     <label class="normal-label" for="technologies">Technologies*</label>
                   </div>
                 </div>
                 <div class="col-md-6 col-xs-6 padding-with-offset">
                   <div class="form-label-group">
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="hobbies"></textarea>  
+                    <textarea class="form-control" id="exampleFormControlTextarea3" rows="3" formControlName="hobbies"></textarea>  
                     <label class="normal-label" for="hobbies">Hobbies*</label>
                   </div>
                 </div>
@@ -154,7 +159,7 @@
                     <option value="medium">Medium(between 50 and 200 employees)</option>
                     <option value="large">Large(more than 200 employees)</option>
                   </select>
-                  <label class="label-static" for="email">Size of Company</label>
+                  <label class="label-static" for="sizeOfCompany">Size of Company</label>
                 </div>
               </div>
             </div>

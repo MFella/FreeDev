@@ -57,8 +57,14 @@ export class AuthService {
   }
 
   getUserProfile(userId: string): Observable<UserToProfileDto> {
-    return this.http.get<UserToProfileDto>(
-      this.getRestUrl() + `auth/profile/${userId}`
+    return this.http
+      .get<UserToProfileDto>(this.getRestUrl() + `auth/profile/${userId}`)
+      .pipe(take(1));
+  }
+
+  checkEmail(email: string): Observable<boolean> {
+    return this.http.get<boolean>(
+      this.getRestUrl() + `auth/check-email?email=${email}`
     );
   }
 

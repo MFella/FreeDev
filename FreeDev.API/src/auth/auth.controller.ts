@@ -5,10 +5,12 @@ import {
   HttpCode,
   Param,
   Post,
+  Query,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { AvailabilityOfEmailQuery } from 'src/dtos/availabilityOfEmailQuery';
 import { DeveloperToCreateDto } from 'src/dtos/developerToCreateDto';
 import { HunterToCreateDto } from 'src/dtos/hunterToCreateDto';
 import { UserToLoginDto } from 'src/dtos/userToLoginDto';
@@ -23,6 +25,13 @@ export class AuthController {
     private readonly userServ: UsersService,
     private readonly authService: AuthService,
   ) {}
+
+  @Get('check-email')
+  async checkAvailabilityOfEmail(
+    @Query() query: AvailabilityOfEmailQuery,
+  ): Promise<boolean> {
+    return await this.userServ.isUserAlreadyExists(query.email);
+  }
 
   @Post('developer')
   @HttpCode(201)

@@ -2,11 +2,19 @@
   <form [formGroup]="profileForm">
   <div class="row pt-4">
     <div class="col-md-8">
-      <div class="card">
+      <div class="card account-details-card mr-4">
         <h4 class="card-header">
           <span>Account Details</span>
           <div class="header-button-group">
-            <button class="btn btn-warning" (click)="this.isReadonly = !this.isReadonly">
+            <button *ngIf="!this.isReadonly" class="btn btn-danger" (click)="cancelEditMode()" [disabled]="this.profileForm.invalid">
+              <fa-icon [icon]="icons[2]"></fa-icon>
+              <span>Cancel</span>
+            </button>
+            <button *ngIf="!this.isReadonly" class="btn btn-success" (click)="updateUserInfo()" [disabled]="this.profileForm.invalid">
+              <fa-icon [icon]="icons[1]"></fa-icon>
+              <span>Save</span>
+            </button>
+            <button *ngIf="this.isReadonly" class="btn btn-warning" (click)="setEditMode()">
               <fa-icon [icon]="icons[0]"></fa-icon>
               <span>Edit</span>
             </button>
@@ -80,13 +88,13 @@
               </div>
             </div>
 
-            <div class="col-md-4 col-xs-6" *ngIf="this.userProfile.role === 'HUNTER'">
+            <div class="col-md-4 col-xs-6 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
               <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="" name="companyName" formControlName="companyName" [readonly]="isReadonly">
                 <label for="companyName">Name of Company</label>
               </div>
             </div>
-            <div class="col-md-4" *ngIf="this.userProfile.role === 'HUNTER'">
+            <div class="col-md-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
               <div class="form-label-group">
                 <input type="text" class="form-control" placeholder="" name="businessOffice" formControlName="businessOffice" [readonly]="isReadonly">
                 <label for="businessOffice">Business Office</label>
@@ -116,10 +124,10 @@
             </div>
 
             <div class="row pb-4" *ngIf="this.userProfile.role === 'HUNTER'">
-              <div class="col-md-4">
-                <div class="form-label-group d-flex flex-column">
-                  <select class="custom-select custom-select-lg" formControlName="sizeOfCompany" [disabled]="isReadonly">
-                    <option value="small" selected>Small(less than 50 employees)</option>
+              <div class="col-md-12 padding-with-offset d-flex flex-row justify-content-center">
+                <div class="form-label-group d-flex flex-column w-50">
+                  <select class="custom-select custom-select-lg" formControlName="sizeOfCompany" [attr.disabled]="isReadonly ? '': null">
+                    <option value="small">Small(less than 50 employees)</option>
                     <option value="medium">Medium(between 50 and 200 employees)</option>
                     <option value="large">Large(more than 200 employees)</option>
                   </select>
@@ -131,25 +139,20 @@
         </div>
       </div>
     </div>
-    <div class="col-md-4">
-      <div class="row">
+    <div class="col-md-4 pl-4">
+      <div class="row ml-4">
         <div class="col-md-12">
           <div class="profile-photo-container">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png"
+            <img [src]="this.userProfile.avatarUrl"
             alt="Some Placeholder"
             class="profile-photo">
           </div>
         </div>
-        <div class="col-md-12">
-          <div class="photo-button-group">
-            <button class="btn btn-danger">
-              <fa-icon [icon]="icons[2]"></fa-icon>
-              <span>Delete</span>
-            </button>
-            <button class="btn btn-info">
-              <fa-icon [icon]="icons[1]"></fa-icon>
-              <span>Upload</span>
-            </button>
+        <hr class="hr-avatar">
+        <div class="col-md-12 py-4 avatar-action-container">
+          <div class="d-flex flex-column justify-content-center px-4">
+            <h3 class="text-center">Upload new avatar</h3>
+            <input type="file" class="form-control-plaintext" id="formFile" (change)="setAvatarToUpload($event)" [disabled]="isReadonly" formControlName="avatarBinding">
           </div>
         </div>
       </div>

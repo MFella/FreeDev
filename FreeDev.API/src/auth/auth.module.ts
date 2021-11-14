@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
+import { FileSchema, File } from 'src/files/file.schema';
+import { FileService } from 'src/files/file.service';
 import { Developer, DeveloperSchema } from 'src/users/developer.schema';
 import { Hunter, HunterSchema } from 'src/users/hunter.schema';
 import { UsersModule } from 'src/users/users.module';
@@ -17,6 +20,7 @@ import { JwtStrategy } from './jwt.strategy';
     MongooseModule.forFeature([
       { name: Developer.name, schema: DeveloperSchema },
       { name: Hunter.name, schema: HunterSchema },
+      { name: File.name, schema: FileSchema },
     ]),
     UsersModule,
     PassportModule,
@@ -25,7 +29,14 @@ import { JwtStrategy } from './jwt.strategy';
       signOptions: { expiresIn: constans.expiresIn },
     }),
   ],
-  providers: [AuthService, UsersService, JwtStrategy, JwtAuthGuard],
+  providers: [
+    ConfigService,
+    AuthService,
+    UsersService,
+    FileService,
+    JwtStrategy,
+    JwtAuthGuard,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}

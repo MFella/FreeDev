@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -12,13 +13,19 @@ import { Hunter, HunterDocument } from './hunter.schema';
 import * as bcrypt from 'bcrypt';
 import { Roles } from 'src/types/roles';
 import { UserToProfileDto } from 'src/dtos/userToProfileDto';
+import { FileService } from 'src/files/file.service';
+import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(Developer.name)
     private developerModel: Model<DeveloperDocument>,
-    @InjectModel(Hunter.name) private hunterModel: Model<HunterDocument>,
+    @InjectModel(Hunter.name)
+    private hunterModel: Model<HunterDocument>,
+    private readonly fileServ: FileService,
+    private readonly configService: ConfigService,
   ) {}
 
   async createDeveloper(
@@ -52,7 +59,7 @@ export class UsersService {
   }
 
   async createHunter(hunterToCreateDto: HunterToCreateDto): Promise<boolean> {
-    const hipoUser = this.isUserAlreadyExists(hunterToCreateDto?.email);
+    const hipoUser = await this.isUserAlreadyExists(hunterToCreateDto?.email);
     if (hipoUser) {
       throw new BadRequestException('User with that email already exist!');
     }
@@ -80,13 +87,16 @@ export class UsersService {
 
   async findUserById(userId: string): Promise<any> {
     const hipoDeveloper = await (
-      await this.developerModel.findOne({ _id: userId }).exec()
+      await await this.developerModel
+        .findOne({ _id: userId })
+        .populate('avatar')
+        .exec()
     )?.toObject();
 
     if (hipoDeveloper) return hipoDeveloper;
 
     const hipoHunter = (
-      await this.hunterModel.findOne({ _id: userId }).exec()
+      await this.hunterModel.findOne({ _id: userId }).populate('avatar').exec()
     )?.toObject();
 
     if (hipoHunter) return hipoHunter;
@@ -111,7 +121,8 @@ export class UsersService {
   }
 
   async isUserAlreadyExists(email: string): Promise<boolean> {
-    return !!(await this.findUserByEmail(email));
+    const hipoUserFromDb = await this.findUserByEmail(email);
+    return !!Object.keys(hipoUserFromDb).length;
   }
 
   async getUserProfile(id: string, storedUser: any): Promise<UserToProfileDto> {
@@ -125,10 +136,15 @@ export class UsersService {
       const amIOwner: boolean =
         storedUser.userId.toString() === userFromDb._id.toString();
 
-      const { password, repeatPassword, ...rest } = userFromDb;
+      const { passwordHash, passwordSalt, avatar, ...rest } = userFromDb;
+
+      const avatarUrl = await this.fileServ.getSignedFileUrl(
+        userFromDb?.avatar?.key,
+      );
 
       const userToProfileDto: UserToProfileDto = {
         amIOwner,
+        avatarUrl,
         ...rest,
       };
 
@@ -136,6 +152,54 @@ export class UsersService {
     } catch (e) {
       throw new InternalServerErrorException(
         'Error occured during retriving data',
+      );
+    }
+  }
+
+  async updateUserInfo(
+    userId: string,
+    role: string,
+    userToUpdateDto: UserToUpdateDto,
+  ): Promise<boolean> {
+    let updatedUser;
+    const userFromDb = await this.findUserById(userId);
+    if (!Object.keys(userFromDb).length) {
+      throw new UnauthorizedException('User with that id doesnt exists');
+    }
+
+    try {
+      let avatar;
+      if (userToUpdateDto.avatarToUpload && userToUpdateDto.avatarName) {
+        avatar = await this.fileServ.uploadFile(
+          userToUpdateDto.avatarToUpload,
+          userToUpdateDto.avatarName,
+        );
+      }
+
+      if (role === Roles.DEVELOPER) {
+        updatedUser = await this.developerModel.updateOne(
+          { _id: userId },
+          {
+            avatar,
+            ...userToUpdateDto,
+          },
+        );
+      } else if (role === Roles.HUNTER) {
+        updatedUser = await this.hunterModel.updateOne(
+          { _id: userId },
+          {
+            avatar,
+            ...userToUpdateDto,
+          },
+        );
+      }
+
+      if (updatedUser) return true;
+
+      return false;
+    } catch (e) {
+      throw new InternalServerErrorException(
+        'Error occured during saving photo',
       );
     }
   }

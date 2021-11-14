@@ -7,6 +7,7 @@ export interface UserToProfileDto {
   role: Roles;
   amIOwner: boolean;
   bio: string;
+  avatarUrl: string;
   nameOfCompany?: string;
   businessOffice?: string;
   sizeOfCompany?: string;

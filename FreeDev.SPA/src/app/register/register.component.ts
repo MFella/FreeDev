@@ -1,12 +1,21 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
 import { NotyService } from '../services/noty.service';
 import { EmployeeToRegisterDto } from '../types/employeeToRegisterDto';
 import { EmployerToRegisterDto } from '../types/employerToRegisterDto';
 import { ContractConverter } from '../utils/contractConverter';
+import { IsEmailTakenValidator } from './validators/isEmailTakenValidator';
 
 @Component({
   selector: 'app-register',
@@ -15,6 +24,7 @@ import { ContractConverter } from '../utils/contractConverter';
 })
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
+  isEmailAlreadyTaken: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -71,14 +81,13 @@ export class RegisterComponent implements OnInit {
         ],
         email: [
           '',
-          {
-            validators: [
-              Validators.required,
-              Validators.pattern(
-                /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
-              ),
-            ],
-          },
+          [
+            Validators.required,
+            Validators.pattern(
+              /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
+            ),
+          ],
+          [IsEmailTakenValidator.createIsEmailTakenValidator(this.authServ)],
         ],
         password: [
           '',
@@ -135,7 +144,9 @@ export class RegisterComponent implements OnInit {
         hobbies: ['', { validators: [] }],
         sizeOfCompany: ['small', { validators: [] }],
       },
-      { validators: [this.passwordMatch] }
+      {
+        validators: [this.passwordMatch],
+      }
     );
   }
 
