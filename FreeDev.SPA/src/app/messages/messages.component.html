@@ -3,48 +3,73 @@
     <div class="col-md-8">
       <div class="card">
         <div class="card-header">
-          Featured
+          <div class="header-avatar-container">
+            <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="">
+          </div>
+          <h4 class="mb-0">Chat with John Reaper</h4>
         </div>
         <div class="card-body">
           <h5 class="card-title">Special title treatment</h5>
           <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
           <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
-        <div class="card-footer">
-          <input type="text">
+        <div class="card-footer message-input-container">
+          <input class="form-control message-input" type="text">
+          <button class="btn btn-info send-button">
+            <span class="pl-1">Send</span>
+            <fa-icon [icon]="icons[1]"></fa-icon>
+          </button>
         </div>
       </div>
     </div>
     <div class="col-md-4">
       <div class="card">
-        <div class="card-header">
-          Featured
+        <div class="card-header d-flex align-items-center">
+          <h4 class="mb-0">Find Person</h4>
         </div>
         <div class="card-body">
-<!-- Nav tabs -->
-<ul class="nav nav-tabs" id="myTab" role="tablist">
-  <li class="nav-item">
-    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Home</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Profile</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="messages-tab" data-toggle="tab" href="#messages" role="tab" aria-controls="messages" aria-selected="false">Messages</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
-  </li>
-</ul>
+          <div class="filter-options-container d-flex flex-column">
+            <div class="type-of-user-container d-flex flex-row align-items-center justify-content-between">
+              <strong>Type</strong>
+              <select class="form-select form-select-md w-50" aria-label=".form-select-lg example">
+                <option value="1">Developer</option>
+                <option value="2">Hunter</option>
+                <option value="3">Both</option>
+              </select>
+            </div>
+            <div class="search-container pt-4">
+              <input class="form-control" type="text" placeholder="Type name...">
+              <button class="btn btn-secondary">
+                <fa-icon [icon]="icons[0]"></fa-icon>
+                <span>Find</span>
+              </button>
+            </div>
+          </div>
+          <hr>
+          <ul class="list-group list-group-flush contact-list">
+            <li class="list-group-item" *ngFor="let item of numbers | paginate: {
+            itemsPerPage: this.pagination.itemsPerPage,
+            currentPage: this.pagination.currentPage,
+            totalItems: numbers.length}">
+              <div class="contact-item">
+                <div class="avatar-container">
+                  <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="">
+                </div>
+  
+                <div class="name-active-container">
+                  <span>User {{item}}</span>
+                  <em class="text-muted">Last active 3 hours ago</em>
+                </div>
+              </div>
+              <div class="contact-attributes">
+                <div class="green-dot"></div>
+              </div>
+            </li>
+          </ul>
 
-<!-- Tab panes -->
-<div class="tab-content">
-  <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab">...</div>
-  <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-  <div class="tab-pane" id="messages" role="tabpanel" aria-labelledby="messages-tab">...</div>
-  <div class="tab-pane" id="settings" role="tabpanel" aria-labelledby="settings-tab">...</div>
-</div>
-
+          <pagination-controls class="pagination-container mt-4"
+          (pageChange)="pageChanged($event)">
+          </pagination-controls>
         </div>
       </div>
     </div>

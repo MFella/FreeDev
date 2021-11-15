@@ -20,9 +20,10 @@ import { SearchOffersComponent } from './search-offers/search-offers.component';
 import { ProfileComponent } from './profile/profile.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MessagesComponent } from './messages/messages.component';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 @NgModule({
-  declarations: [	
+  declarations: [
     AppComponent,
     NavComponent,
     HomeComponent,
@@ -32,8 +33,8 @@ import { MessagesComponent } from './messages/messages.component';
     SearchOffersComponent,
     SelectedBadgeComponent,
     ProfileComponent,
-      MessagesComponent
-   ],
+    MessagesComponent,
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -44,6 +45,7 @@ import { MessagesComponent } from './messages/messages.component';
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
     NgxSpinnerModule,
+    NgxPaginationModule,
   ],
   providers: [
     NotyService,

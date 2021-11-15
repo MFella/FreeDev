@@ -56,10 +56,10 @@ export class NavComponent implements OnInit {
   }
 
   isUserDeveloper(): boolean {
-    return this.localStorageService.getUser().role === Roles.DEVELOPER;
+    return this.localStorageService.getUser()?.role === Roles.DEVELOPER;
   }
 
   isUserHunter(): boolean {
-    return this.localStorageService.getUser().role === Roles.HUNTER;
+    return this.localStorageService.getUser()?.role === Roles.HUNTER;
   }
 }

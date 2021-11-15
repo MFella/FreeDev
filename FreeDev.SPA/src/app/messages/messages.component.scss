@@ -1,0 +1,110 @@
+.message-input-container {
+  display: flex;
+  position: relative;
+
+  input.message-input {
+    border-radius: 2rem;
+    padding-right: 6rem;
+  }
+  button.send-button {
+    position: absolute;
+    border-radius: 2rem;
+    width: 5.5rem;
+    right: 1rem;
+    .ng-fa-icon {
+      padding-left: 0.4rem;
+    }
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+
+  .header-avatar-container {
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    border-radius: 100%;
+    .avatar {
+      max-height: 3rem;
+    }
+
+    & + h4 {
+      padding-left: 1rem;
+    }
+  }
+}
+
+.search-container {
+  width: 100%;
+  display: flex;
+  button {
+    width: 20%;
+    margin-left: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  input {
+    width: 75%;
+  }
+}
+
+.contact-list {
+  border-radius: 1rem;
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.25);
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.4s;
+    &:hover {
+      cursor: pointer;
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      max-height: 4rem;
+      .avatar-container {
+        border: 1px solid rgba(0, 0, 0, 0.4);
+        border-radius: 100%;
+        overflow: hidden;
+        .avatar {
+          max-height: 3rem;
+        }
+      }
+      .name-active-container {
+        padding-left: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        em {
+          font-size: 0.8rem;
+        }
+      }
+    }
+    .contact-attributes {
+      padding-right: 1rem;
+      .green-dot {
+        width: 16px;
+        height: 16px;
+        border-radius: 100%;
+        background-color: rgba(0, 255, 76, 0.65);
+      }
+    }
+  }
+}
+
+.pagination-container {
+  ::ng-deep {
+    .ngx-pagination {
+      text-align: center;
+      padding: 0;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+}
