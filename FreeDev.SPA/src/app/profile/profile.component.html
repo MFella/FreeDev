@@ -5,12 +5,18 @@
       <div class="card account-details-card mr-4">
         <h4 class="card-header">
           <span>Account Details</span>
-          <div class="header-button-group">
-            <button *ngIf="!this.isReadonly" class="btn btn-danger" (click)="cancelEditMode()" [disabled]="this.profileForm.invalid">
+          <div class="header-button-group position-relative" *ngIf="this.userProfile.amIOwner">
+              <div class="spinner-container position-relative">
+                <ngx-spinner
+                [name]="'updateResponseWaiting'"
+                [fullScreen]="false">
+              </ngx-spinner>
+              </div>
+            <button *ngIf="!this.isReadonly" class="btn btn-danger" (click)="cancelEditMode()" [disabled]="this.profileForm.invalid || this.isLoading">
               <fa-icon [icon]="icons[2]"></fa-icon>
               <span>Cancel</span>
             </button>
-            <button *ngIf="!this.isReadonly" class="btn btn-success" (click)="updateUserInfo()" [disabled]="this.profileForm.invalid">
+            <button *ngIf="!this.isReadonly" class="btn btn-success" (click)="updateUserInfo()" [disabled]="this.profileForm.invalid || this.isLoading">
               <fa-icon [icon]="icons[1]"></fa-icon>
               <span>Save</span>
             </button>
@@ -142,7 +148,11 @@
     <div class="col-md-4 pl-4">
       <div class="row ml-4">
         <div class="col-md-12">
-          <div class="profile-photo-container">
+          <div class="profile-photo-container position-relative">
+            <ngx-spinner
+              [name]="'updateAvatarResponseWaiting'"
+              [fullScreen]="false">
+            </ngx-spinner>
             <img [src]="this.userProfile.avatarUrl"
             alt="Some Placeholder"
             class="profile-photo">
@@ -152,7 +162,8 @@
         <div class="col-md-12 py-4 avatar-action-container">
           <div class="d-flex flex-column justify-content-center px-4">
             <h3 class="text-center">Upload new avatar</h3>
-            <input type="file" class="form-control-plaintext" id="formFile" (change)="setAvatarToUpload($event)" [disabled]="isReadonly" formControlName="avatarBinding">
+            <input type="file" class="form-control-plaintext" id="formFile" (change)="setAvatarToUpload($event)"
+            accept=".jpg,.png,.jpeg" formControlName="avatar">
           </div>
         </div>
       </div>

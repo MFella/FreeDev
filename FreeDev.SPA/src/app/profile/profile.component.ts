@@ -1,11 +1,6 @@
 import { Roles } from '../types/roles.enum';
-import {
-  FormGroup,
-  FormBuilder,
-  Validators,
-  FormControl,
-} from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import {
   faEdit,
@@ -17,7 +12,9 @@ import { UserToProfileDto } from '../dtos/userToProfileDto';
 import { UsersService } from '../services/users.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NotyService } from '../services/noty.service';
-import { DomSanitizer } from '@angular/platform-browser';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { UserToUpdateDto } from '../dtos/userToUpdateDto';
+import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
 
 @Component({
   selector: 'app-profile',
@@ -27,9 +24,13 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class ProfileComponent implements OnInit {
   profileForm!: FormGroup;
 
+  isSpinnerVisible: boolean = false;
+
   avatarToUpload: File | null = null;
 
   isReadonly: boolean = true;
+
+  isLoading: boolean = false;
 
   userProfile!: UserToProfileDto;
 
@@ -44,7 +45,8 @@ export class ProfileComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly userServ: UsersService,
     private readonly noty: NotyService,
-    private readonly sanitizer: DomSanitizer
+    private readonly spinner: NgxSpinnerService,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -61,26 +63,63 @@ export class ProfileComponent implements OnInit {
       if (response.profile.role === Roles.DEVELOPER) {
         this.initFormForDeveloper();
       }
+
+      this.profileForm.get('avatar')?.disable();
     });
   }
 
   async updateUserInfo(): Promise<void> {
     const arrayBuffer = await this.avatarToUpload?.arrayBuffer();
+    this.spinner.show('updateResponseWaiting', {
+      type: 'ball-clip-rotate',
+      size: 'small',
+      color: '#000000',
+    });
+    this.isLoading = true;
+
+    const { avatar, ...pipedProfileFormRawValue } =
+      this.profileForm.getRawValue();
+
+    const userToUpdateDto: UserToUpdateDto = {
+      avatarName: this.avatarToUpload?.name,
+      avatarToUpload: Buffer.from(arrayBuffer ?? ''),
+      ...pipedProfileFormRawValue,
+    };
+
+    if (this.profileForm.get('avatar')?.value) {
+      this.spinner.show('updateAvatarResponseWaiting', {
+        type: 'ball-clip-rotate',
+        size: 'small',
+        color: '#000000',
+      });
+    }
+
     this.userServ
-      .updateUserInfo({
-        avatarName: this.avatarToUpload?.name,
-        avatarToUpload: Buffer.from(arrayBuffer ?? ''),
-        ...this.profileForm.getRawValue(),
-      })
+      .updateUserInfo(userToUpdateDto, this.route.snapshot.queryParams?.id)
       .subscribe(
-        (response: boolean) => {
+        (response: SignedFileUrlDto) => {
+          this.userProfile.avatarUrl = response.signedFileUrl;
           if (response) {
             this.isReadonly = !this.isReadonly;
           } else {
             this.noty.error('Couldnt save your data');
           }
+
+          this.profileForm.get('avatar')?.setValue('');
+          this.changeDetectorRef.detectChanges();
+          this.noty.info('Profile has been updated');
         },
-        (error: HttpErrorResponse) => this.noty.error(error.error.message)
+        (error: HttpErrorResponse) => {
+          this.noty.error(error.error.message);
+          this.spinner.hide('updateResponseWaiting');
+          this.spinner.hide('updateAvatarResponseWaiting');
+          this.isLoading = false;
+        },
+        () => {
+          this.spinner.hide('updateResponseWaiting');
+          this.spinner.hide('updateAvatarResponseWaiting');
+          this.isLoading = false;
+        }
       );
   }
 
@@ -92,19 +131,20 @@ export class ProfileComponent implements OnInit {
     } else {
       this.avatarToUpload = avatarToUpload[0];
     }
-
-    console.log('asdasd', this.profileForm.get('avatarBinding'));
   }
 
   cancelEditMode(): void {
     this.profileForm.setValue(this.temporaryEditData);
     this.avatarToUpload = null;
     this.isReadonly = !this.isReadonly;
+    this.profileForm.get('avatar')?.disable();
   }
 
   setEditMode(): void {
     this.temporaryEditData = this.profileForm.getRawValue();
+    this.isSpinnerVisible = true;
     this.isReadonly = !this.isReadonly;
+    this.profileForm.get('avatar')?.enable();
   }
 
   private initFormForDeveloper(): void {
@@ -157,7 +197,7 @@ export class ProfileComponent implements OnInit {
       ],
       technologies: [this.userProfile.technologies, { validators: [] }],
       hobbies: [this.userProfile.hobbies, { validators: [] }],
-      avatarBinding: [],
+      avatar: [],
     });
   }
 
@@ -201,7 +241,7 @@ export class ProfileComponent implements OnInit {
         },
       ],
       sizeOfCompany: [this.userProfile.sizeOfCompany, { validators: [] }],
-      avatarBinding: [],
+      avatar: [],
     });
   }
 }

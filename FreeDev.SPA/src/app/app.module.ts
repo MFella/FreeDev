@@ -1,5 +1,5 @@
 import { SelectedBadgeComponent } from './generics/selected-badge/selected-badge.component';
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -18,9 +18,11 @@ import { AuthInterceptor } from './auth/auth.interceptor';
 import { AddOfferComponent } from './add-offer/add-offer.component';
 import { SearchOffersComponent } from './search-offers/search-offers.component';
 import { ProfileComponent } from './profile/profile.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { MessagesComponent } from './messages/messages.component';
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
     NavComponent,
     HomeComponent,
@@ -30,7 +32,8 @@ import { ProfileComponent } from './profile/profile.component';
     SearchOffersComponent,
     SelectedBadgeComponent,
     ProfileComponent,
-  ],
+      MessagesComponent
+   ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -40,6 +43,7 @@ import { ProfileComponent } from './profile/profile.component';
     FormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
+    NgxSpinnerModule,
   ],
   providers: [
     NotyService,
@@ -50,5 +54,6 @@ import { ProfileComponent } from './profile/profile.component';
     },
   ],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

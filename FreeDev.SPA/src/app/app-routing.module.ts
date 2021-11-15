@@ -1,3 +1,4 @@
+import { MessagesComponent } from './messages/messages.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './guards/auth.guard';
 import { SearchOffersComponent } from './search-offers/search-offers.component';
@@ -38,7 +39,11 @@ const routes: Routes = [
       profile: ProfileResolver,
     },
   },
-  { path: '**', redirectTo: 'home' },
+  {
+    path: 'messages',
+    component: MessagesComponent,
+  },
+  // { path: '**', redirectTo: 'home' },
 ];
 
 @NgModule({

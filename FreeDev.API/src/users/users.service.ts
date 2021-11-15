@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   UnauthorizedException,
@@ -16,6 +17,7 @@ import { UserToProfileDto } from 'src/dtos/userToProfileDto';
 import { FileService } from 'src/files/file.service';
 import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
 import { ConfigService } from '@nestjs/config';
+import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
 
 @Injectable()
 export class UsersService {
@@ -157,46 +159,50 @@ export class UsersService {
   }
 
   async updateUserInfo(
+    userIdFromParams: string,
     userId: string,
     role: string,
     userToUpdateDto: UserToUpdateDto,
-  ): Promise<boolean> {
+  ): Promise<SignedFileUrlDto> {
     let updatedUser;
     const userFromDb = await this.findUserById(userId);
-    if (!Object.keys(userFromDb).length) {
-      throw new UnauthorizedException('User with that id doesnt exists');
+    if (!Object.keys(userFromDb).length || userIdFromParams !== userId) {
+      throw new ForbiddenException('You are not allowed to do this');
     }
 
     try {
-      let avatar;
+      let avatarToUpdate;
       if (userToUpdateDto.avatarToUpload && userToUpdateDto.avatarName) {
-        avatar = await this.fileServ.uploadFile(
+        await this.fileServ.deleteFile(userFromDb.avatar?.key);
+        avatarToUpdate = await this.fileServ.uploadFile(
           userToUpdateDto.avatarToUpload,
           userToUpdateDto.avatarName,
         );
-      }
+      } else avatarToUpdate = userFromDb.avatar;
 
       if (role === Roles.DEVELOPER) {
-        updatedUser = await this.developerModel.updateOne(
+        updatedUser = await this.developerModel.findOneAndUpdate(
           { _id: userId },
           {
-            avatar,
+            avatar: avatarToUpdate,
             ...userToUpdateDto,
           },
         );
       } else if (role === Roles.HUNTER) {
-        updatedUser = await this.hunterModel.updateOne(
+        updatedUser = await this.hunterModel.findOneAndUpdate(
           { _id: userId },
           {
-            avatar,
+            avatar: avatarToUpdate,
             ...userToUpdateDto,
           },
         );
       }
 
-      if (updatedUser) return true;
+      const signedFileUrl: string = await this.fileServ.getSignedFileUrl(
+        avatarToUpdate?.key,
+      );
 
-      return false;
+      return { signedFileUrl };
     } catch (e) {
       throw new InternalServerErrorException(
         'Error occured during saving photo',

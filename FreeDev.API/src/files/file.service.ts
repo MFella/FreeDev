@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { S3 } from 'aws-sdk';
@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { FileDocument } from './file.schema';
 import { v4 as uuid } from 'uuid';
 import { File } from './file.schema';
+import { DeleteProjectOutput } from 'aws-sdk/clients/codebuild';
 
 @Injectable()
 export class FileService {
@@ -48,8 +49,11 @@ export class FileService {
     };
     const objectFromS3 = await s3.getObject(bucketParams).promise();
 
-    console.log(objectFromS3);
     return objectFromS3;
+  }
+
+  async getFileById(fileId: string): Promise<any> {
+    return await this.fileModel.findById(fileId);
   }
 
   async getSignedFileUrl(fileKey: string): Promise<string> {
@@ -62,6 +66,31 @@ export class FileService {
       return signedFileUrl;
     } catch (e) {
       return FileService.DEFAULT_IMAGE_LINK;
+    }
+  }
+
+  async deleteFile(fileKey: string | null): Promise<DeleteProjectOutput> {
+    try {
+      if (!fileKey) {
+        return;
+      }
+
+      await this.fileModel.findOneAndDelete({ key: fileKey });
+
+      const s3 = new S3();
+
+      const params = {
+        Bucket: this.configServ.get('AWS_PUBLIC_BUCKET_NAME'),
+        Key: fileKey,
+      };
+
+      const deleteResponse = await s3.deleteObject(params).promise();
+
+      return deleteResponse;
+    } catch (e) {
+      throw new InternalServerErrorException(
+        'Error occured during deleting photo',
+      );
     }
   }
 }

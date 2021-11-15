@@ -14,9 +14,14 @@
             <fa-icon [icon]="icons[0]"></fa-icon>
             <span>Home</span>
           </li>
-          <li class="nav-item" [routerLink]="['add-offer']" [routerLinkActive]="['is-active']">
+          <li *ngIf="isUserHunter()" 
+          class="nav-item" [routerLink]="['add-offer']" [routerLinkActive]="['is-active']">
             <fa-icon [icon]="icons[4]"></fa-icon>
             <span>Add offer</span>
+          </li>
+          <li class="nav-item" [routerLink]="['messages']" [routerLinkActive]="['is-active']">
+            <fa-icon [icon]="icons[9]"></fa-icon>
+            <span>Messages</span>
           </li>
           <li class="nav-item" [routerLink]="['search-offers']" [routerLinkActive]="['is-active']">
             <fa-icon [icon]="icons[5]"></fa-icon>
@@ -42,10 +47,10 @@
                   <fa-icon [icon]="icons[6]"></fa-icon>
                 </div>
               </li>
-              <li class="nav-item" (click)="logout()">
+              <li class="nav-item">
                 <div class="w-100 d-flex flex-row justify-content-between">
-                  <strong class="text-secondary">Config</strong>
-                  <fa-icon [icon]="icons[7]"></fa-icon>
+                  <strong class="text-secondary">Favourites</strong>
+                  <fa-icon [icon]="icons[8]"></fa-icon>
                 </div>
               </li>
               

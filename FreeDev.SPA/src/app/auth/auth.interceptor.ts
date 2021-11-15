@@ -11,7 +11,6 @@ import { Observable, throwError } from 'rxjs';
 import { LocalStorageService } from '../services/local-storage.service';
 import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
-import { NotyService } from '../services/noty.service';
 import { catchError } from 'rxjs/operators';
 
 @Injectable()
@@ -19,8 +18,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private readonly localStorageService: LocalStorageService,
     private readonly authService: AuthService,
-    private readonly router: Router,
-    private readonly noty: NotyService
+    private readonly router: Router
   ) {}
 
   intercept(
@@ -39,7 +37,6 @@ export class AuthInterceptor implements HttpInterceptor {
           if (response.status === 401) {
             this.router.navigate(['']);
             this.authService.logout();
-            this.noty.error('Session expired - try to log again');
           }
 
           return throwError(response);

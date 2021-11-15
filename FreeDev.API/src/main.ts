@@ -22,8 +22,8 @@ async function bootstrap() {
     region: configService.get('AWS_REGION'),
   });
   // the next two lines did the trick
-  app.use(bodyParser.json({ limit: '1mb' }));
-  app.use(bodyParser.urlencoded({ limit: '1mb', extended: true }));
+  app.use(bodyParser.json({ limit: '25mb' }));
+  app.use(bodyParser.urlencoded({ limit: '25mb', extended: true }));
   await app.listen(PORT);
 }
 bootstrap();

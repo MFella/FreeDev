@@ -2,6 +2,8 @@ import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import {
   faCog,
+  faComments,
+  faHeart,
   faHome,
   faPlusCircle,
   faSearch,
@@ -13,6 +15,7 @@ import {
 import { AuthService } from '../services/auth.service';
 import { LocalStorageService } from '../services/local-storage.service';
 import { NotyService } from '../services/noty.service';
+import { Roles } from '../types/roles.enum';
 
 @Component({
   selector: 'app-nav',
@@ -29,6 +32,8 @@ export class NavComponent implements OnInit {
     faSearch,
     faUser,
     faCog,
+    faHeart,
+    faComments,
   ];
 
   constructor(
@@ -48,5 +53,13 @@ export class NavComponent implements OnInit {
 
   getUserId(): string {
     return this.authServ.storedUser?._id;
+  }
+
+  isUserDeveloper(): boolean {
+    return this.localStorageService.getUser().role === Roles.DEVELOPER;
+  }
+
+  isUserHunter(): boolean {
+    return this.localStorageService.getUser().role === Roles.HUNTER;
   }
 }
