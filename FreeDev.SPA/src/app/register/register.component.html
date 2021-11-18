@@ -1,179 +1,177 @@
-<div class="container-fluid">
+<div class="grid">
+  <div class="col-12 p-4">
   <form [formGroup]="registerForm" (ngSubmit)="register()" novalidate>
-    <div class="row py-4">
-      <div class="col-md-12">
-        <div class="card mx-auto w-75">
-          <div class="card-header">
-           <h4 class="d-flex h-100 align-items-center register-header">Register Yourself</h4>
+    <p-card styleClass="mt-4">
+      <ng-template pTemplate="header">
+        <div class="card-header flex flex-column align-items-center justify-content-center">
+          <h1 class="flex align-items-center register-header">Register Yourself</h1>
+         </div>
+      </ng-template>
+      <ng-template pTemplate="body">
+        <div class="grid">
+
+        
+        <div class="col-4 ">
+          <span class="p-float-label">
+            <input pInputText type="text" class="form-control w-full" placeholder="" name="name" formControlName="name"
+            [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
+            'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
+            && this.registerForm.controls.name.value.length !== 0}">
+            <label for="name">Name</label>
+            <div class="invalid-feedback">
+              <p class="m-0" *ngIf="this.registerForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+              <p *ngIf="this.registerForm.get('name')?.errors?.minlength">&#x2192; Min length 2</p>
+            </div>
+          </span>
+        </div>
+        <div class="col-4">
+          <span class="p-float-label">
+            <input pInputText type="text" class="form-control w-full" placeholder="" name="surname" formControlName="surname"
+            [ngClass]="{'is-valid': this.registerForm.controls.surname.status === 'VALID',
+            'is-invalid': this.registerForm.controls.surname.status === 'INVALID' && this.registerForm.controls.surname.touched
+            && this.registerForm.controls.surname.value.length !== 0}">
+            <label for="surname">Surname</label>
+            <div class="invalid-feedback">
+              <p class="m-0" *ngIf="this.registerForm.get('surname')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+              <p *ngIf="this.registerForm.get('surname')?.errors?.minlength">&#x2192; Min length 2</p>
+            </div>
+          </span>
+        </div>
+        <div class="col-4">
+          <span class="p-float-label">
+            <input pInputText type="text" class="form-control w-full" placeholder="" name="email" formControlName="email"
+            [ngClass]="{'is-valid': this.registerForm.controls.email.status === 'VALID',
+            'is-invalid': this.registerForm.controls.email.status === 'INVALID' && this.registerForm.controls.email.touched
+            && this.registerForm.controls.email.value.length !== 0}">
+            <label for="email">Email</label>
+            <div class="invalid-feedback">
+              <p *ngIf="this.registerForm.get('email')?.errors?.emailTaken">
+                &#x2192; This email is already registered
+              </p>
+              <p *ngIf="this.registerForm.get('email')?.errors?.pattern">
+                &#x2192; Please provide a valid email.
+              </p>
+            </div>
+          </span>
+        </div>
+        <div class="col-4 padding-with-offset">
+          <span class="p-float-label">
+            <input pInputText type="password" class="form-control w-full" placeholder="" name="password" formControlName="password"
+            [ngClass]="{'is-valid': this.registerForm.controls.password.status === 'VALID' && !this.registerForm.errors?.mismatchPassword,
+            'is-invalid': this.registerForm.controls.password.status === 'INVALID' && this.registerForm.controls.password.touched
+            && this.registerForm.controls.password.value.length !== 0 || this.registerForm.errors?.mismatchPassword}">
+            <label for="password">Password</label>
+            <div class="invalid-feedback">
+             <p class="m-0" *ngIf="this.registerForm.get('password')?.errors?.pattern || this.registerForm.get('repeatPassword')?.errors?.pattern">
+               &#x2192; Min 8 signs, 1 capital letter, 1 special character, 1 number
+              </p>
+             <p *ngIf="this.registerForm.errors?.mismatchPassword">&#x2192; Passwords must match</p>
+            </div>
+          </span>
+        </div>
+        <div class="col-4 padding-with-offset">
+          <span class="p-float-label">
+            <input pInputText type="password" class="form-control w-full" placeholder="" name="repeatPassword" formControlName="repeatPassword"
+            [ngClass]="{'is-valid': this.registerForm.controls.repeatPassword.status === 'VALID' && !this.registerForm.errors?.mismatchPassword,
+              'is-invalid': this.registerForm.controls.repeatPassword.status === 'INVALID' && this.registerForm.controls.repeatPassword.touched
+              && this.registerForm.controls.repeatPassword.value.length !== 0 || this.registerForm.errors?.mismatchPassword}">
+            <label for="repeatPassword">Repeat Password</label>
+          </span>
+        </div>
+        <div class="col-4 padding-with-offset flex flex-column justify-content-center">
+          <span><strong>What</strong> do you want here?</span>
+          <div class="p-field-radiobutton pt-2">
+            <p-radioButton class="form-check-input" name="contractName" formControlName="contractName" id="jobRadio" value="contract-job"></p-radioButton>
+            <label class="form-check-label pl-2" for="jobRadio">Find a job</label>
           </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-md-4 col-xs-6">
-                <div class="form-label-group">
-                  <input type="text" class="form-control" placeholder="" name="name" formControlName="name"
-                  [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
-                  'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
-                  && this.registerForm.controls.name.value.length !== 0}">
-                  <label for="name">Name</label>
-                  <div class="invalid-feedback">
-                    <p class="m-0" *ngIf="this.registerForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
-                    <p *ngIf="this.registerForm.get('name')?.errors?.minlength">&#x2192; Min length 2</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-label-group">
-                  <input type="text" class="form-control" placeholder="" name="surname" formControlName="surname"
-                  [ngClass]="{'is-valid': this.registerForm.controls.surname.status === 'VALID',
-                  'is-invalid': this.registerForm.controls.surname.status === 'INVALID' && this.registerForm.controls.surname.touched
-                  && this.registerForm.controls.surname.value.length !== 0}">
-                  <label for="surname">Surname</label>
-                  <div class="invalid-feedback">
-                    <p class="m-0" *ngIf="this.registerForm.get('surname')?.errors?.pattern">&#x2192; Only letters are allowed</p>
-                    <p *ngIf="this.registerForm.get('surname')?.errors?.minlength">&#x2192; Min length 2</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-label-group">
-                  <input type="text" class="form-control" placeholder="" name="email" formControlName="email"
-                  [ngClass]="{'is-valid': this.registerForm.controls.email.status === 'VALID',
-                  'is-invalid': this.registerForm.controls.email.status === 'INVALID' && this.registerForm.controls.email.touched
-                  && this.registerForm.controls.email.value.length !== 0}">
-                  <label for="email">Email</label>
-                  <div class="invalid-feedback">
-                    <p class="m-0" *ngIf="this.registerForm.get('email')?.errors?.emailTaken">
-                      &#x2192; This email is already registered
-                    </p>
-                    <p *ngIf="this.registerForm.get('email')?.errors?.pattern">
-                    Please provide a valid email.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 padding-with-offset">
-                <div class="form-label-group">
-                  <input type="password" class="form-control" placeholder="" name="password" formControlName="password"
-                  [ngClass]="{'is-valid': this.registerForm.controls.password.status === 'VALID' && !this.registerForm.errors?.mismatchPassword,
-                  'is-invalid': this.registerForm.controls.password.status === 'INVALID' && this.registerForm.controls.password.touched
-                  && this.registerForm.controls.password.value.length !== 0 || this.registerForm.errors?.mismatchPassword}">
-                  <label for="password">Password</label>
-                  <div class="invalid-feedback">
-                   <p class="m-0" *ngIf="this.registerForm.get('password')?.errors?.pattern || this.registerForm.get('repeatPassword')?.errors?.pattern">
-                     &#x2192; Min 8 signs, 1 capital letter, 1 special character, 1 number
-                    </p>
-                   <p *ngIf="this.registerForm.errors?.mismatchPassword">&#x2192; Passwords must match</p>
-                  </div>
-                </div>
-              </div>
-              <div class="col-md-4 padding-with-offset">
-                <div class="form-label-group">
-                  <input type="password" class="form-control" placeholder="" name="repeatPassword" formControlName="repeatPassword"
-                  [ngClass]="{'is-valid': this.registerForm.controls.repeatPassword.status === 'VALID' && !this.registerForm.errors?.mismatchPassword,
-                    'is-invalid': this.registerForm.controls.repeatPassword.status === 'INVALID' && this.registerForm.controls.repeatPassword.touched
-                    && this.registerForm.controls.repeatPassword.value.length !== 0 || this.registerForm.errors?.mismatchPassword}">
-                  <label for="repeatPassword">Repeat Password</label>
-                </div>
-              </div>
-              <div class="col-md-4 padding-with-offset d-flex flex-column justify-content-center">
-                <span><strong>What</strong> do you want here?</span>
-                <div class="form-check pt-2">
-                  <input class="form-check-input" type="radio" name="contractName" formControlName="contractName" id="jobRadio" value="contract-job">
-                  <label class="form-check-label" for="jobRadio">Find a job</label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="contractName" formControlName="contractName" id="emplRadio" value="contract-empl">
-                  <label class="form-check-label" for="emplRadio">Find an employee</label>
-                </div>
-              </div>
-            </div>
-            <hr>
-
-            <div class="col-md-12 pt-4">
-              <div class="form-label-group">
-                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" formControlName="bio"></textarea>               
-                <label class="reversed-label" for="bio">Write down somethig about yourself(*)</label>
-              </div>
-            </div>
-            
-
-            <div class="row pb-4" *ngIf="this.isContractJob()">
-                <div class="col-md-6 col-xs-6">
-                  <div class="form-label-group">
-                    <input type="text" class="form-control" placeholder="" name="originCountry" formControlName="originCountry"
-                    [ngClass]="{'is-valid': this.registerForm.controls.originCountry.status === 'VALID' && this.registerForm.controls.originCountry.value.length,
-                    'is-invalid': this.registerForm.controls.originCountry.status === 'INVALID' && this.registerForm.controls.originCountry.touched
-                    && this.registerForm.controls.originCountry.value.length !== 0}">
-                    <label for="name">Country*</label>
-                    <div class="invalid-feedback">
-                      <p class="m-0" *ngIf="this.registerForm.get('originCountry')?.errors?.pattern">&#x2192; Only letters are allowed</p>
-                      <p *ngIf="this.registerForm.get('originCountry')?.errors?.minlength">&#x2192; Min length 2</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6 col-xs-6">
-                  <div class="form-label-group">
-                    <input type="text" class="form-control" placeholder="" name="originCity" formControlName="originCity"
-                    [ngClass]="{'is-valid': this.registerForm.controls.originCity.status === 'VALID' && this.registerForm.controls.originCity.value.length,
-                    'is-invalid': this.registerForm.controls.originCity.status === 'INVALID' && this.registerForm.controls.originCity.touched
-                    && this.registerForm.controls.originCity.value.length !== 0}">
-                    <label for="name">City*</label>
-                    <div class="invalid-feedback">
-                      <p class="m-0" *ngIf="this.registerForm.get('originCity')?.errors?.pattern">&#x2192; Only letters are allowed</p>
-                      <p *ngIf="this.registerForm.get('originCity')?.errors?.minlength">&#x2192; Min length 2</p>
-                    </div>
-                  </div>
-                </div>
-                <div class="col-md-6 col-xs-6 padding-with-offset">
-                  <div class="form-label-group">
-                    <textarea class="form-control" id="exampleFormControlTextarea2" rows="3" formControlName="technologies"></textarea>  
-                    <label class="normal-label" for="technologies">Technologies*</label>
-                  </div>
-                </div>
-                <div class="col-md-6 col-xs-6 padding-with-offset">
-                  <div class="form-label-group">
-                    <textarea class="form-control" id="exampleFormControlTextarea3" rows="3" formControlName="hobbies"></textarea>  
-                    <label class="normal-label" for="hobbies">Hobbies*</label>
-                  </div>
-                </div>
-            </div>
-
-            <div class="row pb-4" *ngIf="!this.isContractJob()">
-
-              <div class="col-md-4 col-xs-6">
-                <div class="form-label-group">
-                  <input type="text" class="form-control" placeholder="" name="companyName" formControlName="companyName">
-                  <label for="companyName">Name of Company(*)</label>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-label-group">
-                  <input type="text" class="form-control" placeholder="" name="businessOffice" formControlName="businessOffice">
-                  <label for="businessOffice">Business Office(*)</label>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-label-group d-flex flex-column">
-                  <select class="custom-select custom-select-lg" formControlName="sizeOfCompany">
-                    <option value="small" selected>Small(less than 50 employees)</option>
-                    <option value="medium">Medium(between 50 and 200 employees)</option>
-                    <option value="large">Large(more than 200 employees)</option>
-                  </select>
-                  <label class="label-static" for="sizeOfCompany">Size of Company</label>
-                </div>
-              </div>
-            </div>
-            <div class="pt-2">
-              <p class="text-muted">Fields marked with an asterisk(*) are not obligatory.</p>
-            </div>
-            <div class="w-100 text-center pt-4">
-              <button class="btn btn-info login-btn" [disabled]="this.registerForm.invalid"> 
-                <span>Register</span>
-              </button>
-            </div>
+          <div class="p-field-radiobutton mt-4">
+            <p-radioButton class="form-check-input" name="contractName" formControlName="contractName" id="emplRadio" value="contract-empl"></p-radioButton>
+            <label class="form-check-label pl-2" for="emplRadio">Find an employee</label>
           </div>
         </div>
+        <div class="col-12">
+          <p-divider styleClass="m-0"></p-divider>
+        </div>
+
+
+      <div class="col-12 pt-4">
+        <span class="p-float-label">
+          <textarea class="w-full" id="bio" rows="5" pInputTextarea formControlName="bio"></textarea>            
+          <label class="reversed-label" for="bio">Write down somethig about yourself(*)</label>
+        </span>
       </div>
+      
+          <div class="col-6 padding-with-offset" *ngIf="this.isContractJob()">
+            <span class="p-float-label">
+              <input type="text" pInputText class="form-control w-full" placeholder="" name="originCountry" formControlName="originCountry"
+              [ngClass]="{'is-valid': this.registerForm.controls.originCountry.status === 'VALID' && this.registerForm.controls.originCountry.value.length,
+              'is-invalid': this.registerForm.controls.originCountry.status === 'INVALID' && this.registerForm.controls.originCountry.touched
+              && this.registerForm.controls.originCountry.value.length !== 0}">
+              <label for="name">Country*</label>
+              <div class="invalid-feedback">
+                <p class="m-0" *ngIf="this.registerForm.get('originCountry')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                <p *ngIf="this.registerForm.get('originCountry')?.errors?.minlength">&#x2192; Min length 2</p>
+              </div>
+            </span>
+          </div>
+          <div class="col-6 padding-with-offset" *ngIf="this.isContractJob()">
+            <span class="p-float-label">
+              <input type="text" pInputText class="form-control w-full" placeholder="" name="originCity" formControlName="originCity"
+              [ngClass]="{'is-valid': this.registerForm.controls.originCity.status === 'VALID' && this.registerForm.controls.originCity.value.length,
+              'is-invalid': this.registerForm.controls.originCity.status === 'INVALID' && this.registerForm.controls.originCity.touched
+              && this.registerForm.controls.originCity.value.length !== 0}">
+              <label for="name">City*</label>
+              <div class="invalid-feedback">
+                <p class="m-0" *ngIf="this.registerForm.get('originCity')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                <p *ngIf="this.registerForm.get('originCity')?.errors?.minlength">&#x2192; Min length 2</p>
+              </div>
+            </span>
+          </div>
+          <div class="col-6  padding-with-offset" *ngIf="this.isContractJob()">
+            <span class="p-float-label">
+              <textarea pInputTextarea class="w-full form-control" id="exampleFormControlTextarea2" rows="3" formControlName="technologies"></textarea>  
+              <label class="normal-label" for="technologies">Technologies*</label>
+            </span>
+          </div>
+          <div class="col-6  padding-with-offset" *ngIf="this.isContractJob()">
+            <span class="p-float-label">
+              <textarea pInputTextarea class="w-full form-control" id="exampleFormControlTextarea3" rows="3" formControlName="hobbies"></textarea>  
+              <label class="normal-label" for="hobbies">Hobbies*</label>
+            </span>
+          </div>
+        <div class="col-4 padding-with-offset" *ngIf="!this.isContractJob()">
+          <span class="p-float-label">
+            <input pInputText type="text" class="form-control w-full" placeholder="" name="companyName" formControlName="companyName">
+            <label for="companyName">Name of Company(*)</label>
+          </span>
+        </div>
+        <div class="col-4 padding-with-offset" *ngIf="!this.isContractJob()">
+          <span class="p-float-label">
+            <input pInputText type="text" class="form-control w-full" placeholder="" name="businessOffice" formControlName="businessOffice">
+            <label for="businessOffice">Business Office(*)</label>
+          </span>
+        </div>
+        <div class="col-4 padding-with-offset" *ngIf="!this.isContractJob()">
+          <div class="form-label-group flex flex-column">
+              <p-dropdown styleClass="w-full" [options]="sizesOfCompany" formControlName="sizeOfCompany" placeholder="Select Size"
+              optionLabel="name" [showClear]="true"></p-dropdown>
+              <label class="label-static mt-2" for="sizeOfCompany">Size of Company</label>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="pt-2">
+            <p class="text-muted">Fields marked with an asterisk(*) are not obligatory.</p>
+          </div>
+          <div class="flex justify-content-center w-full">
+            <button pButton type="button" label="Register" icon="pi pi-arrow-right" 
+            class="p-button-md p-button-info" (click)="register()" [disabled]="this.registerForm.invalid"></button>
+          </div>
+        </div>
     </div>
+      </ng-template>
+    </p-card>
+        <div class="card mx-auto w-75">
+          </div>
   </form>
+</div>
 </div>

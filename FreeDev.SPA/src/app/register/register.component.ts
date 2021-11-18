@@ -25,6 +25,11 @@ import { IsEmailTakenValidator } from './validators/isEmailTakenValidator';
 export class RegisterComponent implements OnInit {
   registerForm!: FormGroup;
   isEmailAlreadyTaken: boolean = false;
+  sizesOfCompany: Array<{ name: string }> = [
+    { name: 'Small' },
+    { name: 'Medium' },
+    { name: 'Large' },
+  ];
 
   constructor(
     private fb: FormBuilder,

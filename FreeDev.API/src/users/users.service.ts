@@ -33,31 +33,34 @@ export class UsersService {
   async createDeveloper(
     developerToCreateDto: DeveloperToCreateDto,
   ): Promise<boolean> {
-    const hipoUser = this.isUserAlreadyExists(developerToCreateDto?.email);
+    const hipoUser = await this.isUserAlreadyExists(
+      developerToCreateDto?.email,
+    );
     if (hipoUser) {
       throw new BadRequestException('User with that email already exist!');
     }
 
-    try {
-      const { password, ...restOfDto } = developerToCreateDto;
-      const passwordSalt = bcrypt.genSaltSync(10);
-      const passwordHash = bcrypt.hashSync(password, passwordSalt);
+    // try {
+    const { password, ...restOfDto } = developerToCreateDto;
+    const passwordSalt = bcrypt.genSaltSync(10);
+    const passwordHash = bcrypt.hashSync(password, passwordSalt);
 
-      const developerToCreate = {
-        passwordHash,
-        passwordSalt,
-        role: Roles.DEVELOPER,
-        ...restOfDto,
-      };
+    const developerToCreate = {
+      passwordHash,
+      passwordSalt,
+      role: Roles.DEVELOPER,
+      ...restOfDto,
+    };
+    console.log(developerToCreate);
 
-      const response = await this.developerModel.create(developerToCreate);
+    const response = await this.developerModel.create(developerToCreate);
 
-      if (response) return true;
-    } catch (e) {
-      throw new InternalServerErrorException(
-        'Problem occured during saving developer. Try again in couple of minutes',
-      );
-    }
+    if (response) return true;
+    // } catch (e) {
+    throw new InternalServerErrorException(
+      'Problem occured during saving developer. Try again in couple of minutes',
+    );
+    // }
   }
 
   async createHunter(hunterToCreateDto: HunterToCreateDto): Promise<boolean> {

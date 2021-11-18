@@ -1,6 +1,10 @@
-@import "~bootswatch/dist/zephyr/variables";
-@import "~bootstrap/scss/bootstrap";
-@import "~bootswatch/dist/zephyr/bootswatch";
+:host ::ng-deep p-menubarsub {
+  width: 100%;
+
+  .p-submenu-list {
+    right: 0;
+  }
+}
 
 .navbar {
   padding-top: 0.2rem;

@@ -16,6 +16,7 @@ import { AuthService } from '../services/auth.service';
 import { LocalStorageService } from '../services/local-storage.service';
 import { NotyService } from '../services/noty.service';
 import { Roles } from '../types/roles.enum';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-nav',
@@ -23,6 +24,8 @@ import { Roles } from '../types/roles.enum';
   styleUrls: ['./nav.component.scss'],
 })
 export class NavComponent implements OnInit {
+  items!: MenuItem[];
+
   icons: Array<IconDefinition> = [
     faHome,
     faUserEdit,
@@ -43,7 +46,9 @@ export class NavComponent implements OnInit {
     private readonly router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.setNavItems();
+  }
 
   logout(): void {
     this.authServ.logout();
@@ -61,5 +66,63 @@ export class NavComponent implements OnInit {
 
   isUserHunter(): boolean {
     return this.localStorageService.getUser()?.role === Roles.HUNTER;
+  }
+
+  private setNavItems(): void {
+    this.items = [
+      {
+        label: 'Home',
+        icon: 'pi pi-fw pi-user',
+        routerLink: 'home',
+      },
+      {
+        label: 'Add Offer',
+        icon: 'pi pi-fw pi-plus',
+        routerLink: 'add-offer',
+      },
+      {
+        label: 'Messages',
+        icon: 'pi pi-fw pi-comments',
+        routerLink: 'messages',
+      },
+      {
+        label: 'Search offers',
+        icon: 'pi pi-fw pi-search',
+        routerLink: 'search-offers',
+      },
+      {
+        label: 'Login',
+        icon: 'pi pi-fw pi-sign-in',
+        routerLink: 'login',
+      },
+      {
+        label: 'Sign up',
+        icon: 'pi pi-fw pi-user-plus',
+        routerLink: 'register',
+      },
+      {
+        label: 'More Actions',
+        icon: 'pi pi-fw pi-cog',
+        styleClass: 'ml-auto',
+        items: [
+          {
+            label: 'Profile',
+            icon: 'pi pi-fw pi-user',
+            routerLink: 'profile',
+            queryParams: { id: this.getUserId() },
+          },
+          {
+            label: 'Favourites',
+            icon: 'pi pi-fw pi-heart',
+            routerLink: 'home',
+          },
+          {
+            label: 'Logout',
+            icon: 'pi pi-fw pi-sign-out',
+            command: () => this.logout(),
+          },
+        ],
+      },
+    ];
   }
 }

@@ -1,8 +1,11 @@
-@import "~bootswatch/dist/zephyr/variables";
-@import "~bootstrap/scss/bootstrap";
-@import "~bootswatch/dist/zephyr/bootswatch";
-
 @import "~ngx-toastr/toastr";
+@import "../node_modules/primeicons/primeicons.css";
+@import "../node_modules/primeng/resources/primeng.min.css";
+@import "../node_modules/primeng/resources/themes/lara-dark-purple/theme.css";
+
+* {
+  font-family: var(--font-family);
+}
 
 .ajs-header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);

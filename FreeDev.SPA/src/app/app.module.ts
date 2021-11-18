@@ -21,6 +21,20 @@ import { ProfileComponent } from './profile/profile.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MessagesComponent } from './messages/messages.component';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { jqxBarGaugeModule } from 'jqwidgets-ng/jqxbargauge';
+import { jqxTooltipModule } from 'jqwidgets-ng/jqxtooltip';
+import { TooltipDirective } from './directives/tooltip.directive';
+import { MenubarModule } from 'primeng/menubar';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DividerModule } from 'primeng/divider';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { DropdownModule } from 'primeng/dropdown';
 
 @NgModule({
   declarations: [
@@ -34,10 +48,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
     SelectedBadgeComponent,
     ProfileComponent,
     MessagesComponent,
+    TooltipDirective,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
+    CommonModule,
+    RouterModule,
     AppRoutingModule,
     FontAwesomeModule,
     ReactiveFormsModule,
@@ -46,6 +63,15 @@ import { NgxPaginationModule } from 'ngx-pagination';
     ToastrModule.forRoot(),
     NgxSpinnerModule,
     NgxPaginationModule,
+    MenubarModule,
+    CardModule,
+    ButtonModule,
+    InputTextModule,
+    InputNumberModule,
+    DividerModule,
+    RadioButtonModule,
+    InputTextareaModule,
+    DropdownModule,
   ],
   providers: [
     NotyService,

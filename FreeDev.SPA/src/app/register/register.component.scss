@@ -1,115 +1,68 @@
+:host ::ng-deep .p-card {
+  border-radius: 1rem;
+  .p-card-header {
+    background-color: var(--bluegray-700);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+  .p-card-body {
+    padding-top: 2rem;
+    background-color: var(--bluegray-900);
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+    .p-card-content {
+      padding-top: 0;
+    }
+  }
+}
+
 .container-fluid {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .padding-with-offset {
-    padding-top: 3.4rem;
-    padding-bottom: 1rem;
+  padding-top: 3.6rem;
+  padding-bottom: 1rem;
 }
 
 hr {
-    margin-top: 2rem;
+  margin-top: 2rem;
 }
 
 .card-header {
-    height: 4rem;
-    background-color: rgba(32, 201, 151, .4);
-    .register-header {
-        padding-left: .4rem;
-    }
+  border-radius: 1rem;
 }
 
-.form-label-group {
-    padding-top: 1.2rem;
+.p-float-label {
+  textarea {
+    resize: none;
+  }
 
-    textarea {
-        resize: none;
-    }
+  .invalid-feedback {
+    padding-top: 0.5rem;
+    position: absolute;
+    font-size: 0.8rem;
+  }
 
-    .invalid-feedback {
-        position: absolute;
-        padding-top: 1.3rem;
-    }
+  select {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 0.2rem;
+  }
 
-    label
-    {
-        position: absolute;
-        transform: translateX(.8rem) translateY(-2.2rem);
-        transition: all .4s;
-        font-size: 1.3rem;
-        pointer-events: none;
-        cursor: text;
-        opacity: .6;
-        
-    }
-
-    label.reversed-label,
-    label.normal-label {
-        transform: translate(0rem, -5.5rem);
-        padding-left: .5rem;
-        padding-top: .3rem;
-    }
-
-    textarea:focus,
-    input:focus {
-        border-color: rgba(0,0,0,.3);
-        -webkit-box-shadow: none;
-        box-shadow: none;
-    }
-
-    input:focus ~ label,
-    input:valid ~ label
-    {
-        transform: translateX(0rem) translateY(0rem);
-        font-size: 1rem;
-        cursor: default;
-        opacity: 1;
-    }
-
-    textarea:focus ~ label.reversed-label,
-    textarea:valid ~ label.reversed-label {
-        font-size: 1rem;
-        opacity: 1;
-        transform: translate(0, -7.1rem);
-        padding: 0;
-    }
-
-    textarea:focus ~ label.normal-label,
-    textarea:valid ~ label.normal-label {
-        font-size: 1rem;
-        opacity: 1;
-        transform: translate(0);
-        padding: 0;
-    }
-
-    select {
-        border: 1px solid rgba(0,0,0, .3);
-        border-radius: .2rem;
-    }
-
-    .label-static {
-        transform: translateY(2.5rem);
-        font-size: 1rem;
-        opacity: 1;
-    }
-
-    select.custom-select {
-        height: 2.4rem;
-    }
-
+  select.custom-select {
+    height: 2.4rem;
+  }
 }
 
 input[type="radio"],
 input[type="radio"] + label {
-    transition: all .2s;
-    &:hover {
-        cursor: pointer;
-    }
+  transition: all 0.2s;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 input[type="radio"]:checked + label {
-
-    transition: all .2s;
-    padding-left: 1rem;
-
+  transition: all 0.2s;
+  padding-left: 1rem;
 }

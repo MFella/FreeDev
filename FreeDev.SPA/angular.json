@@ -35,13 +35,14 @@
             ],
             "styles": [
               "src/styles.scss",
-              "node_modules/bootstrap/dist/css/bootstrap.min.css",
-              "node_modules/alertifyjs/build/css/alertify.css"
+              "node_modules/alertifyjs/build/css/alertify.css",
+              "./node_modules/primeicons/primeicons.css",
+              "./node_modules/primeng/resources/primeng.min.css",
+              "./node_modules/primeflex/primeflex.css"
             ],
             "scripts": [
               "node_modules/alertifyjs/build/alertify.min.js",
-              "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"
+              "node_modules/jquery/dist/jquery.min.js"
             ]
           },
           "configurations": {
@@ -108,9 +109,12 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "./node_modules/primeicons/primeicons.css",
+              "./node_modules/primeng/resources/primeng.min.css",
+              "./node_modules/primeflex/primeflex.css"
             ],
-            "scripts": []
+            "scripts": [ "./node_modules/jquery/dist/jquery.min.js" ]
           }
         }
       }

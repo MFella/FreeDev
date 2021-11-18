@@ -5,6 +5,7 @@ import {
   faSearch,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
+import { WsService } from '../services/ws.service';
 
 @Component({
   selector: 'app-messages',
@@ -18,10 +19,11 @@ export class MessagesComponent implements OnInit {
 
   numbers: Array<number> = [1, 2, 3, 4, 5];
 
-  constructor() {}
+  constructor(private readonly wsServ: WsService) {}
 
   ngOnInit() {
     this.setPagination();
+    this.wsServ.joinRoom('helloThere');
   }
 
   pageChanged(pageNumber: number): void {

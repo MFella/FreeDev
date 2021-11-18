@@ -9,9 +9,13 @@
           <h4 class="mb-0">Chat with John Reaper</h4>
         </div>
         <div class="card-body">
-          <h5 class="card-title">Special title treatment</h5>
-          <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+          <div class="message-content-list">
+            <div class="card-text message-content-container"
+            *ngFor="let message of [1,2,3,1,2,3,4,1,2,3]"
+            tooltip="{{message}}" placement="right" delay="100">
+              <span class="message-content">Message {{message}}</span>
+            </div> 
+          </div>
         </div>
         <div class="card-footer message-input-container">
           <input class="form-control message-input" type="text">

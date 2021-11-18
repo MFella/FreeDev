@@ -29,7 +29,7 @@ export class Developer {
   })
   avatar?: File;
 
-  @Prop({ required: true })
+  @Prop({ default: '' })
   bio: string;
 
   @Prop({ required: true })

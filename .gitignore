@@ -1,6 +1,7 @@
 .DS_STORE
 
 /dist/
+*/.angular/cache/*
 /bazel-out
 /integration/bazel/bazel-*
 *.log
@@ -53,3 +54,6 @@ baseline.json
 
 # Husky
 .husky/_
+
+#cache
+*/cache/

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <span class="navbar-brand">
         <img class="w-25" src="../../assets/heart-shake.png" alt="Shake Hand">
@@ -66,4 +66,12 @@
         </ul>
       </div>
     </div>
-  </nav>
+  </nav> -->
+  <p-menubar [model]="items">
+    <ng-template pTemplate="start" class="ml-4">
+      <div class="flex flex-row align-items-center">
+        <img src="../../assets/heart-shake.png" height="40" class="p-mr-2">
+        <span class='p-text-light px-2 text-2xl'>FreeDev</span>
+      </div>
+    </ng-template>
+</p-menubar>
