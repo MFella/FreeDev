@@ -40,27 +40,27 @@ export class UsersService {
       throw new BadRequestException('User with that email already exist!');
     }
 
-    // try {
-    const { password, ...restOfDto } = developerToCreateDto;
-    const passwordSalt = bcrypt.genSaltSync(10);
-    const passwordHash = bcrypt.hashSync(password, passwordSalt);
+    try {
+      const { password, ...restOfDto } = developerToCreateDto;
+      const passwordSalt = bcrypt.genSaltSync(10);
+      const passwordHash = bcrypt.hashSync(password, passwordSalt);
 
-    const developerToCreate = {
-      passwordHash,
-      passwordSalt,
-      role: Roles.DEVELOPER,
-      ...restOfDto,
-    };
-    console.log(developerToCreate);
+      const developerToCreate = {
+        passwordHash,
+        passwordSalt,
+        role: Roles.DEVELOPER,
+        ...restOfDto,
+      };
+      console.log(developerToCreate);
 
-    const response = await this.developerModel.create(developerToCreate);
+      const response = await this.developerModel.create(developerToCreate);
 
-    if (response) return true;
-    // } catch (e) {
-    throw new InternalServerErrorException(
-      'Problem occured during saving developer. Try again in couple of minutes',
-    );
-    // }
+      if (response) return true;
+    } catch (e) {
+      throw new InternalServerErrorException(
+        'Problem occured during saving developer. Try again in couple of minutes',
+      );
+    }
   }
 
   async createHunter(hunterToCreateDto: HunterToCreateDto): Promise<boolean> {
@@ -169,7 +169,10 @@ export class UsersService {
   ): Promise<SignedFileUrlDto> {
     let updatedUser;
     const userFromDb = await this.findUserById(userId);
-    if (!Object.keys(userFromDb).length || userIdFromParams !== userId) {
+    if (
+      !Object.keys(userFromDb).length ||
+      userIdFromParams.toString() !== userId.toString()
+    ) {
       throw new ForbiddenException('You are not allowed to do this');
     }
 

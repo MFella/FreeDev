@@ -35,6 +35,7 @@ import { CommonModule } from '@angular/common';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { DropdownModule } from 'primeng/dropdown';
     RadioButtonModule,
     InputTextareaModule,
     DropdownModule,
+    FileUploadModule,
   ],
   providers: [
     NotyService,

@@ -1,6 +1,12 @@
 import { Roles } from '../types/roles.enum';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { IconDefinition } from '@fortawesome/fontawesome-common-types';
 import {
   faEdit,
@@ -15,6 +21,8 @@ import { NotyService } from '../services/noty.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UserToUpdateDto } from '../dtos/userToUpdateDto';
 import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
+import { FileUpload } from 'primeng/fileupload';
+import { Dropdown } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-profile',
@@ -22,6 +30,10 @@ import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
   styleUrls: ['./profile.component.scss'],
 })
 export class ProfileComponent implements OnInit {
+  @ViewChild('fileUploader') fileUploader!: FileUpload;
+
+  @ViewChild('dropdownSizeCompany') dropdownSizeCompany!: Dropdown;
+
   profileForm!: FormGroup;
 
   isSpinnerVisible: boolean = false;
@@ -39,6 +51,12 @@ export class ProfileComponent implements OnInit {
   temporaryEditData!: any;
 
   icons: Array<IconDefinition> = [faEdit, faSave, faTimesCircle];
+
+  readonly sizesOfCompany: Array<object> = [
+    { name: 'Small' },
+    { name: 'Medium' },
+    { name: 'Large' },
+  ];
 
   constructor(
     private readonly route: ActivatedRoute,
@@ -108,6 +126,7 @@ export class ProfileComponent implements OnInit {
           this.profileForm.get('avatar')?.setValue('');
           this.changeDetectorRef.detectChanges();
           this.noty.info('Profile has been updated');
+          this.fileUploader.clear();
         },
         (error: HttpErrorResponse) => {
           this.noty.error(error.error.message);
@@ -123,9 +142,8 @@ export class ProfileComponent implements OnInit {
       );
   }
 
-  setAvatarToUpload($event: Event): void {
-    const avatarToUpload: FileList | null = ($event?.target as HTMLInputElement)
-      ?.files;
+  setAvatarToUpload($event: any): void {
+    const avatarToUpload: FileList | null = $event?.files;
     if (!avatarToUpload) {
       this.avatarToUpload = avatarToUpload;
     } else {
@@ -133,11 +151,16 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  removeFile(file: File, uploader: FileUpload): void {
+    uploader.remove(null as any, uploader.files.indexOf(file));
+  }
+
   cancelEditMode(): void {
     this.profileForm.setValue(this.temporaryEditData);
     this.avatarToUpload = null;
     this.isReadonly = !this.isReadonly;
     this.profileForm.get('avatar')?.disable();
+    this.fileUploader.clear();
   }
 
   setEditMode(): void {
@@ -240,8 +263,20 @@ export class ProfileComponent implements OnInit {
           ],
         },
       ],
-      sizeOfCompany: [this.userProfile.sizeOfCompany, { validators: [] }],
+      sizeOfCompany: [
+        { name: this.capitalizeString(this.userProfile.sizeOfCompany) },
+        { validators: [] },
+      ],
       avatar: [],
     });
+  }
+
+  private capitalizeString(stringToCapitalize: string | undefined): string {
+    if (!stringToCapitalize) {
+      return '';
+    }
+    return (
+      stringToCapitalize.charAt(0).toUpperCase() + stringToCapitalize.slice(1)
+    );
   }
 }

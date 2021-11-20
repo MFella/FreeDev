@@ -73,7 +73,7 @@
           </div>
         </span>
         <span class="p-float-label">
-          <input type="password" id="Password" pInputText formControlName="password"
+          <input type="password" id="Password" pInputText formControlName="password" (keydown.enter)="login($event)"
           [ngClass]="{'is-valid': this.loginForm.controls.password.status === 'VALID' && !this.loginForm.errors?.mismatchPassword,
           'is-invalid': this.loginForm.controls.password.status === 'INVALID' && this.loginForm.controls.password.touched
           && this.loginForm.controls.password.value.length !== 0 || this.loginForm.errors?.mismatchPassword}"> 

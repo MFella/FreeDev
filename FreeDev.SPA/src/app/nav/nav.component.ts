@@ -56,6 +56,12 @@ export class NavComponent implements OnInit {
     this.router.navigate(['home']);
   }
 
+  navigateToProfile(): void {
+    this.router.navigate(['profile'], {
+      queryParams: { id: this.getUserId() },
+    });
+  }
+
   getUserId(): string {
     return this.authServ.storedUser?._id;
   }
@@ -108,8 +114,7 @@ export class NavComponent implements OnInit {
           {
             label: 'Profile',
             icon: 'pi pi-fw pi-user',
-            routerLink: 'profile',
-            queryParams: { id: this.getUserId() },
+            command: () => this.navigateToProfile(),
           },
           {
             label: 'Favourites',
