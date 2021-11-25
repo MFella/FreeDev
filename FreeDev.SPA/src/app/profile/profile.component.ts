@@ -95,12 +95,13 @@ export class ProfileComponent implements OnInit {
     });
     this.isLoading = true;
 
-    const { avatar, ...pipedProfileFormRawValue } =
+    const { avatar, sizeOfCompany, ...pipedProfileFormRawValue } =
       this.profileForm.getRawValue();
 
     const userToUpdateDto: UserToUpdateDto = {
       avatarName: this.avatarToUpload?.name,
       avatarToUpload: Buffer.from(arrayBuffer ?? ''),
+      sizeOfComapany: sizeOfCompany?.name,
       ...pipedProfileFormRawValue,
     };
 

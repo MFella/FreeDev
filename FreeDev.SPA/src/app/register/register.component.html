@@ -9,21 +9,19 @@
       </ng-template>
       <ng-template pTemplate="body">
         <div class="grid">
-
-        
-        <div class="col-4 ">
-          <span class="p-float-label">
-            <input pInputText type="text" class="form-control w-full" placeholder="" name="name" formControlName="name"
-            [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
-            'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
-            && this.registerForm.controls.name.value.length !== 0}">
-            <label for="name">Name</label>
-            <div class="invalid-feedback">
-              <p class="m-0" *ngIf="this.registerForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
-              <p *ngIf="this.registerForm.get('name')?.errors?.minlength">&#x2192; Min length 2</p>
-            </div>
-          </span>
-        </div>
+          <div class="col-4">
+            <span class="p-float-label">
+              <input pInputText type="text" class="form-control w-full" placeholder="" name="name" formControlName="name"
+              [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
+              'is-invalid': this.registerForm.controls.name.status === 'INVALID' && this.registerForm.controls.name.touched
+              && this.registerForm.controls.name.value.length !== 0}">
+              <label for="name">Name</label>
+              <div class="invalid-feedback">
+                <p class="m-0" *ngIf="this.registerForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                <p *ngIf="this.registerForm.get('name')?.errors?.minlength">&#x2192; Min length 2</p>
+              </div>
+            </span>
+          </div>
         <div class="col-4">
           <span class="p-float-label">
             <input pInputText type="text" class="form-control w-full" placeholder="" name="surname" formControlName="surname"

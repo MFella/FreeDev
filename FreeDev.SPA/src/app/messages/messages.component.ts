@@ -19,6 +19,12 @@ export class MessagesComponent implements OnInit {
 
   numbers: Array<number> = [1, 2, 3, 4, 5];
 
+  searchRolesNames: Array<{ name: string }> = [
+    { name: 'Developer' },
+    { name: 'Hunter' },
+    { name: 'Both' },
+  ];
+
   constructor(private readonly wsServ: WsService) {}
 
   ngOnInit() {
@@ -29,6 +35,8 @@ export class MessagesComponent implements OnInit {
   pageChanged(pageNumber: number): void {
     this.pagination.currentPage = pageNumber;
   }
+
+  findUser(): void {}
 
   private setPagination(): void {
     this.pagination = {

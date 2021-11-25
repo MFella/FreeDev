@@ -21,9 +21,6 @@ import { ProfileComponent } from './profile/profile.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MessagesComponent } from './messages/messages.component';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { jqxBarGaugeModule } from 'jqwidgets-ng/jqxbargauge';
-import { jqxTooltipModule } from 'jqwidgets-ng/jqxtooltip';
-import { TooltipDirective } from './directives/tooltip.directive';
 import { MenubarModule } from 'primeng/menubar';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -36,6 +33,9 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
 import { FileUploadModule } from 'primeng/fileupload';
+import { PaginatorModule } from 'primeng/paginator';
+import { OrderListModule } from 'primeng/orderlist';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
@@ -49,7 +49,6 @@ import { FileUploadModule } from 'primeng/fileupload';
     SelectedBadgeComponent,
     ProfileComponent,
     MessagesComponent,
-    TooltipDirective,
   ],
   imports: [
     BrowserModule,
@@ -74,6 +73,9 @@ import { FileUploadModule } from 'primeng/fileupload';
     InputTextareaModule,
     DropdownModule,
     FileUploadModule,
+    PaginatorModule,
+    OrderListModule,
+    TooltipModule,
   ],
   providers: [
     NotyService,
