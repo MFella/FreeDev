@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AfterLoginInfoDto } from '../dtos/afterLoginInfoDto';
+import { AfterLoginInfoDto } from '../dtos/users/afterLoginInfoDto';
 
 @Injectable({
   providedIn: 'root',

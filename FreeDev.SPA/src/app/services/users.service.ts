@@ -4,7 +4,8 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment as env } from 'src/environments/environment';
 import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
-import { UserToUpdateDto } from '../dtos/userToUpdateDto';
+import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
+import { UserToUpdateDto } from '../dtos/users/userToUpdateDto';
 
 @Injectable({
   providedIn: 'root',
@@ -19,6 +20,15 @@ export class UsersService {
     return this.http.put<SignedFileUrlDto>(
       this.getRestUrl() + `users?id=${idFromParams}`,
       userToUpdateDto
+    );
+  }
+
+  getUserList(
+    pageNo: number,
+    perPage: number
+  ): Observable<Array<UserToMessageListDto>> {
+    return this.http.get<Array<UserToMessageListDto>>(
+      this.getRestUrl() + `users/users-list?pageNo=${pageNo}&perPage=${perPage}`
     );
   }
 

@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { faGem, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { UserToLoginDto } from '../dtos/userToLoginDto';
+import { UserToLoginDto } from '../dtos/users/userToLoginDto';
 import { AuthService } from '../services/auth.service';
 import { NotyService } from '../services/noty.service';
 

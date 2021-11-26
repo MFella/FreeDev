@@ -9,8 +9,8 @@ import {
   ActivatedRouteSnapshot,
 } from '@angular/router';
 import { Observable, of, throwError } from 'rxjs';
-import { UserToProfileDto } from '../dtos/userToProfileDto';
 import { AuthService } from '../services/auth.service';
+import { UserToProfileDto } from '../dtos/users/userToProfileDto';
 
 @Injectable({
   providedIn: 'root',

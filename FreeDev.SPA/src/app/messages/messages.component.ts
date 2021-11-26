@@ -6,6 +6,11 @@ import {
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { WsService } from '../services/ws.service';
+import { MessageToCreateDto } from '../dtos/messages/messageToCreateDto';
+import { AuthService } from '../services/auth.service';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 
 @Component({
   selector: 'app-messages',
@@ -14,6 +19,12 @@ import { WsService } from '../services/ws.service';
 })
 export class MessagesComponent implements OnInit {
   icons: Array<IconDefinition> = [faSearch, faPaperPlane];
+
+  userList: Array<UserToMessageListDto> = [];
+
+  userMessage!: string;
+
+  receiverId: string = '';
 
   pagination!: Pagination;
 
@@ -25,11 +36,20 @@ export class MessagesComponent implements OnInit {
     { name: 'Both' },
   ];
 
-  constructor(private readonly wsServ: WsService) {}
+  constructor(
+    private readonly wsServ: WsService,
+    private readonly authServ: AuthService,
+    private readonly route: ActivatedRoute
+  ) {}
 
   ngOnInit() {
-    this.setPagination();
     this.wsServ.joinRoom('helloThere');
+    this.route.data
+      .pipe(map((res) => res?.users ?? []))
+      .subscribe((userRoomList: Array<UserToMessageListDto>) => {
+        this.userList = userRoomList;
+        console.log(this.userList);
+      });
   }
 
   pageChanged(pageNumber: number): void {
@@ -38,11 +58,12 @@ export class MessagesComponent implements OnInit {
 
   findUser(): void {}
 
-  private setPagination(): void {
-    this.pagination = {
-      itemsPerPage: 2,
-      currentPage: 1,
-      totalItems: 10,
+  sendMessage(): void {
+    const messageToCreateDto: MessageToCreateDto = {
+      content: this.userMessage,
+      senderId: this.authServ.storedUser?._id,
+      receiverId: this.receiverId,
     };
+    // function from wsServ //
   }
 }

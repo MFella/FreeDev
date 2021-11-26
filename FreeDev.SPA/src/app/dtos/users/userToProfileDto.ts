@@ -1,4 +1,4 @@
-import { Roles } from './../types/roles.enum';
+import { Roles } from 'src/app/types/roles.enum';
 
 export interface UserToProfileDto {
   name: string;

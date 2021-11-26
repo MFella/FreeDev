@@ -14,15 +14,15 @@ import {
   faTimesCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { ActivatedRoute, Data } from '@angular/router';
-import { UserToProfileDto } from '../dtos/userToProfileDto';
 import { UsersService } from '../services/users.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NotyService } from '../services/noty.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { UserToUpdateDto } from '../dtos/userToUpdateDto';
 import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
 import { FileUpload } from 'primeng/fileupload';
 import { Dropdown } from 'primeng/dropdown';
+import { UserToProfileDto } from '../dtos/users/userToProfileDto';
+import { UserToUpdateDto } from '../dtos/users/userToUpdateDto';
 
 @Component({
   selector: 'app-profile',

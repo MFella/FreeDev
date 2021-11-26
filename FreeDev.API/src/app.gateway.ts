@@ -4,11 +4,13 @@ import {
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
-  WsResponse,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { UsersService } from './users/users.service';
 @WebSocketGateway(443, { cors: true })
 export class AppGateway {
+  constructor(private readonly userServ: UsersService) {}
+
   @WebSocketServer()
   server!: Server;
 

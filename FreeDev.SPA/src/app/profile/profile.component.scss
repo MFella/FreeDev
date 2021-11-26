@@ -8,12 +8,18 @@
       }
     }
   }
-  .p-fileupload-files {
-    .p-fileupload-row {
-      .p-fileupload-filename {
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+  .p-fileupload {
+    .p-fileupload-buttonbar {
+      display: flex;
+      justify-content: center;
+    }
+    .p-fileupload-files {
+      .p-fileupload-row {
+        .p-fileupload-filename {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }

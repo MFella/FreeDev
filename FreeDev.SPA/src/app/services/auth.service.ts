@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { DeveloperToCreateDto } from '../dtos/developerToCreateDto';
 import { environment as env } from 'src/environments/environment';
-import { HunterToCreateDto } from '../dtos/hunterToCreateDto';
-import { UserToCreateDto } from '../dtos/userToCreateDto';
 import { Observable, of } from 'rxjs';
-import { UserToLoginDto } from '../dtos/userToLoginDto';
-import { AfterLoginInfoDto } from '../dtos/afterLoginInfoDto';
+import { AfterLoginInfoDto } from '../dtos/users/afterLoginInfoDto';
 import { take, tap } from 'rxjs/operators';
 import * as moment from 'moment';
 import { LocalStorageService } from './local-storage.service';
-import { UserToProfileDto } from '../dtos/userToProfileDto';
+import { UserToCreateDto } from '../dtos/users/userToCreateDto';
+import { UserToLoginDto } from '../dtos/users/userToLoginDto';
+import { UserToProfileDto } from '../dtos/users/userToProfileDto';
+import { DeveloperToCreateDto } from '../dtos/users/developerToCreateDto';
+import { HunterToCreateDto } from '../dtos/users/hunterToCreateDto';
 
 @Injectable({
   providedIn: 'root',

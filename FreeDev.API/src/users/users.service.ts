@@ -3,7 +3,6 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -18,6 +17,8 @@ import { FileService } from 'src/files/file.service';
 import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
 import { ConfigService } from '@nestjs/config';
 import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
+import { UserToMessageListDto } from 'src/dtos/userToMessageListDto';
+import { UserChatListParamsDto } from 'src/dtos/userChatListParamsDto';
 
 @Injectable()
 export class UsersService {
@@ -29,6 +30,9 @@ export class UsersService {
     private readonly fileServ: FileService,
     private readonly configService: ConfigService,
   ) {}
+
+  private static readonly DEFAULT_IMAGE_LINK: string =
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png';
 
   async createDeveloper(
     developerToCreateDto: DeveloperToCreateDto,
@@ -214,5 +218,33 @@ export class UsersService {
         'Error occured during saving photo',
       );
     }
+  }
+
+  async getUserChatList(query: UserChatListParamsDto): Promise<Array<any>> {
+    const attributesToSelect = { _id: 1, name: 1, surname: 1 };
+    const developersFromDb = await this.developerModel
+      .find({})
+      .select(attributesToSelect)
+      .populate('avatar');
+    const huntersFromDb = await this.hunterModel
+      .find({})
+      .select(attributesToSelect)
+      .populate('avatar');
+    const resultArray = JSON.parse(
+      JSON.stringify([...developersFromDb, ...huntersFromDb]),
+    );
+
+    resultArray.forEach(async (el) => {
+      if (!el?.avatar) {
+        el.avatar = { url: UsersService.DEFAULT_IMAGE_LINK };
+      } else {
+        const signedUrlForFile = await this.fileServ.getSignedFileUrl(
+          el.avatar.key,
+        );
+        el.avatar = { url: signedUrlForFile };
+      }
+    });
+
+    return resultArray;
   }
 }

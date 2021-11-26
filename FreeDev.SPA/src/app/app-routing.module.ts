@@ -12,6 +12,7 @@ import { RegisterComponent } from './register/register.component';
 import { Roles } from './types/roles.enum';
 import { RoleGuard } from './guards/role.guard';
 import { ProfileResolver } from './resolvers/profile.resolver';
+import { UsersChatListResolver } from './resolvers/users-chat-list.resolver';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -42,6 +43,9 @@ const routes: Routes = [
   {
     path: 'messages',
     component: MessagesComponent,
+    resolve: {
+      users: UsersChatListResolver,
+    },
   },
   { path: '**', redirectTo: 'home' },
 ];
