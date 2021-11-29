@@ -1,5 +1,5 @@
 export interface MessageToCreateDto {
   content: string;
-  senderId: string;
-  receiverId: string;
+  sender: string;
+  receiver: string;
 }

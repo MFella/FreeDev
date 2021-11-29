@@ -170,9 +170,21 @@
     }
     .p-orderlist-user {
       @include online-dot();
-      .user-avatar {
-        display: inline-block;
-        margin: 2px 0 2px 2px;
+      .user-avatar-container {
+        height: 60px;
+        max-width: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        .user-avatar {
+          margin: 0;
+          top: 50%;
+          display: inline-block;
+          margin: 2px 0 2px 2px;
+          width: 100%;
+          height: auto;
+        }
       }
     }
   }

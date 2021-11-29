@@ -16,8 +16,8 @@
         <ng-template pTemplate="body">
           <div class="message-content-list p-4">
             <div class="card-text message-content-container"
-            *ngFor="let message of [1,2,3,1,2,3,4,1,2,3]" pTooltip="{{'Message number ' + message}}">
-              <span class="message-content">Message {{message}}</span>
+            *ngFor="let message of this.messages" pTooltip="{{'Message number ' + message}}">
+              <span class="message-content">Message {{message.message}}</span>
             </div> 
           </div>
         </ng-template>
@@ -26,7 +26,7 @@
             <input pInputText class="form-control message-input w-full mr-3" type="text" [(ngModel)]="userMessage"
             (keydown.enter)="sendMessage()">
             <button pButton type="button" label="Find" icon="pi pi-send" iconPos="right"
-              class="p-button-md p-button-primary send-message-button" (click)="findUser()"></button>
+              class="p-button-md p-button-primary send-message-button" (click)="sendMessage()"></button>
           </div>
         </ng-template>
       </p-card>
@@ -49,7 +49,7 @@
         <ng-template pTemplate="body">
           <div class="filter-options-container d-flex flex-column">
             <div class="type-of-user-container d-flex flex-row align-items-center justify-content-between">
-              <p-dropdown styleClass="w-full" [options]="searchRolesNames"
+              <p-dropdown styleClass="w-full mb-2" [options]="searchRolesNames"
               placeholder="Type of user" optionLabel="name" [showClear]="true"></p-dropdown>
             </div>
             <div class="search-container pt-4">
@@ -62,11 +62,13 @@
             </div>
             <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3">
               <ng-template let-user pTemplate="item">
-                  <div class="flex justify-content-start p-orderlist-user">
+                  <div class="flex justify-content-start p-orderlist-user" (click)="joinSelectedUserRoom(user._id)">
+                    <div class="user-avatar-container">
                       <img src="{{user.avatar.url}}"
-                      class="user-avatar" width="48">
+                      class="user-avatar">
+                    </div>
                       <div class="flex justify-content-between align-items-around w-full">
-                        <div class="flex flex-column justify-content-around pl-2">
+                        <div class="flex flex-column justify-content-around pl-3">
                           <strong>{{user.name}} {{user.surname}}</strong>
                           <em class="text-xs">Last active 3hrs</em>
                         </div>
@@ -80,7 +82,9 @@
           </div>
         </ng-template>
         <ng-template pTemplate="footer">
-          <p-paginator [rows]="10" [totalRecords]="12" [rowsPerPageOptions]="[10,20,30]"></p-paginator>
+          <p-paginator [rows]="this.pagination.itemsPerPage" [totalRecords]="numberOfTotalRecords"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          (onPageChange)="pageChanged($event)"></p-paginator>
         </ng-template>
       </p-card>
     </div>

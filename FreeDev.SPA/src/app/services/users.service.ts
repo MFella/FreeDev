@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment as env } from 'src/environments/environment';
 import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
+import { ResolvedMessagePageInfo } from '../dtos/users/resolvedMessagePageInfo';
 import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { UserToUpdateDto } from '../dtos/users/userToUpdateDto';
 
@@ -26,8 +27,8 @@ export class UsersService {
   getUserList(
     pageNo: number,
     perPage: number
-  ): Observable<Array<UserToMessageListDto>> {
-    return this.http.get<Array<UserToMessageListDto>>(
+  ): Observable<ResolvedMessagePageInfo> {
+    return this.http.get<ResolvedMessagePageInfo>(
       this.getRestUrl() + `users/users-list?pageNo=${pageNo}&perPage=${perPage}`
     );
   }

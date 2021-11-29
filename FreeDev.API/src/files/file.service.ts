@@ -58,13 +58,10 @@ export class FileService {
 
   async getSignedFileUrl(fileKey: string): Promise<string> {
     try {
-      console.log(fileKey);
       const signedFileUrl = await new S3().getSignedUrl('getObject', {
         Bucket: this.configServ.get('AWS_PUBLIC_BUCKET_NAME'),
         Key: fileKey,
       });
-
-      console.log(signedFileUrl);
       return signedFileUrl;
     } catch (e) {
       console.log(e);

@@ -55,7 +55,6 @@ export class UsersService {
         role: Roles.DEVELOPER,
         ...restOfDto,
       };
-      console.log(developerToCreate);
 
       const response = await this.developerModel.create(developerToCreate);
 
@@ -220,20 +219,33 @@ export class UsersService {
     }
   }
 
-  async getUserChatList(query: UserChatListParamsDto): Promise<Array<any>> {
+  async getUserChatList(
+    query: UserChatListParamsDto,
+  ): Promise<{ result: Array<any>; numberOfTotalRecords: number }> {
     const attributesToSelect = { _id: 1, name: 1, surname: 1 };
     const developersFromDb = await this.developerModel
       .find({})
+      // .limit(Number(query.perPage))
+      // .skip(Number(query.pageNo) * Number(query.perPage))
       .select(attributesToSelect)
       .populate('avatar');
+
     const huntersFromDb = await this.hunterModel
       .find({})
+      // .limit(Number(query.perPage))
+      // .skip(Number(query.pageNo) * Number(query.perPage))
       .select(attributesToSelect)
       .populate('avatar');
-    const resultArray = JSON.parse(
+
+    let resultArray = JSON.parse(
       JSON.stringify([...developersFromDb, ...huntersFromDb]),
     );
 
+    resultArray = this.paginate(
+      resultArray,
+      Number(query.perPage),
+      Number(query.pageNo),
+    );
     resultArray.forEach(async (el) => {
       if (!el?.avatar) {
         el.avatar = { url: UsersService.DEFAULT_IMAGE_LINK };
@@ -245,6 +257,18 @@ export class UsersService {
       }
     });
 
-    return resultArray;
+    const numberOfTotalRecords: number =
+      <number>await this.hunterModel.count() +
+      <number>await this.developerModel.count();
+
+    return { result: resultArray, numberOfTotalRecords };
+  }
+
+  private paginate(
+    arrayToPaginate: Array<any>,
+    perPage: number,
+    pageNo: number,
+  ): Array<any> {
+    return arrayToPaginate.slice(pageNo * perPage, (pageNo + 1) * perPage);
   }
 }

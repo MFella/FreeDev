@@ -37,7 +37,7 @@ export class UsersController {
   @Get('users-list')
   async getUserChatList(
     @Query() query: UserChatListParamsDto,
-  ): Promise<Array<UserToMessageListDto>> {
+  ): Promise<{ result: Array<any>; numberOfTotalRecords: number }> {
     return await this.userServ.getUserChatList(query);
   }
 }

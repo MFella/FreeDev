@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppGateway } from './app.gateway';
+import { MessageModule } from './messages/message.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { AppGateway } from './app.gateway';
     UsersModule,
     AuthModule,
     OfferModule,
+    MessageModule,
     ConfigModule.forRoot({
       envFilePath: '.dev.env',
       isGlobal: true,

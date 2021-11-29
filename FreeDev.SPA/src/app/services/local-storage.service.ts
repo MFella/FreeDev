@@ -1,3 +1,4 @@
+import { Pagination } from './../types/pagination';
 import { Injectable } from '@angular/core';
 import { AfterLoginInfoDto } from '../dtos/users/afterLoginInfoDto';
 
@@ -33,5 +34,19 @@ export class LocalStorageService {
     const userFromLS = localStorage?.getItem('user');
     if (!userFromLS) return null;
     return JSON.parse(userFromLS ?? '');
+  }
+
+  setPagination(prefix_key: string, pagination: Pagination): void {
+    localStorage.setItem(prefix_key + 'pagination', JSON.stringify(pagination));
+  }
+
+  getPagination(prefix_key: string): Pagination {
+    const itemFromStorage =
+      localStorage.getItem(prefix_key + 'pagination') ??
+      JSON.stringify({
+        itemsPerPage: 2,
+        currentPage: 0,
+      });
+    return JSON.parse(itemFromStorage);
   }
 }
