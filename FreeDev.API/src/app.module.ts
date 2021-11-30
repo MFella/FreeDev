@@ -15,7 +15,6 @@ import { MessageModule } from './messages/message.module';
     UsersModule,
     AuthModule,
     OfferModule,
-    MessageModule,
     ConfigModule.forRoot({
       envFilePath: '.dev.env',
       isGlobal: true,

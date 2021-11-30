@@ -16,17 +16,19 @@
         <ng-template pTemplate="body">
           <div class="message-content-list p-4">
             <div class="card-text message-content-container"
-            *ngFor="let message of this.messages" pTooltip="{{'Message number ' + message}}">
-              <span class="message-content">Message {{message.message}}</span>
+            *ngFor="let message of this.messages" pTooltip="{{message.sendTime.toString().split('T')[0]
+            + ' ' + message.sendTime.toString().split('T')[1].split('.')[0]}}"
+            [ngClass]="{'is-mine': message.amIOwner}">
+              <span class="message-content">{{message.message}}</span>
             </div> 
           </div>
         </ng-template>
         <ng-template pTemplate="footer">
           <div class="message-input-container">
             <input pInputText class="form-control message-input w-full mr-3" type="text" [(ngModel)]="userMessage"
-            (keydown.enter)="sendMessage()">
+            (keydown.enter)="sendMessage()" [disabled]="privateRoomKey === ''">
             <button pButton type="button" label="Find" icon="pi pi-send" iconPos="right"
-              class="p-button-md p-button-primary send-message-button" (click)="sendMessage()"></button>
+              class="p-button-md p-button-primary send-message-button" (click)="sendMessage()" [disabled]="privateRoomKey === ''"></button>
           </div>
         </ng-template>
       </p-card>
@@ -62,7 +64,7 @@
             </div>
             <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3">
               <ng-template let-user pTemplate="item">
-                  <div class="flex justify-content-start p-orderlist-user" (click)="joinSelectedUserRoom(user._id)">
+                  <div class="flex justify-content-start p-orderlist-user" (click)="getUserRoomKey(user._id)">
                     <div class="user-avatar-container">
                       <img src="{{user.avatar.url}}"
                       class="user-avatar">

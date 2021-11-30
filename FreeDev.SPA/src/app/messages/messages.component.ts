@@ -14,6 +14,7 @@ import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { ResolverPagination } from '../types/resolvedPagination';
 import { UsersService } from '../services/users.service';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
+import { map, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-messages',
@@ -39,6 +40,8 @@ export class MessagesComponent implements OnInit {
 
   rowsPerPageOptions: Array<number> = [2, 5, 10];
 
+  privateRoomKey: string = '';
+
   searchRolesNames: Array<{ name: string }> = [
     { name: 'Developer' },
     { name: 'Hunter' },
@@ -54,7 +57,6 @@ export class MessagesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.wsServ.onlyJoin(this.authServ.storedUser?._id);
     this.route.data.subscribe((resolvedMessagePageInfo: Data) => {
       this.userList = resolvedMessagePageInfo.users.result ?? [];
       this.numberOfTotalRecords =
@@ -67,8 +69,13 @@ export class MessagesComponent implements OnInit {
     this.observePrivateMessage();
   }
 
-  joinSelectedUserRoom(userId: string): void {
-    this.receiverId = userId;
+  getUserRoomKey(userId: string): void {
+    this.usersServ
+      .getUserChatKeyRoom(userId)
+      .subscribe((response: { key: string }) => {
+        this.wsServ.joinUserRoom(response.key);
+        this.privateRoomKey = response.key;
+      });
   }
 
   pageChanged(resolvedPagination: ResolverPagination): void {
@@ -92,6 +99,7 @@ export class MessagesComponent implements OnInit {
       content: this.userMessage,
       sender: this.authServ.storedUser?._id,
       receiver: this.receiverId,
+      key: this.privateRoomKey,
     };
     // function from wsServ //
     this.wsServ.sendPrivateMessage(messageToCreateDto);
@@ -121,8 +129,17 @@ export class MessagesComponent implements OnInit {
   private observePrivateMessage(): void {
     this.wsServ
       .observePrivateMessage()
+      .pipe(
+        map((response: any) => {
+          const newResponse = {
+            amIOwner: this.authServ.storedUser._id === response.sender,
+            ...response,
+          };
+          return newResponse;
+        })
+      )
       .subscribe((response: MessageResponseDto) => {
-        console.log('observe');
+        console.log(response);
         this.messages.push(response);
       });
   }

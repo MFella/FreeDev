@@ -25,10 +25,6 @@ export class WsService {
     this.socket.emit('joinRoom', smth);
   }
 
-  onlyJoin(_id: string): void {
-    this.socket.emit('onlyJoin', { _id });
-  }
-
   sendPrivateMessage(messageToCreateDto: MessageToCreateDto): void {
     this.socket.emit('privateMessage', messageToCreateDto);
   }
@@ -39,5 +35,9 @@ export class WsService {
         observer.next(message);
       });
     });
+  }
+
+  joinUserRoom(key: string): void {
+    this.socket.emit('joinPrivateRoom', { key });
   }
 }

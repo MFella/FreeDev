@@ -21,15 +21,15 @@ export class AppGateway {
     console.log('connected');
   }
 
-  @SubscribeMessage('onlyJoin')
+  @SubscribeMessage('joinPrivateRoom')
   joinPrivateRoom(
-    @MessageBody() data: any,
+    @MessageBody() data: { key: string },
     @ConnectedSocket() client: Socket,
   ): void {
-    if (!this.connectedUsers.hasOwnProperty(data._id)) {
-      this.connectedUsers[data._id] = client;
+    if (!this.connectedUsers.hasOwnProperty(data.key)) {
+      this.connectedUsers[data.key] = client;
     }
-    console.log('dasdas');
+    client.join(data.key);
   }
 
   @SubscribeMessage('privateMessage')
@@ -43,19 +43,6 @@ export class AppGateway {
       sendTime: new Date(),
     };
 
-    if (this.connectedUsers.hasOwnProperty(data.receiver)) {
-      this.connectedUsers[data.receiver].emit(
-        'privateResponse',
-        messageToResponse,
-      );
-      // save meesage in model ;)
-    }
-
-    if (this.connectedUsers.hasOwnProperty(data.sender)) {
-      this.connectedUsers[data.sender].emit(
-        'privateResponse',
-        messageToResponse,
-      );
-    }
+    this.server.to(data.key).emit('privateResponse', messageToResponse);
   }
 }

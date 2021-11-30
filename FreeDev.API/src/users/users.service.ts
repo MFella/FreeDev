@@ -3,6 +3,7 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -17,8 +18,8 @@ import { FileService } from 'src/files/file.service';
 import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
 import { ConfigService } from '@nestjs/config';
 import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
-import { UserToMessageListDto } from 'src/dtos/userToMessageListDto';
 import { UserChatListParamsDto } from 'src/dtos/userChatListParamsDto';
+import { RoomKey, RoomKeyDocument } from 'src/messages/room-key.schema';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +28,8 @@ export class UsersService {
     private developerModel: Model<DeveloperDocument>,
     @InjectModel(Hunter.name)
     private hunterModel: Model<HunterDocument>,
+    @InjectModel(RoomKey.name)
+    private readonly roomKeyModel: Model<RoomKeyDocument>,
     private readonly fileServ: FileService,
     private readonly configService: ConfigService,
   ) {}
@@ -264,11 +267,60 @@ export class UsersService {
     return { result: resultArray, numberOfTotalRecords };
   }
 
+  async getUserKeyRoom(senderId: string, receiverId: string): Promise<any> {
+    const receiverFromDb = await this.findUserById(receiverId);
+    if (!Object.values(receiverFromDb)) {
+      throw new NotFoundException('User with that id doesnt exists');
+    }
+
+    try {
+      const roomKeyFromDb = await this.roomKeyModel
+        .findOne({ userIds: [senderId, receiverId] })
+        .select({ key: 1 });
+
+      const revertedKeyFromDb = await this.roomKeyModel
+        .findOne({ userIds: [receiverId, senderId] })
+        .select({ key: 1 });
+
+      if (!roomKeyFromDb && !revertedKeyFromDb) {
+        const keyToSave = this.generateKey();
+
+        const modelToSave = {
+          userIds: [senderId, receiverId],
+          key: keyToSave,
+        };
+
+        await this.roomKeyModel.create(modelToSave);
+
+        return { key: keyToSave };
+      }
+
+      if (roomKeyFromDb) return { key: roomKeyFromDb.key };
+
+      if (revertedKeyFromDb) return { key: revertedKeyFromDb.key };
+
+      return { key: '' };
+    } catch (e) {
+      throw new InternalServerErrorException('Internal server error');
+    }
+  }
+
   private paginate(
     arrayToPaginate: Array<any>,
     perPage: number,
     pageNo: number,
   ): Array<any> {
     return arrayToPaginate.slice(pageNo * perPage, (pageNo + 1) * perPage);
+  }
+
+  private generateKey() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == 'x' ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      },
+    );
   }
 }

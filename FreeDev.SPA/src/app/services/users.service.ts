@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { take, tap } from 'rxjs/operators';
 import { environment as env } from 'src/environments/environment';
 import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
 import { ResolvedMessagePageInfo } from '../dtos/users/resolvedMessagePageInfo';
@@ -31,6 +31,12 @@ export class UsersService {
     return this.http.get<ResolvedMessagePageInfo>(
       this.getRestUrl() + `users/users-list?pageNo=${pageNo}&perPage=${perPage}`
     );
+  }
+
+  getUserChatKeyRoom(userId: string): Observable<any> {
+    return this.http
+      .get<any>(this.getRestUrl() + `users/user-key-room?_id=${userId}`)
+      .pipe(take(1));
   }
 
   private getRestUrl(): string {

@@ -4,7 +4,7 @@ export type RoomKeyDocument = RoomKey & Document;
 
 @Schema()
 export class RoomKey {
-  @Prop({ reuqired: true })
+  @Prop({ required: true })
   userIds: Array<string>;
 
   @Prop({ required: true })
