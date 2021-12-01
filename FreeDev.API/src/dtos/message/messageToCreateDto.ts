@@ -8,6 +8,9 @@ export class MessageToCreateDto {
   receiver: string;
 
   @IsString()
+  key: string;
+
+  @IsString()
   content: string;
 
   @IsDate()

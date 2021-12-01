@@ -1,3 +1,4 @@
+import { MessageService } from './messages/message.service';
 import {
   ConnectedSocket,
   MessageBody,
@@ -6,13 +7,17 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { MessageToCreateDto } from './dtos/message/messageToCreateDto';
 import { MessageToRoom } from './types/messageToRoom';
 import { UsersService } from './users/users.service';
 @WebSocketGateway(443, { cors: true })
 export class AppGateway {
   connectedUsers: any = {};
 
-  constructor(private readonly userServ: UsersService) {}
+  constructor(
+    private readonly userServ: UsersService,
+    private readonly messageServ: MessageService,
+  ) {}
 
   @WebSocketServer()
   server!: Server;
@@ -33,10 +38,10 @@ export class AppGateway {
   }
 
   @SubscribeMessage('privateMessage')
-  handlePrivateMessage(
+  async handlePrivateMessage(
     @ConnectedSocket() connectedSocket,
     @MessageBody() data: MessageToRoom,
-  ): void {
+  ): Promise<void> {
     const messageToResponse: any = {
       message: data.content,
       sender: data.sender,
@@ -44,5 +49,15 @@ export class AppGateway {
     };
 
     this.server.to(data.key).emit('privateResponse', messageToResponse);
+
+    const messageToCreate: MessageToCreateDto = {
+      content: data.content,
+      sender: data.sender,
+      receiver: data.receiver,
+      sendTime: messageToResponse.sendTime,
+      key: data.key,
+    };
+
+    await this.messageServ.createMessage(messageToCreate);
   }
 }

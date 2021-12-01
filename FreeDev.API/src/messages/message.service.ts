@@ -19,4 +19,18 @@ export class MessageService {
       );
     }
   }
+
+  async getSavedMessages(roomKey: string): Promise<any> {
+    try {
+      console.log(roomKey);
+      const messagesFromDb = await await this.messageModel.find({
+        key: roomKey,
+      });
+      return messagesFromDb;
+    } catch (e) {
+      throw new InternalServerErrorException(
+        'Error occured during fetching data.',
+      );
+    }
+  }
 }

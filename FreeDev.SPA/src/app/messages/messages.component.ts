@@ -1,6 +1,15 @@
 import { LocalStorageService } from './../services/local-storage.service';
 import { Pagination } from './../types/pagination';
-import { Component, OnInit } from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterViewChecked,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   faPaperPlane,
   faSearch,
@@ -21,7 +30,10 @@ import { map, switchMap } from 'rxjs/operators';
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss'],
 })
-export class MessagesComponent implements OnInit {
+export class MessagesComponent implements OnInit, AfterViewChecked {
+  @ViewChild('paginator')
+  paginator!: any;
+
   private static readonly MESSAGE_LS_PREFIX: string = 'messages_user_list_';
 
   messages: Array<MessageResponseDto> = [];
@@ -53,7 +65,8 @@ export class MessagesComponent implements OnInit {
     private readonly authServ: AuthService,
     private readonly route: ActivatedRoute,
     private readonly lsServ: LocalStorageService,
-    private readonly usersServ: UsersService
+    private readonly usersServ: UsersService,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -61,20 +74,45 @@ export class MessagesComponent implements OnInit {
       this.userList = resolvedMessagePageInfo.users.result ?? [];
       this.numberOfTotalRecords =
         resolvedMessagePageInfo.users.numberOfTotalRecords;
-      console.log(this.userList);
-      this.pagination =
-        resolvedMessagePageInfo.pagination ?? this.getDefaultPagination();
+      this.pagination = this.getDefaultPagination();
+      this.changeDetectorRef.detectChanges();
     });
 
     this.observePrivateMessage();
   }
 
+  ngAfterViewChecked(): void {
+    // this.paginator.changePageToFirst(null);
+    this.pagination = this.getDefaultPagination();
+    this.changeDetectorRef.detectChanges();
+  }
+
   getUserRoomKey(userId: string): void {
     this.usersServ
       .getUserChatKeyRoom(userId)
-      .subscribe((response: { key: string }) => {
-        this.wsServ.joinUserRoom(response.key);
-        this.privateRoomKey = response.key;
+      .pipe(
+        switchMap((response: { key: string }) => {
+          this.receiverId = userId;
+          this.wsServ.joinUserRoom(response.key);
+          this.privateRoomKey = response.key;
+          this.messages = [];
+          return this.usersServ.getSavedMessaged(response.key).pipe(
+            map((res: Array<any>) => {
+              const newResponse = res.map((element: any) => {
+                return {
+                  message: element.content,
+                  sendTime: element.sendTime,
+                  sender: element.sender,
+                  amIOwner: element.sender === this.authServ.storedUser._id,
+                };
+              });
+              return newResponse;
+            })
+          );
+        })
+      )
+      .subscribe((response: Array<any>) => {
+        this.messages = response;
       });
   }
 
@@ -118,12 +156,7 @@ export class MessagesComponent implements OnInit {
   }
 
   private getDefaultPagination(): Pagination {
-    return (
-      this.lsServ.getPagination(MessagesComponent.MESSAGE_LS_PREFIX) ?? {
-        itemsPerPage: 2,
-        currentPage: 0,
-      }
-    );
+    return this.lsServ.getPagination(MessagesComponent.MESSAGE_LS_PREFIX);
   }
 
   private observePrivateMessage(): void {
@@ -139,7 +172,6 @@ export class MessagesComponent implements OnInit {
         })
       )
       .subscribe((response: MessageResponseDto) => {
-        console.log(response);
         this.messages.push(response);
       });
   }

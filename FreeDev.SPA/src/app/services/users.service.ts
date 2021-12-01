@@ -39,6 +39,12 @@ export class UsersService {
       .pipe(take(1));
   }
 
+  getSavedMessaged(roomKey: string): Observable<Array<any>> {
+    return this.http
+      .get<Array<any>>(this.getRestUrl() + `message/all?key=${roomKey}`)
+      .pipe(take(1));
+  }
+
   private getRestUrl(): string {
     return env.backendUrl;
   }
