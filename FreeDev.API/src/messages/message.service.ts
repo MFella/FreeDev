@@ -23,13 +23,35 @@ export class MessageService {
   async getSavedMessages(roomKey: string): Promise<any> {
     try {
       console.log(roomKey);
-      const messagesFromDb = await await this.messageModel.find({
+      const messagesFromDb = await this.messageModel.find({
         key: roomKey,
       });
       return messagesFromDb;
     } catch (e) {
       throw new InternalServerErrorException(
         'Error occured during fetching data.',
+      );
+    }
+  }
+
+  async getPartialSavedMessages(
+    messageFrom: number,
+    messageStep: number,
+    roomKey: string,
+  ): Promise<any> {
+    try {
+      const messagesFromDb = await this.messageModel
+        .find({
+          key: roomKey,
+        })
+        .sort({ sendTime: -1 })
+        .skip(messageFrom)
+        .limit(messageStep);
+
+      return messagesFromDb;
+    } catch (error: unknown) {
+      throw new InternalServerErrorException(
+        'Error occured during fetching partial data.',
       );
     }
   }

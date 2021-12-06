@@ -4,17 +4,21 @@
       <p-card styleClass="border-round">
         <ng-template pTemplate="header">
           <div class="card-user-header flex p-3">
-            <div class="header-avatar-container">
+            <div class="header-avatar-container" *ngIf="!selectedUser">
               <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="">
+            </div>
+            <div class="header-avatar-container" *ngIf="selectedUser">
+              <img class="avatar" src="{{selectedUser.avatar?.url}}" alt="">
             </div>
             <div class="online-dot-container">
               <div class="green-dot"></div>
             </div>
-            <h4 class="mb-0 pl-2">Chat with John Reaper</h4>
+            <h4 *ngIf="selectedUser" class="mb-0 pl-2">Chat with {{selectedUser.name + ' ' + selectedUser.surname}}</h4>
+            <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user has been selected</h4>
           </div>
         </ng-template>  
         <ng-template pTemplate="body">
-          <div class="message-content-list p-4">
+          <div class="message-content-list p-4" #messagesContainer (scroll)="fetchMessagesOnScroll()">
             <div class="card-text message-content-container"
             *ngFor="let message of this.messages" pTooltip="{{message.sendTime.toString().split('T')[0]
             + ' ' + message.sendTime.toString().split('T')[1].split('.')[0]}}"
@@ -85,7 +89,7 @@
         </ng-template>
         <ng-template pTemplate="footer">
           <p-paginator [rows]="this.pagination.itemsPerPage" [totalRecords]="numberOfTotalRecords"
-          [rowsPerPageOptions]="rowsPerPageOptions"
+          [rowsPerPageOptions]="rowsPerPageOptions" [first]="0"
           (onPageChange)="pageChanged($event)" #paginator></p-paginator>
         </ng-template>
       </p-card>

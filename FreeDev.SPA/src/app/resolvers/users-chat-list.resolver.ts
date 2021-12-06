@@ -32,7 +32,7 @@ export class UsersChatListResolver implements Resolve<ResolvedMessagePageInfo> {
       UsersChatListResolver.MESSAGE_LS_PREFIX
     );
     return this.usersServ
-      .getUserList(
+      .getFilteredUserList(
         paginationFromStorage?.currentPage ?? 1,
         paginationFromStorage?.itemsPerPage ?? 2
       )

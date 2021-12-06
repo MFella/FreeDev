@@ -36,6 +36,7 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { PaginatorModule } from 'primeng/paginator';
 import { OrderListModule } from 'primeng/orderlist';
 import { TooltipModule } from 'primeng/tooltip';
+import { ChipsModule } from 'primeng/chips';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { TooltipModule } from 'primeng/tooltip';
     PaginatorModule,
     OrderListModule,
     TooltipModule,
+    ChipsModule,
   ],
   providers: [
     NotyService,

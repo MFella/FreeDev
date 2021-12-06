@@ -267,6 +267,89 @@ export class UsersService {
     return { result: resultArray, numberOfTotalRecords };
   }
 
+  async getFilteredUserChatList(
+    query: any,
+  ): Promise<{ result: Array<any>; numberOfTotalRecords: number }> {
+    const attributesToSelect = { _id: 1, name: 1, surname: 1 };
+    let usersToReturn = [];
+    let numberOfTotalRecords: number = 0;
+    const lengthOfHunter = !!query.name.trim().length
+      ? await this.hunterModel
+          .find({
+            name: query.name,
+          })
+          .count()
+      : await this.hunterModel.find({}).count();
+
+    const lengthOfDeveloper = !!query.name.trim().length
+      ? await this.developerModel
+          .find({
+            name: query.name.trim(),
+          })
+          .count()
+      : await this.developerModel.find({}).count();
+
+    const huntersFromDb = !!query.name.trim().length
+      ? await this.hunterModel
+          .find({
+            name: query.name,
+          })
+          .select(attributesToSelect)
+      : await this.hunterModel.find({}).select(attributesToSelect);
+
+    const developersFromDb = !!query.name.trim().length
+      ? await this.developerModel
+          .find({
+            name: query.name.trim(),
+          })
+          .select(attributesToSelect)
+      : await this.developerModel.find({}).select(attributesToSelect);
+
+    switch (query.typeOfUser) {
+      case 'DEVELOPER':
+        usersToReturn = developersFromDb;
+        numberOfTotalRecords = lengthOfDeveloper;
+        break;
+      case 'HUNTER':
+        usersToReturn = huntersFromDb;
+        numberOfTotalRecords = lengthOfHunter;
+        break;
+      case 'BOTH':
+        usersToReturn = [...huntersFromDb, ...developersFromDb];
+        numberOfTotalRecords = lengthOfDeveloper + lengthOfHunter;
+        console.log('asdfasfas', numberOfTotalRecords);
+        break;
+      default:
+        break;
+    }
+
+    let resultArray = JSON.parse(JSON.stringify([...usersToReturn]));
+
+    resultArray = this.paginate(
+      resultArray,
+      Number(query.perPage),
+      Number(query.pageNo),
+    );
+    resultArray.forEach(async (el) => {
+      if (!el?.avatar) {
+        el.avatar = { url: UsersService.DEFAULT_IMAGE_LINK };
+      } else {
+        const signedUrlForFile = await this.fileServ.getSignedFileUrl(
+          el.avatar.key,
+        );
+        el.avatar = { url: signedUrlForFile };
+      }
+    });
+
+    console.log('results: ', resultArray);
+    console.log('query ', query);
+
+    return {
+      result: resultArray,
+      numberOfTotalRecords,
+    };
+  }
+
   async getUserKeyRoom(senderId: string, receiverId: string): Promise<any> {
     const receiverFromDb = await this.findUserById(receiverId);
     if (!Object.values(receiverFromDb)) {

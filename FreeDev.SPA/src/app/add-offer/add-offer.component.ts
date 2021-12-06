@@ -10,8 +10,6 @@ import {
   ComponentFactoryResolver,
   ComponentRef,
   OnInit,
-  ViewChild,
-  ViewContainerRef,
 } from '@angular/core';
 import {
   faClipboardList,
@@ -24,8 +22,13 @@ import {
   styleUrls: ['./add-offer.component.scss'],
 })
 export class AddOfferComponent implements OnInit {
-  @ViewChild('skillInputRef', { read: ViewContainerRef })
-  adPoint!: ViewContainerRef;
+  experienceLevels: Array<{ level: string }> = [
+    { level: 'ENTRY' },
+    { level: 'JUNIOR' },
+    { level: 'MID' },
+    { level: 'SENIOR' },
+    { level: 'EXPERT' },
+  ];
 
   offerForm!: FormGroup;
 
@@ -48,28 +51,16 @@ export class AddOfferComponent implements OnInit {
     this.initForm();
   }
 
-  handleAddingNewSkill(): void {
-    const skillValue = this.offerForm.get('tags')?.value.trim();
-
-    if (!skillValue) {
-      this.offerForm.get('tags')?.setValue('');
-      return;
-    }
-
-    this.createBandgeComponent(skillValue);
-
-    this.offerForm.get('tags')?.setValue('');
+  onBlur(): void {
+    console.log(this.offerForm.getRawValue());
   }
 
   addOffer(): void {
-    const { skills, ...rest } = this.offerForm.getRawValue();
-    const tags: Array<string> = this.selectedBadgesComponentRef.map(
-      (component: ComponentRef<SelectedBadgeComponent>) =>
-        component.instance.label
-    );
+    const { skills, experienceLevel, ...rest } = this.offerForm.getRawValue();
 
     const offerToCreateDto: OfferToCreateDto = {
-      tags,
+      tags: skills,
+      experienceLevel: experienceLevel.level,
       ...rest,
     };
 
@@ -101,45 +92,15 @@ export class AddOfferComponent implements OnInit {
       tags: ['', { validators: [] }],
       experienceLevel: ['ENTRY', { validators: [Validators.required] }],
       salary: [
-        '',
+        5,
         {
           validators: [
             Validators.required,
             Validators.pattern(/^-?\d*[.,]?\d{0,2}$/),
+            Validators.min(5),
           ],
         },
       ],
     });
   }
-
-  private createBandgeComponent(label: string) {
-    const factory = this.resolver.resolveComponentFactory(
-      SelectedBadgeComponent
-    );
-
-    const componentRef: ComponentRef<SelectedBadgeComponent> =
-      this.adPoint.createComponent(factory);
-    const uniqueId = getUniqueId(5);
-
-    componentRef.instance.label = label;
-    componentRef.instance.id = uniqueId;
-
-    this.storedBadgesLabels.set(uniqueId, componentRef);
-
-    this.selectedBadgesComponentRef.push(componentRef);
-
-    componentRef.instance.deleteAction$.subscribe((id: string) => {
-      this.storedBadgesLabels.get(id)?.destroy();
-    });
-  }
 }
-
-export const getUniqueId = (parts: number): string => {
-  const stringArr = [];
-  for (let i = 0; i < parts; i++) {
-    // tslint:disable-next-line:no-bitwise
-    const S4 = (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    stringArr.push(S4);
-  }
-  return stringArr.join('-');
-};

@@ -23,7 +23,8 @@ import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { ResolverPagination } from '../types/resolvedPagination';
 import { UsersService } from '../services/users.service';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
-import { map, switchMap } from 'rxjs/operators';
+import { map, switchMap, take } from 'rxjs/operators';
+import { timer } from 'rxjs';
 
 @Component({
   selector: 'app-messages',
@@ -31,8 +32,12 @@ import { map, switchMap } from 'rxjs/operators';
   styleUrls: ['./messages.component.scss'],
 })
 export class MessagesComponent implements OnInit, AfterViewChecked {
+  private static readonly SCROLL_TIME_OFFSET = 20;
   @ViewChild('paginator')
   paginator!: any;
+
+  @ViewChild('messagesContainer')
+  messagesContainer!: ElementRef;
 
   private static readonly MESSAGE_LS_PREFIX: string = 'messages_user_list_';
 
@@ -41,6 +46,8 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   icons: Array<IconDefinition> = [faSearch, faPaperPlane];
 
   userList: Array<UserToMessageListDto> = [];
+
+  selectedUser!: UserToMessageListDto | undefined;
 
   userMessage!: string;
 
@@ -53,6 +60,10 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
   rowsPerPageOptions: Array<number> = [2, 5, 10];
 
   privateRoomKey: string = '';
+
+  messageNumberFrom: number = 0;
+
+  messagesToFetchStep: number = 10;
 
   searchRolesNames: Array<{ name: string }> = [
     { name: 'Developer' },
@@ -96,24 +107,35 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
           this.wsServ.joinUserRoom(response.key);
           this.privateRoomKey = response.key;
           this.messages = [];
-          return this.usersServ.getSavedMessaged(response.key).pipe(
-            map((res: Array<any>) => {
-              const newResponse = res.map((element: any) => {
-                return {
-                  message: element.content,
-                  sendTime: element.sendTime,
-                  sender: element.sender,
-                  amIOwner: element.sender === this.authServ.storedUser._id,
-                };
-              });
-              return newResponse;
-            })
+          this.messageNumberFrom = 0;
+          return this.usersServ.fetchPartialMessages(
+            this.messageNumberFrom,
+            this.messagesToFetchStep,
+            response.key
           );
         })
       )
       .subscribe((response: Array<any>) => {
         this.messages = response;
+        this.selectedUser = this.userList.find((user) => user._id === userId);
+        this.scrollToBottom();
       });
+  }
+
+  fetchMessagesOnScroll(): void {
+    if (!this.messagesContainer.nativeElement.scrollTop) {
+      // zaciagnij dodatkowe wiadomosci
+      this.messageNumberFrom += this.messagesToFetchStep;
+      this.usersServ
+        .fetchPartialMessages(
+          this.messageNumberFrom,
+          this.messagesToFetchStep,
+          this.privateRoomKey
+        )
+        .subscribe((response: Array<MessageResponseDto>) => {
+          this.messages = [...response, ...this.messages];
+        });
+    }
   }
 
   pageChanged(resolvedPagination: ResolverPagination): void {
@@ -130,6 +152,20 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       });
   }
 
+  fetchPartialMessages(): void {
+    if (this.privateRoomKey === '') return;
+
+    this.usersServ
+      .fetchPartialMessages(
+        this.messageNumberFrom,
+        this.messagesToFetchStep,
+        this.privateRoomKey
+      )
+      .subscribe((messages: Array<MessageResponseDto>) => {
+        this.messages = [...messages, ...this.messages];
+      });
+  }
+
   findUser(): void {}
 
   sendMessage(): void {
@@ -142,6 +178,24 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     // function from wsServ //
     this.wsServ.sendPrivateMessage(messageToCreateDto);
     this.userMessage = '';
+  }
+
+  private scrollToBottom(): void {
+    timer(MessagesComponent.SCROLL_TIME_OFFSET).subscribe(() => {
+      try {
+        const listOfMsg = document.querySelectorAll(
+          '.message-content-container'
+        );
+
+        if (this.messagesContainer.nativeElement?.scrollHeight) {
+          this.messagesContainer.nativeElement.scrollTop =
+            this.messagesContainer.nativeElement.scrollHeight +
+            listOfMsg[listOfMsg.length - 1].scrollHeight;
+        }
+      } catch (err: unknown) {
+        console.error(err);
+      }
+    });
   }
 
   private parseResolvedPagination(
@@ -173,6 +227,7 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       )
       .subscribe((response: MessageResponseDto) => {
         this.messages.push(response);
+        this.scrollToBottom();
       });
   }
 }

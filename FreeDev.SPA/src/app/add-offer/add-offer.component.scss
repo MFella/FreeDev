@@ -1,3 +1,14 @@
+:host ::ng-deep {
+  .p-chips {
+    ul {
+      width: 100%;
+    }
+  }
+  span.p-inputnumber {
+    width: 100%;
+  }
+}
+
 .container {
   overflow: hidden;
 }
@@ -21,7 +32,6 @@ textarea {
 }
 
 .offer-heading {
-  height: 4rem;
   display: flex;
   align-items: center;
   font-size: 1.6rem;
@@ -33,15 +43,25 @@ textarea {
     padding-left: 1rem;
   }
 
-  fa-icon {
-    transform: scale(1.3);
+  i.pi-book {
+    font-size: 2rem;
   }
+}
+
+input.title-input {
+  width: calc(100% - 3rem);
 }
 
 .input-group-prepend,
 .input-group-text {
   border-top-right-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
+}
+
+.input-group-prepend {
+  position: absolute;
+  transform: translate(-1.5rem, 0.5rem);
+  font-size: 1.5rem;
 }
 
 .offer-salary {
@@ -61,9 +81,5 @@ textarea {
 }
 
 .invalid-feedback-offset {
-  padding-top: 3rem;
-}
-
-input[type="number"] + .invalid-feedback {
-  transform: translateY(2.5rem);
+  padding-top: 4rem;
 }

@@ -43,6 +43,14 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @Get('filtered-users-list')
+  async getFilteredUserChatList(
+    @Query() query: any,
+  ): Promise<{ result: Array<any>; numberOfTotalRecords: number }> {
+    return await this.userServ.getFilteredUserChatList(query);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get('user-key-room')
   async getUserKeyRoom(@Req() request, @Query() query: { _id: string }) {
     console.log(request.user);

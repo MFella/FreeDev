@@ -90,9 +90,14 @@
     border: 1px solid rgba(0, 0, 0, 0.4);
     overflow: hidden;
     border-radius: 2rem;
+    height: 4rem;
+    width: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     .avatar {
-      max-height: 3rem;
-      max-width: 3rem;
+      max-height: 4rem;
+      max-width: 4rem;
     }
 
     & + h4 {
@@ -106,7 +111,6 @@
   overflow-y: scroll;
   box-shadow: inset 0px 0px 20px -4px rgba(0, 0, 0, 0.75);
   border-radius: var(--border-radius);
-  overflow-y: scroll;
   .message-content-container {
     display: flex;
     width: fit-content;
