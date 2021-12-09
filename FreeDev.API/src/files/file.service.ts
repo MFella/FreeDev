@@ -64,7 +64,6 @@ export class FileService {
       });
       return signedFileUrl;
     } catch (e) {
-      console.log(e);
       return FileService.DEFAULT_IMAGE_LINK;
     }
   }

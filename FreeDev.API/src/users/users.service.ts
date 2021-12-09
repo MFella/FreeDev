@@ -6,7 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { DeveloperToCreateDto } from 'src/dtos/developerToCreateDto';
 import { HunterToCreateDto } from 'src/dtos/hunterToCreateDto';
 import { Developer, DeveloperDocument } from './developer.schema';
@@ -268,42 +268,56 @@ export class UsersService {
   }
 
   async getFilteredUserChatList(
+    userId: ObjectId,
     query: any,
   ): Promise<{ result: Array<any>; numberOfTotalRecords: number }> {
-    const attributesToSelect = { _id: 1, name: 1, surname: 1 };
+    const attributesToSelect = { _id: 1, name: 1, surname: 1, avatar: 1 };
+    const trimmedName = new RegExp(query.name?.trim(), 'i');
+
     let usersToReturn = [];
     let numberOfTotalRecords: number = 0;
-    const lengthOfHunter = !!query.name.trim().length
+
+    const lengthOfHunter = !!query.name?.trim()?.length
       ? await this.hunterModel
           .find({
-            name: query.name,
+            name: trimmedName,
+            _id: { $ne: userId },
           })
           .count()
-      : await this.hunterModel.find({}).count();
+      : await this.hunterModel.find({ _id: { $ne: userId } }).count();
 
-    const lengthOfDeveloper = !!query.name.trim().length
+    const lengthOfDeveloper = !!query.name?.trim()?.length
       ? await this.developerModel
           .find({
-            name: query.name.trim(),
+            name: trimmedName,
+            _id: { $ne: userId },
           })
           .count()
-      : await this.developerModel.find({}).count();
+      : await this.developerModel.find({ _id: { $ne: userId } }).count();
 
-    const huntersFromDb = !!query.name.trim().length
+    const huntersFromDb = !!query.name?.trim()?.length
       ? await this.hunterModel
           .find({
-            name: query.name,
+            name: trimmedName,
           })
           .select(attributesToSelect)
-      : await this.hunterModel.find({}).select(attributesToSelect);
+          .populate('avatar')
+      : await this.hunterModel
+          .find({ _id: { $ne: userId } })
+          .populate('avatar')
+          .select(attributesToSelect);
 
-    const developersFromDb = !!query.name.trim().length
+    const developersFromDb = !!query.name?.trim()?.length
       ? await this.developerModel
           .find({
-            name: query.name.trim(),
+            name: trimmedName,
           })
           .select(attributesToSelect)
-      : await this.developerModel.find({}).select(attributesToSelect);
+          .populate('avatar')
+      : await this.developerModel
+          .find({ _id: { $ne: userId } })
+          .populate('avatar')
+          .select(attributesToSelect);
 
     switch (query.typeOfUser) {
       case 'DEVELOPER':
@@ -317,7 +331,6 @@ export class UsersService {
       case 'BOTH':
         usersToReturn = [...huntersFromDb, ...developersFromDb];
         numberOfTotalRecords = lengthOfDeveloper + lengthOfHunter;
-        console.log('asdfasfas', numberOfTotalRecords);
         break;
       default:
         break;
@@ -330,6 +343,7 @@ export class UsersService {
       Number(query.perPage),
       Number(query.pageNo),
     );
+
     resultArray.forEach(async (el) => {
       if (!el?.avatar) {
         el.avatar = { url: UsersService.DEFAULT_IMAGE_LINK };
@@ -340,9 +354,6 @@ export class UsersService {
         el.avatar = { url: signedUrlForFile };
       }
     });
-
-    console.log('results: ', resultArray);
-    console.log('query ', query);
 
     return {
       result: resultArray,

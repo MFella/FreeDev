@@ -1,0 +1,14 @@
+:host ::ng-deep .p-card {
+  .main-card-header-container {
+    h2 + i {
+      transform: rotate(180deg);
+    }
+  }
+  .filters-card-content-container {
+    .filter-salary-container {
+      .salary-slider {
+        width: 50%;
+      }
+    }
+  }
+}

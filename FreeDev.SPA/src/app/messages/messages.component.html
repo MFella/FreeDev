@@ -55,12 +55,12 @@
         <ng-template pTemplate="body">
           <div class="filter-options-container d-flex flex-column">
             <div class="type-of-user-container d-flex flex-row align-items-center justify-content-between">
-              <p-dropdown styleClass="w-full mb-2" [options]="searchRolesNames"
-              placeholder="Type of user" optionLabel="name" [showClear]="true"></p-dropdown>
+              <p-dropdown styleClass="w-full mb-2" [options]="searchRolesNames" optionLabel="name" [showClear]="true"
+              [(ngModel)]="selectedPersonType"></p-dropdown>
             </div>
             <div class="search-container pt-4">
               <span class="p-float-label w-full">
-                <input pInputText class="w-full" type="text" name="search-user-input">
+                <input pInputText class="w-full" type="text" name="search-user-input" [(ngModel)]="searchUserPhrase">
                 <label for="search-user-input">Name</label>
               </span>                
                 <button pButton type="button" label="Find" icon="pi pi-search" iconPos="right"
@@ -89,7 +89,7 @@
         </ng-template>
         <ng-template pTemplate="footer">
           <p-paginator [rows]="this.pagination.itemsPerPage" [totalRecords]="numberOfTotalRecords"
-          [rowsPerPageOptions]="rowsPerPageOptions" [first]="0"
+          [rowsPerPageOptions]="rowsPerPageOptions"
           (onPageChange)="pageChanged($event)" #paginator></p-paginator>
         </ng-template>
       </p-card>

@@ -17,7 +17,9 @@ import { UsersService } from '../services/users.service';
 @Injectable({
   providedIn: 'root',
 })
-export class UsersChatListResolver implements Resolve<ResolvedMessagePageInfo> {
+export class UsersChatListResolver
+  implements Resolve<{ result: Array<any>; numberOfTotalRecords: number }>
+{
   private static readonly MESSAGE_LS_PREFIX: string = 'messages_user_list_';
   constructor(
     private readonly usersServ: UsersService,
@@ -27,13 +29,13 @@ export class UsersChatListResolver implements Resolve<ResolvedMessagePageInfo> {
   resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot
-  ): Observable<ResolvedMessagePageInfo> {
+  ): Observable<{ result: Array<any>; numberOfTotalRecords: number }> {
     const paginationFromStorage = this.lsServ.getPagination(
       UsersChatListResolver.MESSAGE_LS_PREFIX
     );
     return this.usersServ
       .getFilteredUserList(
-        paginationFromStorage?.currentPage ?? 1,
+        paginationFromStorage?.currentPage ?? 0,
         paginationFromStorage?.itemsPerPage ?? 2
       )
       .pipe(

@@ -1,7 +1,48 @@
-<div class="container pt-4">
-  <div class="row">
-    <div class="col-md-12">
-      // tutaj powinna wlecieć stronka z wyszukiwaniem ofert
-    </div>
+<div class="grid">
+  <div class="col-12 pt-4">
+    <p-card>
+      <ng-template pTemplate="header">
+        <div class="main-card-header-container flex justify-content-center align-items-center">
+          <i class="pi pi-play" style="font-size: 2rem"></i>
+          <h2 class="text-center p-3">Search your dream offer</h2>
+          <i class="pi pi-play" style="font-size: 2rem"></i>
+        </div>
+        <p-divider styleClass="m-0 p-0"></p-divider>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <div class="grid">
+          <div class="col-8">
+            <div class="p-inputgroup">
+              <button type="button" pButton pRipple label="Search"></button>
+              <input type="text" pInputText placeholder="Keyword">         
+            </div>
+          </div>
+          <div class="col-4">
+            <p-card styleClass="bg-gray-900">
+            <ng-template pTemplate="header">
+              <div class="filters-card-header-container flex justify-content-center align-items-center">
+                <h4 class="text-center"> Applied Filters</h4>
+              </div>
+              <p-divider styleClass="m-0 p-0"></p-divider>
+            </ng-template>
+            <ng-template pTemplate="content">
+              <div class="filters-card-content-container">
+                <div class="filter-salary-container flex flex-row justify-content-between align-items-center">
+                  <span>
+                    Salary Range:
+                    <strong class="pl-2">{{rangeValues[0] + ' - ' + rangeValues[1]}}</strong>
+                  </span>
+                  <p-slider [(ngModel)]="rangeValues" [range]="true" [min]="5" [max]="100" class="salary-slider"></p-slider>
+                </div>
+              </div>
+            </ng-template>
+            </p-card>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer">
+          Footer content here
+      </ng-template>
+  </p-card>
   </div>
 </div>

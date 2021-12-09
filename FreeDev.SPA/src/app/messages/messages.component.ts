@@ -31,7 +31,7 @@ import { timer } from 'rxjs';
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss'],
 })
-export class MessagesComponent implements OnInit, AfterViewChecked {
+export class MessagesComponent implements OnInit, AfterViewInit {
   private static readonly SCROLL_TIME_OFFSET = 20;
   @ViewChild('paginator')
   paginator!: any;
@@ -65,10 +65,14 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
 
   messagesToFetchStep: number = 10;
 
+  selectedPersonType!: { name: string };
+
+  searchUserPhrase!: string;
+
   searchRolesNames: Array<{ name: string }> = [
+    { name: 'Both' },
     { name: 'Developer' },
     { name: 'Hunter' },
-    { name: 'Both' },
   ];
 
   constructor(
@@ -92,10 +96,9 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
     this.observePrivateMessage();
   }
 
-  ngAfterViewChecked(): void {
-    // this.paginator.changePageToFirst(null);
+  ngAfterViewInit(): void {
     this.pagination = this.getDefaultPagination();
-    this.changeDetectorRef.detectChanges();
+    setTimeout(() => this.paginator.changePage(this.pagination.currentPage), 0);
   }
 
   getUserRoomKey(userId: string): void {
@@ -145,7 +148,12 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       this.pagination
     );
     this.usersServ
-      .getUserList(this.pagination.currentPage, this.pagination.itemsPerPage)
+      .getFilteredUserList(
+        this.pagination.currentPage,
+        this.pagination.itemsPerPage,
+        this.searchUserPhrase,
+        this.selectedPersonType?.name?.toUpperCase()
+      )
       .subscribe((paginatedList: any) => {
         this.userList = paginatedList.result ?? [];
         this.numberOfTotalRecords = paginatedList.numberOfTotalRecords;
@@ -166,7 +174,24 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
       });
   }
 
-  findUser(): void {}
+  findUser(): void {
+    // update pagination - currentPage is 0;
+    this.pagination.currentPage = 0;
+
+    this.usersServ
+      .getFilteredUserList(
+        0,
+        this.pagination.itemsPerPage,
+        this.searchUserPhrase,
+        this.selectedPersonType?.name?.toUpperCase()
+      )
+      .subscribe(
+        (response: { result: Array<any>; numberOfTotalRecords: number }) => {
+          this.userList = response.result;
+          this.numberOfTotalRecords = response.numberOfTotalRecords;
+        }
+      );
+  }
 
   sendMessage(): void {
     const messageToCreateDto: MessageToCreateDto = {
@@ -187,7 +212,10 @@ export class MessagesComponent implements OnInit, AfterViewChecked {
           '.message-content-container'
         );
 
-        if (this.messagesContainer.nativeElement?.scrollHeight) {
+        if (
+          this.messagesContainer.nativeElement?.scrollHeight &&
+          listOfMsg[listOfMsg.length - 1]
+        ) {
           this.messagesContainer.nativeElement.scrollTop =
             this.messagesContainer.nativeElement.scrollHeight +
             listOfMsg[listOfMsg.length - 1].scrollHeight;

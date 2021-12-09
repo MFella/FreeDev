@@ -42,11 +42,12 @@ export class UsersService {
     pageNo: number,
     perPage: number,
     name: string = '',
-    typeOfUser: TypeOfSearchUser = TypeOfSearchUser.BOTH
-  ): Observable<ResolvedMessagePageInfo> {
-    return this.http.get<ResolvedMessagePageInfo>(
+    typeOfUser: string | TypeOfSearchUser = TypeOfSearchUser.BOTH
+  ): Observable<{ result: Array<any>; numberOfTotalRecords: number }> {
+    console.log('co jest tutajm grane', typeOfUser);
+    return this.http.get<{ result: Array<any>; numberOfTotalRecords: number }>(
       this.getRestUrl() +
-        `users/filtered-users-list?pageNo=${pageNo}&perPage=${perPage}&name=${name}
+        `users/filtered-users-list?pageNo=${pageNo}&perPage=${perPage}&name=${name?.trim()}
     &typeOfUser=${typeOfUser}`
     );
   }

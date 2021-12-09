@@ -37,6 +37,7 @@ import { PaginatorModule } from 'primeng/paginator';
 import { OrderListModule } from 'primeng/orderlist';
 import { TooltipModule } from 'primeng/tooltip';
 import { ChipsModule } from 'primeng/chips';
+import { SliderModule } from 'primeng/slider';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { ChipsModule } from 'primeng/chips';
     OrderListModule,
     TooltipModule,
     ChipsModule,
+    SliderModule,
   ],
   providers: [
     NotyService,
