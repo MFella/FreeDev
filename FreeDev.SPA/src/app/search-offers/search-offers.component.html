@@ -13,15 +13,44 @@
         <div class="grid">
           <div class="col-8">
             <div class="p-inputgroup">
-              <button type="button" pButton pRipple label="Search"></button>
-              <input type="text" pInputText placeholder="Keyword">         
+              <button type="button" pButton pRipple label="Search" icon="pi pi-search"></button>
+              <p-chips [(ngModel)]="tags" [allowDuplicate]="false" (onAdd)="checkIfCanBeAdded($event)"></p-chips>   
             </div>
+            <div class="pt-2">
+              <div class="p-text-left">
+                <strong class="pl-3">Maximum length of skills are 6</strong>
+              </div>
+            </div>
+            <p-orderList [value]="[1,2,3,4,5]" controlsPosition="none" class="p-orderlist-users" styleClass="mt-4">
+              <ng-template let-user pTemplate="item">
+                <div class="p-orderlist-offer-container">
+                  <div class="flex flex-row justify-content-between align-items-center">
+                    <div class="offer-short-info">
+                      <h3 class="m-0 offer-title">Title</h3>
+                      <p class="text-muted pl-1 my-2">Text text text text text text text text...</p>
+                      <span>
+                        <p-badge *ngFor="let item of [1,2,3,4,5]"
+                        class="ml-2" [value]="'#badge' + item"></p-badge>
+                      </span>
+                    </div>
+                    <div class="offer-action-list flex flex-column justify-content-between">
+                      <span class="text-right">25-02-199</span>
+                      <button pButton type="button" class="p-button-raised p-button-warning p-button-rounded p-button-sm mt-4" 
+                      label="To offer" icon="pi pi-arrow-right"></button>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+          </p-orderList>
           </div>
           <div class="col-4">
             <p-card styleClass="bg-gray-900">
             <ng-template pTemplate="header">
               <div class="filters-card-header-container flex justify-content-center align-items-center">
-                <h4 class="text-center"> Applied Filters</h4>
+                <h3 class="text-center flex justify-content-center align-items-center">
+                  <i class="pi pi-filter pr-2"></i>
+                   <span>Applied Filters</span>
+                </h3>
               </div>
               <p-divider styleClass="m-0 p-0"></p-divider>
             </ng-template>
@@ -34,14 +63,19 @@
                   </span>
                   <p-slider [(ngModel)]="rangeValues" [range]="true" [min]="5" [max]="100" class="salary-slider"></p-slider>
                 </div>
+                <div class="filter-date-container flex flex-row justify-content-between align-items-center">
+                  <span>Period</span>
+                  <p-dropdown [options]="periods" [(ngModel)]="selectedPeriod" optionLabel="label"></p-dropdown>
+                </div>
+                <div class="filter-level-container flex flex-row justify-content-between align-items-center">
+                  <span>Entry Level</span>
+                  <p-dropdown [options]="levels" [(ngModel)]="selectedEntryLevel" optionLabel="label"></p-dropdown>
+                </div>
               </div>
             </ng-template>
             </p-card>
           </div>
         </div>
-      </ng-template>
-      <ng-template pTemplate="footer">
-          Footer content here
       </ng-template>
   </p-card>
   </div>

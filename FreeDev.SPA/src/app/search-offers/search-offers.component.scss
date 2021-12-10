@@ -1,13 +1,45 @@
 :host ::ng-deep .p-card {
+  .p-chips {
+    flex-wrap: wrap;
+    align-content: space-between;
+    width: 100%;
+  }
+  .p-orderlist-controls {
+    display: none;
+  }
+
+  .offer-action-list {
+    display: none;
+  }
+
   .main-card-header-container {
     h2 + i {
       transform: rotate(180deg);
     }
   }
+  .filters-card-header-container {
+    i {
+      font-size: 1.5rem;
+    }
+  }
+
   .filters-card-content-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     .filter-salary-container {
       .salary-slider {
         width: 50%;
+      }
+    }
+    .filter-date-container,
+    .filter-level-container {
+      margin-top: 2rem;
+      .p-inputwrapper {
+        width: 50%;
+        .p-dropdown {
+          width: 100%;
+        }
       }
     }
   }

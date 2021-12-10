@@ -38,6 +38,7 @@ import { OrderListModule } from 'primeng/orderlist';
 import { TooltipModule } from 'primeng/tooltip';
 import { ChipsModule } from 'primeng/chips';
 import { SliderModule } from 'primeng/slider';
+import { BadgeModule } from 'primeng/badge';
 
 @NgModule({
   declarations: [
@@ -80,6 +81,7 @@ import { SliderModule } from 'primeng/slider';
     TooltipModule,
     ChipsModule,
     SliderModule,
+    BadgeModule,
   ],
   providers: [
     NotyService,
