@@ -39,6 +39,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ChipsModule } from 'primeng/chips';
 import { SliderModule } from 'primeng/slider';
 import { BadgeModule } from 'primeng/badge';
+import { OfferDetailsComponent } from './offer-details/offer-details.component';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { BadgeModule } from 'primeng/badge';
     SelectedBadgeComponent,
     ProfileComponent,
     MessagesComponent,
+    OfferDetailsComponent,
   ],
   imports: [
     BrowserModule,

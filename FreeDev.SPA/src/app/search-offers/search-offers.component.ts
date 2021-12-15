@@ -1,4 +1,7 @@
+import { Pagination } from './../types/pagination';
 import { Component, OnInit } from '@angular/core';
+import { OfferService } from '../services/offer.service';
+import { OfferToListDto } from '../dtos/offers/offerToListDto';
 
 @Component({
   selector: 'app-search-offers',
@@ -11,6 +14,15 @@ export class SearchOffersComponent implements OnInit {
   // Filtry: Kiedy zapostowane: Ten dzien, ten tydzien, ten miesiac, ten rok, od zawsze
   //          Stawka: tutaj dać suwaczek
   //          Poziom wejcia: Entry, Mid, Expert
+
+  pagination: Pagination = {
+    itemsPerPage: 2,
+    currentPage: 0,
+  };
+
+  numberOfTotalRecords: number = 10;
+
+  rowsPerPageOptions: Array<number> = [2, 5, 10];
 
   selectedPeriod!: string;
 
@@ -36,9 +48,9 @@ export class SearchOffersComponent implements OnInit {
     { name: 'EXPERT', label: 'Expert' },
   ];
 
-  rangeValues: Array<number> = [20, 50];
+  salaryRange: Array<number> = [20, 50];
 
-  constructor() {}
+  constructor(private readonly offerServ: OfferService) {}
 
   ngOnInit() {}
 
@@ -47,4 +59,19 @@ export class SearchOffersComponent implements OnInit {
       this.tags.splice(5);
     }
   }
+
+  searchForOffers(): void {
+    this.offerServ
+      .getOfferList(
+        this.tags,
+        this.salaryRange,
+        this.selectedPeriod,
+        this.selectedEntryLevel
+      )
+      .subscribe((response: Array<OfferToListDto>) => {
+        console.log('co ja otrzymałem: ', response);
+      });
+  }
+
+  pageChanged(_$event: Event): void {}
 }

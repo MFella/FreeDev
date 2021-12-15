@@ -90,7 +90,8 @@
         <ng-template pTemplate="footer">
           <p-paginator [rows]="this.pagination.itemsPerPage" [totalRecords]="numberOfTotalRecords"
           [rowsPerPageOptions]="rowsPerPageOptions"
-          (onPageChange)="pageChanged($event)" #paginator></p-paginator>
+          (onPageChange)="pageChanged($event)" #paginator>
+          </p-paginator>
         </ng-template>
       </p-card>
     </div>

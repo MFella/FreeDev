@@ -13,7 +13,7 @@
         <div class="grid">
           <div class="col-8">
             <div class="p-inputgroup">
-              <button type="button" pButton pRipple label="Search" icon="pi pi-search"></button>
+              <button type="button" pButton pRipple label="Search" icon="pi pi-search" (click)="searchForOffers()"></button>
               <p-chips [(ngModel)]="tags" [allowDuplicate]="false" (onAdd)="checkIfCanBeAdded($event)"></p-chips>   
             </div>
             <div class="pt-2">
@@ -59,9 +59,9 @@
                 <div class="filter-salary-container flex flex-row justify-content-between align-items-center">
                   <span>
                     Salary Range:
-                    <strong class="pl-2">{{rangeValues[0] + ' - ' + rangeValues[1]}}</strong>
+                    <strong class="pl-2">{{salaryRange[0] + ' - ' + salaryRange[1]}}</strong>
                   </span>
-                  <p-slider [(ngModel)]="rangeValues" [range]="true" [min]="5" [max]="100" class="salary-slider"></p-slider>
+                  <p-slider [(ngModel)]="salaryRange" [range]="true" [min]="5" [max]="100" class="salary-slider"></p-slider>
                 </div>
                 <div class="filter-date-container flex flex-row justify-content-between align-items-center">
                   <span>Period</span>
@@ -77,6 +77,12 @@
           </div>
         </div>
       </ng-template>
+      <ng-template pTemplate="footer">
+          <p-paginator [rows]="this.pagination.itemsPerPage" [totalRecords]="numberOfTotalRecords"
+          [rowsPerPageOptions]="rowsPerPageOptions"
+          (onPageChange)="pageChanged($event)">
+          </p-paginator>
+        </ng-template>
   </p-card>
   </div>
 </div>
