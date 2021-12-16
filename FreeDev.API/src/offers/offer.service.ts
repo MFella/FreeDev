@@ -11,6 +11,7 @@ import { Model } from 'mongoose';
 import { OfferToCreateDto } from 'src/dtos/offerToCreateDto';
 import { Offer, OfferDocument } from './offer.schema';
 import { Roles } from 'src/types/roles';
+import { OfferResolver } from 'src/utils/offer/offerResolver';
 
 export class OfferService {
   constructor(
@@ -27,7 +28,10 @@ export class OfferService {
         throw new ForbiddenException('You cant create offers');
       }
 
-      const result = await this.offerModel.create(offerToCreateDto);
+      const result = await this.offerModel.create({
+        createdAt: new Date(),
+        ...offerToCreateDto,
+      });
       return !!result;
     } catch (e) {
       throw new InternalServerErrorException(
@@ -37,24 +41,90 @@ export class OfferService {
   }
 
   async getOfferList(query: PaginationWithFiltersQuery): Promise<any> {
-    // try {
-    console.log(query.tags);
-    const arrayOfTags = (<unknown>(
-      query.tags.map((tag: string) => new RegExp(`^${tag}$`, 'i'))
-    )) as Array<string>;
-    const offersToReturn = await this.offerModel
-      .find({
-        tags: { $in: arrayOfTags },
-      })
-      .skip(Number(query.currentPage) * Number(query.itemsPerPage))
-      .limit(Number(query.itemsPerPage));
+    try {
+      const selectedFields = {
+        _id: 1,
+        title: 1,
+        description: 1,
+        tags: 1,
+        createdAt: 1,
+      };
+      let arrayOfTags: Array<string> = [];
+      if (query.tags.length === 1 && query.tags[0] === '') {
+        arrayOfTags = [];
+      } else {
+        arrayOfTags = (<unknown>(
+          query.tags.map((tag: string) => new RegExp(`^${tag}$`, 'i'))
+        )) as Array<string>;
+      }
 
-    return offersToReturn;
-    //  } catch (e: any) {
-    throw new InternalServerErrorException(
-      'Error occured during retriving data',
-    );
-    // }
+      const resolvedPeriods: Array<Date> = OfferResolver.convertPeriodToDate(
+        query.period,
+      );
+
+      const resolvedSalary: Array<number> = OfferResolver.convertSalaryToNumber(
+        query.salaryRange,
+      );
+
+      const arrayOfTagsCondition = !arrayOfTags.length
+        ? { $exists: true }
+        : { $in: arrayOfTags };
+
+      const periodsCondition: any = !resolvedPeriods.length
+        ? { $exists: true }
+        : { $gt: resolvedPeriods[0], $lt: resolvedPeriods[1] };
+
+      const salaryCondition: any = !resolvedSalary.length
+        ? { $exists: true }
+        : {
+            $gte: Math.min(...resolvedSalary),
+            $lte: Math.max(...resolvedSalary),
+          };
+
+      const offersToReturn = await this.offerModel
+        .find({
+          tags: arrayOfTagsCondition,
+          createdAt: periodsCondition,
+          salary: salaryCondition,
+        })
+        .select(selectedFields)
+        .skip(Number(query.currentPage) * Number(query.itemsPerPage))
+        .limit(Number(query.itemsPerPage));
+
+      const numberOfTotalRecords = await this.offerModel
+        .find({
+          tags: arrayOfTagsCondition,
+          createdAt: periodsCondition,
+          salary: salaryCondition,
+        })
+        .count();
+
+      const minSalary = await this.offerModel
+        .find({})
+        .select({ salary: 1 })
+        .sort({ salary: 1 })
+        .limit(1);
+
+      const maxSalary = await this.offerModel
+        .find({})
+        .select({ salary: 1 })
+        .sort({ salary: -1 })
+        .limit(1);
+
+      const finalMinSalary = minSalary.length === 1 ? minSalary[0].salary : 0;
+      const finalMaxSalary = maxSalary.length === 1 ? maxSalary[0].salary : 100;
+
+      return {
+        offers: offersToReturn,
+        numberOfTotalRecords,
+        finalMinSalary,
+        finalMaxSalary,
+      };
+    } catch (e: any) {
+      throw new InternalServerErrorException(
+        'Error occured during retriving data',
+      );
+    }
   }
 
   async getOfferDetails(offerId: string): Promise<any> {

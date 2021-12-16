@@ -4,6 +4,9 @@ import { Injectable } from '@angular/core';
 import { environment as env } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { OfferToListDto } from '../dtos/offers/offerToListDto';
+import { OFFER_PERIOD } from '../types/offer/offerPeriod';
+import { OFFER_ENTRY_LEVEL } from '../types/offer/offerEntryLevel';
+import { OfferListPayloadDto } from '../dtos/offers/offerListPayloadDto';
 
 @Injectable({
   providedIn: 'root',
@@ -25,24 +28,28 @@ export class OfferService {
   }
 
   getOfferList(
-    tags: Array<string>,
-    salaryRange: Array<number>,
-    period: string,
-    entryLevel: string,
+    tags: Array<string> = [],
+    salaryRange: Array<number> = [],
+    period: OFFER_PERIOD = OFFER_PERIOD.ANY,
+    entryLevel: OFFER_ENTRY_LEVEL = OFFER_ENTRY_LEVEL.ANY,
     itemsPerPage: string = '2',
     currentPage: string = '0'
-  ): Observable<Array<OfferToListDto>> {
+  ): Observable<OfferListPayloadDto> {
     const tagsQuery = new URLSearchParams();
     const salaryQuery = new URLSearchParams();
+
+    tagsQuery.append('tags[]', '');
+    salaryQuery.append('salaryRange[]', '');
+
     tags.forEach((tag: string) => {
       tagsQuery.append('tags[]', tag);
     });
 
     salaryRange.forEach((salary: number) => {
-      salaryQuery.append('salaryRange', salary.toString());
+      salaryQuery.append('salaryRange[]', salary.toString());
     });
 
-    return this.http.get<Array<OfferToListDto>>(
+    return this.http.get<OfferListPayloadDto>(
       this.getRestUrl() +
         `offer/list?${tagsQuery}&${salaryQuery}&period=${period}&entryLevel=${entryLevel}&itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`
     );

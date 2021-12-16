@@ -1,0 +1,7 @@
+export enum OFFER_PERIOD {
+  ANY = 'ANY',
+  THIS_DAY = 'THIS_DAY',
+  THIS_WEEK = 'THIS_WEEK',
+  THIS_MONTH = 'THIS_MONTH',
+  THIS_YEAR = 'THIS_YEAR',
+}

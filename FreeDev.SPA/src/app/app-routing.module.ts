@@ -15,6 +15,7 @@ import { ProfileResolver } from './resolvers/profile.resolver';
 import { UsersChatListResolver } from './resolvers/users-chat-list.resolver';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { OfferDetailResolver } from './resolvers/offer-detail.resolver';
+import { OfferListResolver } from './resolvers/offer-list.resolver';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -33,6 +34,9 @@ const routes: Routes = [
   {
     path: 'search-offers',
     component: SearchOffersComponent,
+    resolve: {
+      offerWithLength: OfferListResolver,
+    },
     canActivate: [AuthGuard],
   },
   {

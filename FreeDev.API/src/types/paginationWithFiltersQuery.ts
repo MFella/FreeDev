@@ -10,8 +10,12 @@ export class PaginationWithFiltersQuery {
   @IsString({ each: true })
   @IsArray()
   @IsOptional()
-  tags: Array<string>;
+  tags: Array<string> = [];
 
   @IsString({ each: true })
-  salaryRange: Array<string>;
+  salaryRange: Array<string> = [];
+
+  @IsOptional()
+  @IsString()
+  period: string;
 }

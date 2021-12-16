@@ -32,12 +32,13 @@ import { timer } from 'rxjs';
   styleUrls: ['./messages.component.scss'],
 })
 export class MessagesComponent implements OnInit, AfterViewInit {
-  private static readonly SCROLL_TIME_OFFSET = 20;
   @ViewChild('paginator')
   paginator!: any;
 
   @ViewChild('messagesContainer')
   messagesContainer!: ElementRef;
+
+  private static readonly SCROLL_TIME_OFFSET = 20;
 
   private static readonly MESSAGE_LS_PREFIX: string = 'messages_user_list_';
 

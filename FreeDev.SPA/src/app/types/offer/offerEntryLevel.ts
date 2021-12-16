@@ -1,0 +1,8 @@
+export enum OFFER_ENTRY_LEVEL {
+  ANY = 'ANY',
+  INTERN = 'INTERN',
+  JUNIOR = 'JUNIOR',
+  MID = 'MID',
+  SENIOR = 'SENIOR',
+  EXPERT = 'EXPERT',
+}

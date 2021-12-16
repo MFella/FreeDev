@@ -43,4 +43,17 @@
       }
     }
   }
+
+  .p-orderlist-offer-container {
+    .offer-short-info {
+      min-width: 0;
+      .offer-short-description {
+        width: 30rem;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+    }
+  }
 }
