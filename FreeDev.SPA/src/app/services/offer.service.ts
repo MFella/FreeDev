@@ -55,6 +55,20 @@ export class OfferService {
     );
   }
 
+  submitProposal(offerId: string): Observable<void> {
+    return this.http.put<void>(
+      this.getRestUrl() + `offer/submit-proposal?offerId=${offerId}`,
+      {}
+    );
+  }
+
+  saveOffer(offerId: string): Observable<void> {
+    return this.http.put<void>(
+      this.getRestUrl() + `offer/save?offerId=${offerId}`,
+      {}
+    );
+  }
+
   private getRestUrl(): string {
     return env.backendUrl;
   }

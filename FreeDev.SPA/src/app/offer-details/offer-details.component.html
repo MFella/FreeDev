@@ -1,1 +1,94 @@
-<p>offer-details works!</p>
+<div class="grid pt-4">
+    <div class="col-12">
+        <p-card>
+            <div class="grid">
+                <div class="col-8">
+                    <p-card>
+                        <ng-template pTemplate="header">
+                            <div class="offer-main-header w-full flex justify-content-left px-4">
+                                <h2 class="offer-title">
+                                    {{offerToDisplay.title}}
+                                </h2>
+                            </div>
+                            <p-divider styleClass="m-0"></p-divider>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="offer-main-content">
+                                <div class="offer-main-content-description">
+                                    <p>{{offerToDisplay.description}}</p>
+                                </div>
+                                <p-divider></p-divider>
+                                <div class="offer-main-content-salary-level">
+                                    <div class="grid">
+                                        <div class="col-6 flex flex-column">
+                                            <strong>Entry Level</strong>
+                                            <small class="pt-2 pl-2">{{offerToDisplay.experienceLevel}}</small>
+                                        </div>
+                                        <div class="col-6 flex flex-column">
+                                            <strong>Salary</strong>
+                                            <small class="pt-2 pl-2">{{offerToDisplay.salary}} $</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                                <div class="offer-main-content-skills flex flex-column">
+                                    <strong>Required skills</strong>
+                                    <div class="badge-skills-container pt-3">
+                                    <p-badge *ngFor="let tag of offerToDisplay.tags"
+                                        class="ml-2" [value]="'#' + tag">
+                                    </p-badge>
+                                    </div>
+                                </div>
+                                <p-divider></p-divider>
+                            </div>
+                        </ng-template>
+                    </p-card>
+                </div>
+                <div class="col-4">
+                    <p-card>
+                        <ng-template pTemplate="header">
+                            <div class="offer-side-header flex justify-content-between align-items-center p-4">
+
+                                <div class="offer-side-owner-info flex flex-column">
+                                    <strong>Belongs to {{offerToDisplay.createdBy.name}} {{offerToDisplay.createdBy.surname}}</strong>
+                                    <small class='pt-2 font-italic'>Member of {{offerToDisplay.createdBy.nameOfCompany}} Company</small>
+                                </div>
+                                <button pButton class="p-button-info mt-3" label="Check Profile" 
+                                icon="pi pi-arrow-right" iconPos="right" (click)="toUserProfile(offerToDisplay.createdBy._id)"></button>
+                            </div>
+                            <p-divider styleClass="m-0"></p-divider>
+                        </ng-template>
+                        <ng-template pTemplate="content">
+                            <div class="offer-side-content flex flex-column ml-2">
+                                <div class="flex flex-column">
+                                    <strong>X jobs posted</strong>
+                                    <small class="pt-2">50% hire rate</small>
+                                </div>
+                                <div class="flex flex-column my-3">
+                                    <strong>Applied by X users</strong>
+                                    <small class="pt-2">30% had a chat</small>
+                                </div>
+                                <strong></strong>
+                            </div>
+                            <p-divider styleClass="m-0"></p-divider>
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            
+                            <div class="offer-side-footer">
+                                <div class="action-button-container flex justify-content-between">
+                                    <button pButton class="p-button-warning" label="Save Offer" 
+                                    icon="pi pi-heart" (click)="saveOffer('asdas')"></button>
+                                    <button pButton class="p-button-success" label="Submit Proposal" 
+                                    icon="pi pi-envelope" (click)="submitProposal('adsda')"></button>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </p-card>
+                </div>
+            </div>
+            <ng-template pTemplate="header"></ng-template>
+            <ng-template pTemplate="content"></ng-template>
+            <ng-template pTemplate="footer"></ng-template>
+        </p-card>
+    </div>
+</div>

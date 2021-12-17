@@ -46,6 +46,9 @@ export class Developer {
 
   @Prop({ required: true })
   role: Roles;
+
+  @Prop({ required: true })
+  favouriteOffers: Array<string>;
 }
 
 export const DeveloperSchema = SchemaFactory.createForClass(Developer);

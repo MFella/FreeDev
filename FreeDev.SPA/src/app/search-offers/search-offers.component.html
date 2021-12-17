@@ -21,6 +21,7 @@
                 <strong class="pl-3">Maximum length of skills are 6</strong>
               </div>
             </div>
+            <div *ngIf="!offersToDisplay.length" class="nothing-to-display-splash"> <p>Nothing to display at this time :/</p></div>
             <p-orderList [value]="this.offersToDisplay" controlsPosition="none" class="p-orderlist-users" styleClass="mt-4">
               <ng-template let-offer pTemplate="item">
                 <div class="p-orderlist-offer-container">

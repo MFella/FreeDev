@@ -12,10 +12,13 @@ import { OfferToCreateDto } from 'src/dtos/offerToCreateDto';
 import { Offer, OfferDocument } from './offer.schema';
 import { Roles } from 'src/types/roles';
 import { OfferResolver } from 'src/utils/offer/offerResolver';
+import { Developer, DeveloperDocument } from 'src/users/developer.schema';
 
 export class OfferService {
   constructor(
     @InjectModel(Offer.name) private readonly offerModel: Model<OfferDocument>,
+    @InjectModel(Developer.name)
+    private developerModel: Model<DeveloperDocument>,
   ) {}
 
   async createOffer(
@@ -30,6 +33,7 @@ export class OfferService {
 
       const result = await this.offerModel.create({
         createdAt: new Date(),
+        createdBy: loggedUser.userId,
         ...offerToCreateDto,
       });
       return !!result;
@@ -132,9 +136,11 @@ export class OfferService {
       throw new BadRequestException('Provided id is not valid');
     }
     try {
-      const offerFromRepo = await this.offerModel.findOne({
-        _id: offerId.toString(),
-      });
+      const offerFromRepo = await this.offerModel
+        .findOne({
+          _id: offerId.toString(),
+        })
+        .populate('createdBy', { name: 1, surname: 1, nameOfCompany: 1 });
 
       if (!Object.values(offerFromRepo).length) {
         throw new NotFoundException('Offer with that id doesnt exists');
@@ -144,6 +150,44 @@ export class OfferService {
     } catch (e: any) {
       throw new InternalServerErrorException(
         'Error occured during retriving data.',
+      );
+    }
+  }
+
+  async addOfferToFavourites(userId: string, offerId: string): Promise<any> {
+    try {
+      const userFromDb = await this.developerModel.findById(userId);
+      if (!Object.values(userFromDb)) {
+        throw new NotFoundException('User with that id doesnt exists');
+      }
+
+      await this.developerModel.findByIdAndUpdate(userId, {
+        favouriteOffers: [...new Set([offerId, ...userFromDb.favouriteOffers])],
+      });
+      return;
+    } catch (e: unknown) {
+      throw new InternalServerErrorException(
+        'Error occured during saving data.',
+      );
+    }
+  }
+
+  async submitProposal(userId: string, offerId: string): Promise<any> {
+    try {
+      const offerFromDb = await this.offerModel.findById(offerId);
+      if (!Object.values(offerFromDb)) {
+        throw new NotFoundException('User with that id doesnt exists');
+      }
+
+      await this.offerModel.findByIdAndUpdate(offerId, {
+        favouriteOffers: [
+          ...new Set([userId, ...offerFromDb.appliedDevelopers]),
+        ],
+      });
+      return;
+    } catch (e: unknown) {
+      throw new InternalServerErrorException(
+        'Error occured during saving data.',
       );
     }
   }

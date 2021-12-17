@@ -60,6 +60,7 @@ export class AuthController {
     @Req() request,
     @Param('id') id,
   ): Promise<UserToProfileDto> {
+    console.log(id);
     return await this.userServ.getUserProfile(id, request?.user);
   }
 }

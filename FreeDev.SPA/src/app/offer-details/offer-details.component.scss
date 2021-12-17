@@ -1,0 +1,18 @@
+:host ::ng-deep .p-card {
+  background-color: var(--bluegray-800);
+  .p-card {
+    background-color: var(--bluegray-900);
+  }
+  .offer-side-header {
+    .offer-side-owner-info {
+      small {
+        max-width: 80%;
+        flex-wrap: nowrap;
+        word-break: break-word;
+      }
+    }
+  }
+  .p-card-footer {
+    padding: 0;
+  }
+}

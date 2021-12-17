@@ -3,7 +3,10 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   Post,
+  Put,
   Query,
   Req,
   UseGuards,
@@ -37,5 +40,28 @@ export class OfferController {
     @Query() pagination: PaginationWithFiltersQuery,
   ): Promise<any> {
     return this.offerService.getOfferList(pagination);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('save')
+  @HttpCode(204)
+  async saveOffer(
+    @Query() query: { offerId: string },
+    @Req() request,
+  ): Promise<any> {
+    return this.offerService.addOfferToFavourites(
+      request.user.userId,
+      query.offerId,
+    );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('submit-proposal')
+  @HttpCode(204)
+  async submitProposal(
+    @Query() query: { offerId: string },
+    @Req() request,
+  ): Promise<any> {
+    return this.offerService.submitProposal(request.user.userId, query.offerId);
   }
 }

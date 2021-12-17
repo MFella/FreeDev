@@ -16,7 +16,6 @@ import { Roles } from 'src/types/roles';
 import { UserToProfileDto } from 'src/dtos/userToProfileDto';
 import { FileService } from 'src/files/file.service';
 import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
-import { ConfigService } from '@nestjs/config';
 import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
 import { UserChatListParamsDto } from 'src/dtos/userChatListParamsDto';
 import { RoomKey, RoomKeyDocument } from 'src/messages/room-key.schema';
@@ -31,7 +30,6 @@ export class UsersService {
     @InjectModel(RoomKey.name)
     private readonly roomKeyModel: Model<RoomKeyDocument>,
     private readonly fileServ: FileService,
-    private readonly configService: ConfigService,
   ) {}
 
   private static readonly DEFAULT_IMAGE_LINK: string =
