@@ -40,6 +40,7 @@ import { ChipsModule } from 'primeng/chips';
 import { SliderModule } from 'primeng/slider';
 import { BadgeModule } from 'primeng/badge';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
+import { SavedOffersComponent } from './saved-offers/saved-offers.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { OfferDetailsComponent } from './offer-details/offer-details.component';
     ProfileComponent,
     MessagesComponent,
     OfferDetailsComponent,
+    SavedOffersComponent,
   ],
   imports: [
     BrowserModule,

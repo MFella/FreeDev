@@ -1,3 +1,5 @@
+import { SavedOffersResolver } from './resolvers/saved-offers.resolver';
+import { SavedOffersComponent } from './saved-offers/saved-offers.component';
 import { MessagesComponent } from './messages/messages.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthGuard } from './guards/auth.guard';
@@ -45,6 +47,14 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     resolve: {
       offer: OfferDetailResolver,
+    },
+  },
+  {
+    path: 'saved-offers',
+    component: SavedOffersComponent,
+    canActivate: [AuthGuard],
+    resolve: {
+      offers: SavedOffersResolver,
     },
   },
   {

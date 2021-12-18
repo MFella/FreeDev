@@ -1,5 +1,11 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import {
+  Document,
+  Schema as MongooseSchema,
+  SchemaTypes,
+  Types,
+} from 'mongoose';
+import { Offer } from 'src/offers/offer.schema';
 import { Roles } from 'src/types/roles';
 import { File } from '../files/file.schema';
 
@@ -47,7 +53,7 @@ export class Developer {
   @Prop({ required: true })
   role: Roles;
 
-  @Prop({ required: true })
+  @Prop({ type: [SchemaTypes.String], ref: Offer.name })
   favouriteOffers: Array<string>;
 }
 

@@ -1,3 +1,4 @@
+import { SavedOffer } from './../types/offer/savedOffer';
 import { OfferToCreateDto } from './../dtos/offerToCreateDto';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -52,6 +53,16 @@ export class OfferService {
     return this.http.get<OfferListPayloadDto>(
       this.getRestUrl() +
         `offer/list?${tagsQuery}&${salaryQuery}&period=${period}&entryLevel=${entryLevel}&itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`
+    );
+  }
+
+  getSavedOffers(
+    itemsPerPage: string,
+    currentPage: string
+  ): Observable<Array<SavedOffer>> {
+    return this.http.get<Array<SavedOffer>>(
+      this.getRestUrl() +
+        `offer/saved?itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`
     );
   }
 

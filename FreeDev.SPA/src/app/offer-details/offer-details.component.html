@@ -76,10 +76,17 @@
                             
                             <div class="offer-side-footer">
                                 <div class="action-button-container flex justify-content-between">
-                                    <button pButton class="p-button-warning" label="Save Offer" 
-                                    icon="pi pi-heart" (click)="saveOffer('asdas')"></button>
-                                    <button pButton class="p-button-success" label="Submit Proposal" 
-                                    icon="pi pi-envelope" (click)="submitProposal('adsda')"></button>
+                                    <button pButton class="p-button-warning" 
+                                    label="{{saveButtonLabel}}" 
+                                    icon="pi pi-heart" (click)="saveOffer(offerToDisplay._id)"
+                                    [disabled]="isUserSavedOffer"
+                                    [class.cursor-disabled]="isUserSavedOffer"></button>
+
+                                    <button pButton class="p-button-success"
+                                    label="{{submitButtonLabel}}" 
+                                    icon="pi pi-envelope" (click)="submitProposal(offerToDisplay._id)"
+                                    [disabled]="isUserAppliedForOffer"
+                                    [class.cursor-disabled]="isUserAppliedForOffer"></button>
                                 </div>
                             </div>
                         </ng-template>

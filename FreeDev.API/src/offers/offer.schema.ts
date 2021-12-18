@@ -28,7 +28,7 @@ export class Offer {
   @Prop({ required: true, default: new Date() })
   createdAt: Date;
 
-  @Prop({ type: [SchemaTypes.ObjectId], ref: Developer.name })
+  @Prop({ type: [SchemaTypes.ObjectId], ref: Hunter.name })
   appliedDevelopers: Array<Types.ObjectId>;
 }
 

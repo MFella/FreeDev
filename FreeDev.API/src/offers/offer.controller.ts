@@ -14,6 +14,7 @@ import {
 import { OfferToCreateDto } from 'src/dtos/offerToCreateDto';
 import { OfferService } from './offer.service';
 import { PaginationWithFiltersQuery } from 'src/types/paginationWithFiltersQuery';
+import { PaginationQuery } from 'src/types/paginationQuery';
 
 @Controller('offer')
 export class OfferController {
@@ -30,8 +31,14 @@ export class OfferController {
 
   @UseGuards(JwtAuthGuard)
   @Get('details')
-  async getOfferDetails(@Query() query: { id: string }): Promise<any> {
-    return this.offerService.getOfferDetails(query.id?.toString());
+  async getOfferDetails(
+    @Query() query: { id: string },
+    @Req() req,
+  ): Promise<any> {
+    return this.offerService.getOfferDetails(
+      query.id?.toString(),
+      req.user.userId,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -63,5 +70,18 @@ export class OfferController {
     @Req() request,
   ): Promise<any> {
     return this.offerService.submitProposal(request.user.userId, query.offerId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('saved')
+  async getSavedOffers(
+    @Query() pagination: PaginationQuery,
+    @Req() request,
+  ): Promise<any> {
+    return this.offerService.getSavedOffers(
+      request.user.userId,
+      pagination.itemsPerPage,
+      pagination.currentPage,
+    );
   }
 }

@@ -5,14 +5,16 @@ import {
   ForbiddenException,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { OfferToCreateDto } from 'src/dtos/offerToCreateDto';
 import { Offer, OfferDocument } from './offer.schema';
 import { Roles } from 'src/types/roles';
 import { OfferResolver } from 'src/utils/offer/offerResolver';
 import { Developer, DeveloperDocument } from 'src/users/developer.schema';
+import { createAwait } from 'typescript';
 
 export class OfferService {
   constructor(
@@ -131,11 +133,23 @@ export class OfferService {
     }
   }
 
-  async getOfferDetails(offerId: string): Promise<any> {
+  async getOfferDetails(offerId: string, userId: string): Promise<any> {
     if (!offerId.match(/^[0-9a-fA-F]{24}$/)) {
       throw new BadRequestException('Provided id is not valid');
     }
     try {
+      let isUserAppliedForOffer: boolean = false;
+      let isUserSavedOffer: boolean = false;
+      const userFromRepo = await this.developerModel.findOne({ _id: userId });
+
+      if (!Object.values(userFromRepo).length) {
+        throw new UnauthorizedException('You shall not pass');
+      }
+
+      isUserSavedOffer = userFromRepo.favouriteOffers
+        .map((offerId: any) => offerId.toString())
+        .includes(offerId);
+
       const offerFromRepo = await this.offerModel
         .findOne({
           _id: offerId.toString(),
@@ -146,7 +160,15 @@ export class OfferService {
         throw new NotFoundException('Offer with that id doesnt exists');
       }
 
-      return offerFromRepo;
+      isUserAppliedForOffer = offerFromRepo.appliedDevelopers
+        .map((objectId: unknown) => objectId.toString())
+        .includes(userId.toString());
+
+      return {
+        offerContent: offerFromRepo,
+        isUserAppliedForOffer,
+        isUserSavedOffer,
+      };
     } catch (e: any) {
       throw new InternalServerErrorException(
         'Error occured during retriving data.',
@@ -154,16 +176,17 @@ export class OfferService {
     }
   }
 
-  async addOfferToFavourites(userId: string, offerId: string): Promise<any> {
+  async addOfferToFavourites(userId: string, offerId: any): Promise<any> {
     try {
       const userFromDb = await this.developerModel.findById(userId);
       if (!Object.values(userFromDb)) {
         throw new NotFoundException('User with that id doesnt exists');
       }
 
-      await this.developerModel.findByIdAndUpdate(userId, {
+      const xd = await this.developerModel.findByIdAndUpdate(userId, {
         favouriteOffers: [...new Set([offerId, ...userFromDb.favouriteOffers])],
       });
+
       return;
     } catch (e: unknown) {
       throw new InternalServerErrorException(
@@ -172,15 +195,15 @@ export class OfferService {
     }
   }
 
-  async submitProposal(userId: string, offerId: string): Promise<any> {
-    try {
-      const offerFromDb = await this.offerModel.findById(offerId);
-      if (!Object.values(offerFromDb)) {
-        throw new NotFoundException('User with that id doesnt exists');
-      }
+  async submitProposal(userId: any, offerId: string): Promise<any> {
+    const offerFromDb = await this.offerModel.findById(offerId);
+    if (!Object.values(offerFromDb)) {
+      throw new NotFoundException('User with that id doesnt exists');
+    }
 
-      await this.offerModel.findByIdAndUpdate(offerId, {
-        favouriteOffers: [
+    try {
+      const updated = await this.offerModel.findByIdAndUpdate(offerId, {
+        appliedDevelopers: [
           ...new Set([userId, ...offerFromDb.appliedDevelopers]),
         ],
       });
@@ -190,5 +213,29 @@ export class OfferService {
         'Error occured during saving data.',
       );
     }
+  }
+
+  async getSavedOffers(
+    userId: string,
+    itemsPerPage: string,
+    currentPage: string,
+  ): Promise<any> {
+    const propsToTake = { createdAt: 1, title: 1, tags: 1 };
+
+    const userFromDb = await this.developerModel.findById(userId).populate({
+      path: 'favouriteOffers',
+      select: propsToTake,
+      skip: Number(currentPage) * Number(itemsPerPage),
+      limit: Number(itemsPerPage),
+    });
+
+    if (!Object.values(userFromDb).length) {
+      throw new UnauthorizedException('User with that id doesnt exists');
+    }
+
+    return {
+      onlyOffers: userFromDb.favouriteOffers,
+      numberOfTotalRecords: userFromDb.favouriteOffers.length,
+    };
   }
 }

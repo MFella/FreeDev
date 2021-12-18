@@ -117,9 +117,9 @@ export class NavComponent implements OnInit {
             command: () => this.navigateToProfile(),
           },
           {
-            label: 'Favourites',
+            label: 'Saved',
             icon: 'pi pi-fw pi-heart',
-            routerLink: 'home',
+            routerLink: 'saved-offers',
           },
           {
             label: 'Logout',
