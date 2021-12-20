@@ -9,7 +9,18 @@
                 <p-divider styleClass="m-0"></p-divider>
             </ng-template>
             <ng-template pTemplate="content">
-                <div class="saved-offers-content">
+                <div class="saved-offers-filters flex justify-content-between">
+                    <div class="p-inputgroup saved-offers-title-filter">
+                        <button type="button" pButton pRipple class="p-button-info" label="Search" icon="pi pi-search"
+                        (click)="searchSavedOffers()"></button>
+                        <input type="text" pInputText placeholder="Example title..." [(ngModel)]="searchPhrase">         
+                    </div>
+                    <div class="saved-offers-date-filter text-right">
+                        <label for="range" class="mr-2">Data Range</label>
+                        <p-calendar [(ngModel)]="dateRange" [selectionMode]="'range'" (onClickOutside)="onDateClickOutside()"></p-calendar>
+                    </div>
+                </div>
+                <div class="saved-offers-content mt-4">
                     <p-orderList [value]="savedOffers">
                         <ng-template let-offer pTemplate="item">
                             <div class="p-orderlist-offer-container">

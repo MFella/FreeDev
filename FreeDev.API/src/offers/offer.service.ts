@@ -183,7 +183,7 @@ export class OfferService {
         throw new NotFoundException('User with that id doesnt exists');
       }
 
-      const xd = await this.developerModel.findByIdAndUpdate(userId, {
+      await this.developerModel.findByIdAndUpdate(userId, {
         favouriteOffers: [...new Set([offerId, ...userFromDb.favouriteOffers])],
       });
 
@@ -202,7 +202,7 @@ export class OfferService {
     }
 
     try {
-      const updated = await this.offerModel.findByIdAndUpdate(offerId, {
+      await this.offerModel.findByIdAndUpdate(offerId, {
         appliedDevelopers: [
           ...new Set([userId, ...offerFromDb.appliedDevelopers]),
         ],
@@ -219,15 +219,37 @@ export class OfferService {
     userId: string,
     itemsPerPage: string,
     currentPage: string,
+    dateRange: Array<string>,
+    searchPhrase: string,
   ): Promise<any> {
     const propsToTake = { createdAt: 1, title: 1, tags: 1 };
+    const trueDateRange = dateRange.map((date: string) => new Date(date));
+    const maxDate: Date = trueDateRange.reduce((a, b) => (a > b ? a : b));
+    const minDate: Date = trueDateRange.reduce((a, b) => (a < b ? a : b));
+
+    const dateCondition =
+      !dateRange.length || dateRange.length !== 3
+        ? { $exists: true }
+        : { $gte: minDate, $lte: maxDate };
+
+    const titleCondition = !searchPhrase.length
+      ? { $exists: true }
+      : new RegExp(`^${searchPhrase}`, 'i');
 
     const userFromDb = await this.developerModel.findById(userId).populate({
       path: 'favouriteOffers',
+      match: { createdAt: dateCondition, title: titleCondition },
       select: propsToTake,
       skip: Number(currentPage) * Number(itemsPerPage),
       limit: Number(itemsPerPage),
     });
+
+    const favouriteOffersCount = (
+      await this.developerModel.findById(userId).populate({
+        path: 'favouriteOffers',
+        match: { createdAt: dateCondition, title: titleCondition },
+      })
+    ).favouriteOffers.length;
 
     if (!Object.values(userFromDb).length) {
       throw new UnauthorizedException('User with that id doesnt exists');
@@ -235,7 +257,7 @@ export class OfferService {
 
     return {
       onlyOffers: userFromDb.favouriteOffers,
-      numberOfTotalRecords: userFromDb.favouriteOffers.length,
+      numberOfTotalRecords: favouriteOffersCount,
     };
   }
 }

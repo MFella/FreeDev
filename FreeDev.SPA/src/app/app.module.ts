@@ -41,6 +41,7 @@ import { SliderModule } from 'primeng/slider';
 import { BadgeModule } from 'primeng/badge';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { SavedOffersComponent } from './saved-offers/saved-offers.component';
+import { CalendarModule } from 'primeng/calendar';
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import { SavedOffersComponent } from './saved-offers/saved-offers.component';
     ChipsModule,
     SliderModule,
     BadgeModule,
+    CalendarModule,
   ],
   providers: [
     NotyService,

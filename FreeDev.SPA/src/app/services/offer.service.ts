@@ -8,6 +8,7 @@ import { OfferToListDto } from '../dtos/offers/offerToListDto';
 import { OFFER_PERIOD } from '../types/offer/offerPeriod';
 import { OFFER_ENTRY_LEVEL } from '../types/offer/offerEntryLevel';
 import { OfferListPayloadDto } from '../dtos/offers/offerListPayloadDto';
+import { SavedOffersResponseDto } from '../dtos/offers/savedOffersResponseDto';
 
 @Injectable({
   providedIn: 'root',
@@ -57,12 +58,21 @@ export class OfferService {
   }
 
   getSavedOffers(
-    itemsPerPage: string,
-    currentPage: string
-  ): Observable<Array<SavedOffer>> {
-    return this.http.get<Array<SavedOffer>>(
+    searchPhrase: string = '',
+    dateRange: Array<Date> = [],
+    itemsPerPage: string = '2',
+    currentPage: string = '0'
+  ): Observable<SavedOffersResponseDto> {
+    const dateQuery = new URLSearchParams();
+    dateQuery.append('date[]', '');
+
+    dateRange.forEach((date: Date) => {
+      dateQuery.append('date[]', date.toString());
+    });
+
+    return this.http.get<SavedOffersResponseDto>(
       this.getRestUrl() +
-        `offer/saved?itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`
+        `offer/saved?searchPhrase=${searchPhrase}&${dateQuery}&itemsPerPage=${itemsPerPage}&currentPage=${currentPage}`
     );
   }
 

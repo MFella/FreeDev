@@ -8,6 +8,7 @@ import { OFFER_ENTRY_LEVEL } from '../types/offer/offerEntryLevel';
 import { ResolverPagination } from '../types/resolvedPagination';
 import { LocalStorageService } from '../services/local-storage.service';
 import { OfferListPayloadDto } from '../dtos/offers/offerListPayloadDto';
+import { PaginationResolver } from '../utils/paginationResolver';
 
 @Component({
   selector: 'app-search-offers',
@@ -96,7 +97,8 @@ export class SearchOffersComponent implements OnInit {
   }
 
   pageChanged(resolverPagination: ResolverPagination): void {
-    this.pagination = this.parseResolvedPagination(resolverPagination);
+    this.pagination =
+      PaginationResolver.parseResolvedPagination(resolverPagination);
 
     this.lsServ.setPagination(
       SearchOffersComponent.OFFER_LS_PREFIX,

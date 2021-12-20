@@ -2,4 +2,17 @@
   .p-orderlist-controls {
     display: none;
   }
+  .p-card-content {
+    .saved-offers-filters {
+      .saved-offers-title-filter {
+        max-width: 60%;
+      }
+      .saved-offers-date-filter {
+        width: 100%;
+        .p-calendar {
+          width: 50%;
+        }
+      }
+    }
+  }
 }

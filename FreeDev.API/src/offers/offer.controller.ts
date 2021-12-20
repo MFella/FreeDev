@@ -82,6 +82,8 @@ export class OfferController {
       request.user.userId,
       pagination.itemsPerPage,
       pagination.currentPage,
+      pagination.date,
+      pagination.searchPhrase,
     );
   }
 }

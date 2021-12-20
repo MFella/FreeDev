@@ -13,11 +13,12 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { SavedOffer } from '../types/offer/savedOffer';
 import { catchError } from 'rxjs/operators';
+import { SavedOffersResponseDto } from '../dtos/offers/savedOffersResponseDto';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SavedOffersResolver implements Resolve<Array<SavedOffer>> {
+export class SavedOffersResolver implements Resolve<SavedOffersResponseDto> {
   private static readonly SAVED_OFFERS_PREFIX: string = 'saved_offers_';
 
   constructor(
@@ -29,15 +30,17 @@ export class SavedOffersResolver implements Resolve<Array<SavedOffer>> {
   resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot
-  ): Observable<Array<SavedOffer>> {
+  ): Observable<SavedOffersResponseDto> {
     const pagination: Pagination = this.lsServ.getPagination(
       SavedOffersResolver.SAVED_OFFERS_PREFIX
     );
 
     return this.offerServ
       .getSavedOffers(
-        pagination?.itemsPerPage.toString() ?? 2,
-        pagination?.currentPage.toString() ?? 0
+        '',
+        [],
+        pagination?.itemsPerPage.toString() ?? '2',
+        pagination?.currentPage.toString() ?? '0'
       )
       .pipe(
         catchError((error: HttpErrorResponse) => {
