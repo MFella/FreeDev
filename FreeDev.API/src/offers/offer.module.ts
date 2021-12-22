@@ -1,3 +1,4 @@
+import { Hunter, HunterSchema } from './../users/hunter.schema';
 import { Developer, DeveloperSchema } from './../users/developer.schema';
 import { UsersModule } from './../users/users.module';
 import { OfferController } from './offer.controller';
@@ -12,6 +13,7 @@ import { OfferService } from './offer.service';
     MongooseModule.forFeature([
       { name: Offer.name, schema: OfferSchema },
       { name: Developer.name, schema: DeveloperSchema },
+      { name: Hunter.name, schema: HunterSchema },
     ]),
   ],
   providers: [OfferService],

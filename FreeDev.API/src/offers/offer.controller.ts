@@ -1,10 +1,11 @@
+import { Roles } from '../types/roles';
 import { JwtAuthGuard } from './../auth/jwt-auth.guard';
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   HttpCode,
-  HttpStatus,
   Post,
   Put,
   Query,
@@ -35,6 +36,13 @@ export class OfferController {
     @Query() query: { id: string },
     @Req() req,
   ): Promise<any> {
+    if (req.user.role === Roles.HUNTER) {
+      return await this.offerService.getHunterOfferDetails(
+        query.id?.toString(),
+        req.user.userId,
+      );
+    }
+
     return this.offerService.getOfferDetails(
       query.id?.toString(),
       req.user.userId,
@@ -56,6 +64,9 @@ export class OfferController {
     @Query() query: { offerId: string },
     @Req() request,
   ): Promise<any> {
+    if (request.user.role === Roles.HUNTER) {
+      throw new ForbiddenException('You havent got permission to do that');
+    }
     return this.offerService.addOfferToFavourites(
       request.user.userId,
       query.offerId,
@@ -69,6 +80,9 @@ export class OfferController {
     @Query() query: { offerId: string },
     @Req() request,
   ): Promise<any> {
+    if (request.user.role === Roles.HUNTER) {
+      throw new ForbiddenException('You havent got permission to do that');
+    }
     return this.offerService.submitProposal(request.user.userId, query.offerId);
   }
 
@@ -78,7 +92,17 @@ export class OfferController {
     @Query() pagination: PaginationQuery,
     @Req() request,
   ): Promise<any> {
-    return this.offerService.getSavedOffers(
+    if (request.user.role === Roles.HUNTER) {
+      return await this.offerService.getMyOffers(
+        request.user.userId,
+        pagination.itemsPerPage,
+        pagination.currentPage,
+        pagination.date,
+        pagination.searchPhrase,
+      );
+    }
+
+    return await this.offerService.getSavedOffers(
       request.user.userId,
       pagination.itemsPerPage,
       pagination.currentPage,

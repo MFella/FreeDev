@@ -20,7 +20,10 @@
                         <p-calendar [(ngModel)]="dateRange" [selectionMode]="'range'" (onClickOutside)="onDateClickOutside()"></p-calendar>
                     </div>
                 </div>
-                <div class="saved-offers-content mt-4">
+                <div class="lack-of-items-info text-center absolute" *ngIf="!savedOffers.length">
+                    <h3>There is no offers. Try again with different filters</h3>
+                </div>
+                <div class="saved-offers-content">
                     <p-orderList [value]="savedOffers">
                         <ng-template let-offer pTemplate="item">
                             <div class="p-orderlist-offer-container">

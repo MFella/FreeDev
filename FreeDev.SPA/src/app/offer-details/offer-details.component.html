@@ -59,7 +59,14 @@
                             <p-divider styleClass="m-0"></p-divider>
                         </ng-template>
                         <ng-template pTemplate="content">
-                            <div class="offer-side-content flex flex-column ml-2">
+                            <div class="offer-side-content flex flex-column ml-2 my-4" *ngIf="!!appliedUsers?.length">
+                                <div class="flex flex-column" *ngFor="let user of appliedUsers">
+                                    <strong>{{user.name}} {{user.surname}}</strong>
+                                    <small class="pt-2">50% hire rate</small>
+                                </div>
+                                <strong></strong>
+                            </div>
+                            <div class="offer-side-content flex flex-column ml-2" *ngIf="!appliedUsers?.length">
                                 <div class="flex flex-column">
                                     <strong>X jobs posted</strong>
                                     <small class="pt-2">50% hire rate</small>
@@ -72,7 +79,7 @@
                             </div>
                             <p-divider styleClass="m-0"></p-divider>
                         </ng-template>
-                        <ng-template pTemplate="footer">
+                        <ng-template pTemplate="footer" *ngIf="this.authServ.storedUser.role === 'DEVELOPER'">
                             
                             <div class="offer-side-footer">
                                 <div class="action-button-container flex justify-content-between">

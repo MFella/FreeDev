@@ -4,6 +4,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NotyService } from '../services/noty.service';
 import { OfferService } from '../services/offer.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-offer-details',
@@ -16,8 +17,11 @@ export class OfferDetailsComponent implements OnInit {
     private readonly offerServ: OfferService,
     private readonly noty: NotyService,
     private readonly router: Router,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    public readonly authServ: AuthService
   ) {}
+
+  appliedUsers: Array<{ name: string; surname: string; _id: string }> = [];
 
   offerToDisplay!: OfferDetailsDto;
 
@@ -34,6 +38,7 @@ export class OfferDetailsComponent implements OnInit {
       this.offerToDisplay = response.offer.offerContent;
       this.isUserAppliedForOffer = response.offer.isUserAppliedForOffer;
       this.isUserSavedOffer = response.offer.isUserSavedOffer;
+      this.appliedUsers = response.offer?.appliedDevs;
       this.updateButtonLabels();
       this.changeDetectorRef.detectChanges();
     });

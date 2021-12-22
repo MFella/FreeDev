@@ -3,6 +3,14 @@
     display: none;
   }
   .p-card-content {
+    .lack-of-items-info {
+      width: 95%;
+      transform: translateY(2rem);
+    }
+    .saved-offers-content {
+      // margin-top: 4rem;
+      margin-top: 0.5rem;
+    }
     .saved-offers-filters {
       .saved-offers-title-filter {
         max-width: 60%;

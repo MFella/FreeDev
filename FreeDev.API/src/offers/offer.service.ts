@@ -1,3 +1,4 @@
+import { Hunter, HunterDocument } from './../users/hunter.schema';
 import { PaginationWithFiltersQuery } from '../types/paginationWithFiltersQuery';
 import { StoredUser } from './../types/storedUser.interface';
 import {
@@ -8,19 +9,20 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, ObjectId } from 'mongoose';
+import { Model } from 'mongoose';
 import { OfferToCreateDto } from 'src/dtos/offerToCreateDto';
 import { Offer, OfferDocument } from './offer.schema';
 import { Roles } from 'src/types/roles';
 import { OfferResolver } from 'src/utils/offer/offerResolver';
 import { Developer, DeveloperDocument } from 'src/users/developer.schema';
-import { createAwait } from 'typescript';
 
 export class OfferService {
   constructor(
     @InjectModel(Offer.name) private readonly offerModel: Model<OfferDocument>,
     @InjectModel(Developer.name)
-    private developerModel: Model<DeveloperDocument>,
+    private readonly developerModel: Model<DeveloperDocument>,
+    @InjectModel(Hunter.name)
+    private readonly hunterModel: Model<HunterDocument>,
   ) {}
 
   async createOffer(
@@ -176,6 +178,45 @@ export class OfferService {
     }
   }
 
+  async getHunterOfferDetails(offerId: string, userId: string): Promise<any> {
+    if (!offerId.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new BadRequestException('Provided id is not valid');
+    }
+    try {
+      let isUserAppliedForOffer: boolean = false;
+      let isUserSavedOffer: boolean = false;
+      const userFromRepo = await this.hunterModel.findOne({ _id: userId });
+
+      if (!Object.values(userFromRepo).length) {
+        throw new UnauthorizedException('You shall not pass');
+      }
+
+      const offerFromRepo = await this.offerModel
+        .findOne({
+          _id: offerId.toString(),
+        })
+        .populate('createdBy', { name: 1, surname: 1, nameOfCompany: 1 });
+      const appliedDevs: Array<any> = await this.getAppliedDevelopers(
+        offerFromRepo.appliedDevelopers,
+      );
+
+      if (!Object.values(offerFromRepo).length) {
+        throw new NotFoundException('Offer with that id doesnt exists');
+      }
+
+      return {
+        offerContent: offerFromRepo,
+        appliedDevs,
+        isUserAppliedForOffer,
+        isUserSavedOffer,
+      };
+    } catch (e: any) {
+      throw new InternalServerErrorException(
+        'Error occured during retriving data.',
+      );
+    }
+  }
+
   async addOfferToFavourites(userId: string, offerId: any): Promise<any> {
     try {
       const userFromDb = await this.developerModel.findById(userId);
@@ -230,7 +271,7 @@ export class OfferService {
     const dateCondition =
       !dateRange.length || dateRange.length !== 3
         ? { $exists: true }
-        : { $gte: minDate, $lte: maxDate };
+        : { $gte: minDate.toISOString(), $lte: maxDate.toISOString() };
 
     const titleCondition = !searchPhrase.length
       ? { $exists: true }
@@ -259,5 +300,68 @@ export class OfferService {
       onlyOffers: userFromDb.favouriteOffers,
       numberOfTotalRecords: favouriteOffersCount,
     };
+  }
+
+  async getMyOffers(
+    userId: string,
+    itemsPerPage: string,
+    currentPage: string,
+    dateRange: Array<string>,
+    searchPhrase: string,
+  ): Promise<any> {
+    const propsToTake = { createdAt: 1, title: 1, tags: 1 };
+    const trueDateRange = dateRange.map((date: string) => new Date(date));
+    const maxDate: Date = trueDateRange.reduce((a, b) => (a > b ? a : b));
+    const minDate: Date = trueDateRange.reduce((a, b) => (a < b ? a : b));
+
+    const userFromDb = await this.hunterModel.findById(userId);
+
+    const dateCondition =
+      !dateRange.length || dateRange.length !== 3
+        ? { $exists: true }
+        : { $gte: minDate.toISOString(), $lte: maxDate.toISOString() };
+
+    const titleCondition = !searchPhrase.length
+      ? { $exists: true }
+      : new RegExp(`^${searchPhrase}`, 'i');
+
+    const offersFromDb = await this.offerModel
+      .find({ createdBy: userId })
+      .where({ createdAt: dateCondition, title: titleCondition })
+      .select(propsToTake)
+      .skip(Number(currentPage) * Number(itemsPerPage))
+      .limit(Number(itemsPerPage));
+
+    const favouriteOffersCount = await this.offerModel
+      .findById(userId)
+      .where({ createdAt: dateCondition, title: titleCondition })
+      .count();
+
+    if (!Object.values(userFromDb).length) {
+      throw new UnauthorizedException('User with that id doesnt exists');
+    }
+
+    return {
+      onlyOffers: offersFromDb,
+      numberOfTotalRecords: favouriteOffersCount,
+    };
+  }
+
+  private async getAppliedDevelopers(
+    appliedDevelopers: Array<any>,
+  ): Promise<Array<any>> {
+    let devsToReturn: Array<any> = [];
+    const propsToTake = { name: 1, surname: 1 };
+    await Promise.all(
+      appliedDevelopers.map(async (devId: string) => {
+        let devFromRepo = await this.developerModel
+          .findById(devId)
+          .select(propsToTake);
+        if (Object.values(devFromRepo).length) {
+          devsToReturn.push(devFromRepo);
+        }
+      }),
+    );
+    return devsToReturn;
   }
 }

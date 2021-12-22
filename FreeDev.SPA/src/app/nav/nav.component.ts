@@ -117,7 +117,10 @@ export class NavComponent implements OnInit {
             command: () => this.navigateToProfile(),
           },
           {
-            label: 'Saved',
+            label:
+              this.authServ.storedUser?.role === Roles.DEVELOPER
+                ? 'Saved'
+                : 'My offers',
             icon: 'pi pi-fw pi-heart',
             routerLink: 'saved-offers',
           },

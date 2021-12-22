@@ -1,77 +1,8 @@
-<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-      <span class="navbar-brand">
-        <img class="w-25" src="../../assets/heart-shake.png" alt="Shake Hand">
-        <span>FreeDev</span>
-      </span>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  
-      <div class="collapse navbar-collapse justify-content-center" id="navbarColor01">
-        <ul class="navbar-nav d-flex justify-content-around w-100">
-          <li class="nav-item" [routerLink]="['home']" [routerLinkActive]="['is-active']">
-            <fa-icon [icon]="icons[0]"></fa-icon>
-            <span>Home</span>
-          </li>
-          <li *ngIf="isUserHunter()" 
-          class="nav-item" [routerLink]="['add-offer']" [routerLinkActive]="['is-active']">
-            <fa-icon [icon]="icons[4]"></fa-icon>
-            <span>Add offer</span>
-          </li>
-          <li class="nav-item" [routerLink]="['messages']" [routerLinkActive]="['is-active']">
-            <fa-icon [icon]="icons[9]"></fa-icon>
-            <span>Messages</span>
-          </li>
-          <li class="nav-item" [routerLink]="['search-offers']" [routerLinkActive]="['is-active']">
-            <fa-icon [icon]="icons[5]"></fa-icon>
-            <span>Search offers</span>
-          </li>
-          <li *ngIf="!this.localStorageService.getUser()" class="nav-item" [routerLink]="['login']" [routerLinkActive]="['is-active']">
-            <fa-icon [icon]="icons[1]"></fa-icon>
-            <span>Login</span>
-          </li>
-          <li *ngIf="!this.localStorageService.getUser()" class="nav-item" [routerLink]="['register']" [routerLinkActive]="['is-active']">
-            <div>
-              <fa-icon [icon]="icons[2]"></fa-icon>
-              <span>Sign up</span>
-            </div>
-          </li>
-          <li class="nav-item dropdown">
-            <div class="nav-link dropdown-toggle config-user-toggle" data-bs-toggle="dropdown" role="button" 
-            aria-haspopup="true" aria-expanded="false">Dropdown</div>
-            <ul class="dropdown-menu config-user-dropdown">
-              <li class="nav-item" [routerLink]="['profile']" [queryParams]="{id: getUserId()}">
-                <div class="w-100 d-flex flex-row justify-content-between">
-                  <strong class="text-secondary">Profile</strong>
-                  <fa-icon [icon]="icons[6]"></fa-icon>
-                </div>
-              </li>
-              <li class="nav-item">
-                <div class="w-100 d-flex flex-row justify-content-between">
-                  <strong class="text-secondary">Favourites</strong>
-                  <fa-icon [icon]="icons[8]"></fa-icon>
-                </div>
-              </li>
-              
-              <div class="dropdown-divider"></div>
-              <li class="nav-item" (click)="logout()">
-                <div class="w-100 d-flex flex-row justify-content-between">
-                  <strong class="text-secondary">Logout</strong>
-                  <fa-icon [icon]="icons[3]"></fa-icon>
-                </div>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+<p-menubar [model]="items">
+  <ng-template pTemplate="start" class="ml-4">
+    <div class="flex flex-row align-items-center">
+      <img src="../../assets/heart-shake.png" height="40" class="p-mr-2">
+      <span class='p-text-light px-2 text-2xl'>FreeDev</span>
     </div>
-  </nav> -->
-  <p-menubar [model]="items">
-    <ng-template pTemplate="start" class="ml-4">
-      <div class="flex flex-row align-items-center">
-        <img src="../../assets/heart-shake.png" height="40" class="p-mr-2">
-        <span class='p-text-light px-2 text-2xl'>FreeDev</span>
-      </div>
-    </ng-template>
+  </ng-template>
 </p-menubar>
