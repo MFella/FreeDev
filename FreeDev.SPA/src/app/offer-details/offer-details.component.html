@@ -59,12 +59,20 @@
                             <p-divider styleClass="m-0"></p-divider>
                         </ng-template>
                         <ng-template pTemplate="content">
-                            <div class="offer-side-content flex flex-column ml-2 my-4" *ngIf="!!appliedUsers?.length">
-                                <div class="flex flex-column" *ngFor="let user of appliedUsers">
-                                    <strong>{{user.name}} {{user.surname}}</strong>
-                                    <small class="pt-2">50% hire rate</small>
+                            <div class="offer-side-content flex flex-column mb-4" *ngIf="!!appliedUsers?.length">
+                                <h3 class="text-center">Applied developers</h3>
+                                <div class="flex justify-content-between align-items-center" *ngFor="let user of appliedUsers">
+                                    <div class="flex flex-column">
+                                        <strong>{{user.name}} {{user.surname}}</strong>
+                                        <small class="pt-2">50% hire rate</small>
+                                    </div>
+                                    <div class="action-button-group">
+                                        <button pButton class="p-button-success mr-2" label="" icon="pi pi-envelope" 
+                                        pTooltip="Send Message" tooltipPosition="top"></button>
+                                        <button pButton class="p-button-warning" label="" icon="pi pi-user"
+                                        pTooltip="Show Profile" tooltipPosition="top" (click)="toUserProfile(user._id)"></button>
+                                    </div>
                                 </div>
-                                <strong></strong>
                             </div>
                             <div class="offer-side-content flex flex-column ml-2" *ngIf="!appliedUsers?.length">
                                 <div class="flex flex-column">

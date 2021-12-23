@@ -13,8 +13,17 @@
             <div class="online-dot-container">
               <div class="green-dot"></div>
             </div>
-            <h4 *ngIf="selectedUser" class="mb-0 pl-2">Chat with {{selectedUser.name + ' ' + selectedUser.surname}}</h4>
-            <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user has been selected</h4>
+            <div class="flex justify-content-between align-items-center w-full">
+              <h4 *ngIf="selectedUser" class="mb-0 pl-2">Chat with {{selectedUser.name + ' ' + selectedUser.surname}}</h4>
+              <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user has been selected</h4>
+              <div class="action-buttons-container">
+                <button pButton pRipple type="button" icon="pi pi-phone" class="p-button-rounded p-button-success p-button-icon-only mr-2"
+                pTooltip="Start call" tooltipPosition="top"></button>
+                <button pButton pRipple type="button" icon="pi pi-video" class="p-button-rounded p-button-icon-only"
+                pTooltip="Start video" tooltipPosition="top"></button>
+              </div>
+            </div>
+
           </div>
         </ng-template>  
         <ng-template pTemplate="body">

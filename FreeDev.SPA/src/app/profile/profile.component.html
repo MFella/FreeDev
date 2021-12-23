@@ -12,13 +12,13 @@
               <div class="inline-block pr-3 pb-1">
                 <i class="pi pi-spin pi-spinner" style="font-size: 2rem" *ngIf="isLoading"></i>
               </div>
-              <button pButton pRipple *ngIf="!this.isReadonly" type="button" label="Cancel" icon="pi pi-times" class="p-button-danger"
+              <button pButton pRipple *ngIf="!isReadonly" type="button" label="Cancel" icon="pi pi-times" class="p-button-danger"
               (click)="cancelEditMode()" [disabled]="this.profileForm.invalid || isLoading"></button>
               
-              <button pButton pRipple  *ngIf="!this.isReadonly" class="p-button-success" label="Save" icon="pi pi-save"
+              <button pButton pRipple  *ngIf="!isReadonly" class="p-button-success" label="Save" icon="pi pi-save"
               (click)="updateUserInfo()" [disabled]="this.profileForm.invalid || isLoading">
               </button>
-              <button pButton pRipple  *ngIf="this.isReadonly" class="p-button-warning" 
+              <button pButton pRipple  *ngIf="isReadonly" class="p-button-warning" 
               (click)="setEditMode()" label="Edit" icon="pi pi-pencil"
               >
               </button>
@@ -146,7 +146,8 @@
         </div>
         <div class="col-12 py-4 avatar-action-container">
           <div class="d-flex flex-column justify-content-center px-4">
-            <p-fileUpload #fileUploader [showCancelButton]="true" [showUploadButton]="false" [customUpload]="true" 
+            <p-fileUpload *ngIf="this.userProfile.amIOwner"
+            #fileUploader [showCancelButton]="true" [showUploadButton]="false" [customUpload]="true" 
             mode="advanced" name="avatar" [disabled]="isReadonly"
             [maxFileSize]="10000000" (onSelect)="setAvatarToUpload($event)" skinSimple="true" accept="image/*" [fileLimit]="1">
           </p-fileUpload>
