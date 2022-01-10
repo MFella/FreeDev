@@ -1,55 +1,6 @@
-<!-- <div class="container-fluid">
-  <div class="row py-4">
-    <div class="col-md-12">
-      <div class="card mx-auto w-25">
-        <div class="card-header text-center">
-          <h3 class="w-100 d-flex flex-row justify-content-center"> 
-            <fa-icon [icon]="icons[0]"></fa-icon> 
-            <span>Login here</span>
-          </h3>
-        </div>
-        <div class="card-body">
-          <form [formGroup]="loginForm">
-            <div class="form-label-group mb-3">
-              <input type="text" name="email" class="form-control input_user" id="email"
-              value="" placeholder="" formControlName="email" (keydown.enter)="login($event)"
-              [ngClass]="{'is-valid': this.loginForm.controls.email.status === 'VALID',
-                  'is-invalid': this.loginForm.controls.email.status === 'INVALID' && this.loginForm.controls.email.touched
-                  && this.loginForm.controls.email.value.length !== 0}">
-              <label for="email">Email</label>
-              <div class="invalid-feedback">
-                <p class="m-0" *ngIf="this.loginForm.get('email')?.errors?.pattern">&#x2192; Bad pattern of email</p>
-                <p *ngIf="this.loginForm.get('email')?.errors?.minlength">&#x2192; Min length 6</p>
-                <p *ngIf="this.loginForm.get('email')?.errors?.maxlength">&#x2192; Max length 320</p>
-              </div>
-            </div>
-            <div class="form-label-group mb-2">
-              <input type="password" name="password" id="password"
-              class="form-control input_pass" value="" placeholder="" formControlName="password" (keydown.enter)="login($event)"
-              [ngClass]="{'is-valid': this.loginForm.controls.password.status === 'VALID' && !this.loginForm.errors?.mismatchPassword,
-              'is-invalid': this.loginForm.controls.password.status === 'INVALID' && this.loginForm.controls.password.touched
-              && this.loginForm.controls.password.value.length !== 0 || this.loginForm.errors?.mismatchPassword}">
-              <label for="password">Password</label>
-              <div class="invalid-feedback">
-                <p class="m-0" *ngIf="this.loginForm.get('password')?.errors?.pattern">&#x2192; 1 special character, 1 number</p>
-                <p *ngIf="this.loginForm.get('password')?.errors?.minlength">&#x2192; Min length 10</p>
-              </div>
-            </div>
-            <div class="w-100 text-center login-btn-container">
-              <button class="btn btn-info login-btn" [disabled]="this.loginForm.invalid" (click)="login($event)"> 
-                <span>Login</span>
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> -->
-
 <div class="grid mt-4">
-  <div class="col-4"></div>
-  <div class="col-4">
+  <div class="col-3"></div>
+  <div class="md:col-6 sm:col-12">
     <p-card styleClass="">
       <ng-template pTemplate="header">
         <div class="header-container flex justify-content-center align-items-center py-4 h-full">
@@ -93,6 +44,6 @@
         </ng-template>
   </p-card>
 </div>
-  <div class="col-4"></div>
+  <div class="col-3"></div>
 </div>
 

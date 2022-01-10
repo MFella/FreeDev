@@ -1,14 +1,14 @@
 <div class="grid p-4">
-    <div class="col-4 pt-4 my-auto">
+    <div class="col-4 pt-4 my-auto placeholder-img-col">
       <img class="dashboard-image" src="../../assets/computer-money.jpg" alt="Stonks">
     </div>
-    <div class="col-8 my-auto">
+    <div class="col-8 my-auto text-content-col">
       <div class="jumbotron p-4 w-full">
         <h1 class="display-4">This is your time!</h1>
         <p class="lead">By using your programming skills, you can earn money</p>
         <p-divider></p-divider>
         <p>Feel free to browse offers which meet your expectations.</p>
-        <button pButton class="btn btn-primary btn-lg w-10rem" styleClass="flex justify-content-between" 
+        <button *ngIf="!authServ.storedUser" pButton class="btn btn-primary btn-lg w-10rem" styleClass="flex justify-content-between" 
         role="button" icon="pi pi-arrow-right" [routerLink]="['/register']">Go to Register</button>
       </div>
     </div>

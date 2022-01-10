@@ -2,7 +2,7 @@
     <div class="col-12">
         <p-card>
             <div class="grid">
-                <div class="col-8">
+                <div class="md:col-8 sm:col-12">
                     <p-card>
                         <ng-template pTemplate="header">
                             <div class="offer-main-header w-full flex justify-content-left px-4">
@@ -20,11 +20,11 @@
                                 <p-divider></p-divider>
                                 <div class="offer-main-content-salary-level">
                                     <div class="grid">
-                                        <div class="col-6 flex flex-column">
+                                        <div class="sm:col-12 md:col-6 flex flex-column">
                                             <strong>Entry Level</strong>
                                             <small class="pt-2 pl-2">{{offerToDisplay.experienceLevel}}</small>
                                         </div>
-                                        <div class="col-6 flex flex-column">
+                                        <div class="sm:col-12 md:col-6 flex flex-column">
                                             <strong>Salary</strong>
                                             <small class="pt-2 pl-2">{{offerToDisplay.salary}} $</small>
                                         </div>
@@ -35,7 +35,7 @@
                                     <strong>Required skills</strong>
                                     <div class="badge-skills-container pt-3">
                                     <p-badge *ngFor="let tag of offerToDisplay.tags"
-                                        class="ml-2" [value]="'#' + tag">
+                                        styleClass="ml-2 mt-2" [value]="'#' + tag">
                                     </p-badge>
                                     </div>
                                 </div>
@@ -44,7 +44,7 @@
                         </ng-template>
                     </p-card>
                 </div>
-                <div class="col-4">
+                <div class="sm:col-12 md:col-4">
                     <p-card>
                         <ng-template pTemplate="header">
                             <div class="offer-side-header flex justify-content-between align-items-center p-4">

@@ -24,3 +24,31 @@
     }
   }
 }
+
+@media only screen and (max-width: 1000px) {
+  :host ::ng-deep .saved-offers-filters {
+    flex-direction: column !important;
+    .saved-offers-title-filter {
+      max-width: 100% !important;
+    }
+    .saved-offers-date-filter {
+      text-align: left !important;
+      margin-top: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .p-calendar {
+        width: 100% !important;
+      }
+    }
+  }
+  :host ::ng-deep .offer-date-with-action {
+    button {
+      display: flex;
+      justify-content: center;
+      .p-button-label {
+        display: none;
+      }
+    }
+  }
+}

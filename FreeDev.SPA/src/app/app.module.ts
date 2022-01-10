@@ -42,9 +42,12 @@ import { BadgeModule } from 'primeng/badge';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { SavedOffersComponent } from './saved-offers/saved-offers.component';
 import { CalendarModule } from 'primeng/calendar';
+import { CallComponent } from './call/call.component';
+import { DynamicDialogModule } from 'primeng/dynamicdialog';
+import { DecisionCallComponent } from './decision-call/decision-call.component';
 
 @NgModule({
-  declarations: [
+  declarations: [	
     AppComponent,
     NavComponent,
     HomeComponent,
@@ -57,7 +60,9 @@ import { CalendarModule } from 'primeng/calendar';
     MessagesComponent,
     OfferDetailsComponent,
     SavedOffersComponent,
-  ],
+    CallComponent,
+      DecisionCallComponent
+   ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -88,6 +93,7 @@ import { CalendarModule } from 'primeng/calendar';
     SliderModule,
     BadgeModule,
     CalendarModule,
+    DynamicDialogModule,
   ],
   providers: [
     NotyService,

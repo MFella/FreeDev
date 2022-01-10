@@ -12,3 +12,12 @@
   color: var(--bluegray-100);
   border-radius: 1.5rem;
 }
+
+@media only screen and (max-width: 500px) {
+  .text-content-col {
+    width: 100%;
+  }
+  .placeholder-img-col {
+    display: none;
+  }
+}

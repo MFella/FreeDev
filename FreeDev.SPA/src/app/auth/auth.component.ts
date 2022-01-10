@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { faGem, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { Subject } from 'rxjs';
 import { UserToLoginDto } from '../dtos/users/userToLoginDto';
 import { AuthService } from '../services/auth.service';
 import { NotyService } from '../services/noty.service';
@@ -36,6 +37,7 @@ export class AuthComponent implements OnInit {
         this.loginForm.reset();
         this.noty.success('You have been logged in successfully!');
         this.router.navigate(['/home']);
+        this.authService.loginAction$.next();
       },
       (error: HttpErrorResponse) => {
         this.noty.error(error.error.message);

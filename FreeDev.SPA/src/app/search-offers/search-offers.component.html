@@ -11,7 +11,39 @@
       </ng-template>
       <ng-template pTemplate="content">
         <div class="grid">
-          <div class="col-8">
+          <div class="md:col-4 sm:col-12">
+            <p-card styleClass="bg-gray-900">
+            <ng-template pTemplate="header">
+              <div class="filters-card-header-container flex justify-content-center align-items-center">
+                <h3 class="text-center flex justify-content-center align-items-center">
+                  <i class="pi pi-filter pr-2"></i>
+                   <span>Applied Filters</span>
+                </h3>
+              </div>
+              <p-divider styleClass="m-0 p-0"></p-divider>
+            </ng-template>
+            <ng-template pTemplate="content">
+              <div class="filters-card-content-container">
+                <div class="filter-salary-container flex flex-row justify-content-between align-items-center">
+                  <span>
+                    Salary Range:
+                    <strong class="pl-2">{{salaryRange[0] + ' - ' + salaryRange[1]}}</strong>
+                  </span>
+                  <p-slider [(ngModel)]="salaryRange" [range]="true" [min]="finalMinSalary" [max]="finalMaxSalary" class="salary-slider"></p-slider>
+                </div>
+                <div class="filter-date-container flex flex-row justify-content-between align-items-center">
+                  <span>Period</span>
+                  <p-dropdown [options]="periods" [(ngModel)]="selectedPeriod" optionLabel="label"></p-dropdown>
+                </div>
+                <div class="filter-level-container flex flex-row justify-content-between align-items-center">
+                  <span>Entry Level</span>
+                  <p-dropdown [options]="levels" [(ngModel)]="selectedEntryLevel" optionLabel="label"></p-dropdown>
+                </div>
+              </div>
+            </ng-template>
+            </p-card>
+          </div>
+          <div class="md:col-8 sm:col-12">
             <div class="p-inputgroup">
               <button type="button" pButton pRipple label="Search" icon="pi pi-search" (click)="searchForOffers()"></button>
               <p-chips [(ngModel)]="tags" [allowDuplicate]="false" (onAdd)="checkIfCanBeAdded($event)"></p-chips>   
@@ -46,38 +78,6 @@
                 </div>
               </ng-template>
           </p-orderList>
-          </div>
-          <div class="col-4">
-            <p-card styleClass="bg-gray-900">
-            <ng-template pTemplate="header">
-              <div class="filters-card-header-container flex justify-content-center align-items-center">
-                <h3 class="text-center flex justify-content-center align-items-center">
-                  <i class="pi pi-filter pr-2"></i>
-                   <span>Applied Filters</span>
-                </h3>
-              </div>
-              <p-divider styleClass="m-0 p-0"></p-divider>
-            </ng-template>
-            <ng-template pTemplate="content">
-              <div class="filters-card-content-container">
-                <div class="filter-salary-container flex flex-row justify-content-between align-items-center">
-                  <span>
-                    Salary Range:
-                    <strong class="pl-2">{{salaryRange[0] + ' - ' + salaryRange[1]}}</strong>
-                  </span>
-                  <p-slider [(ngModel)]="salaryRange" [range]="true" [min]="finalMinSalary" [max]="finalMaxSalary" class="salary-slider"></p-slider>
-                </div>
-                <div class="filter-date-container flex flex-row justify-content-between align-items-center">
-                  <span>Period</span>
-                  <p-dropdown [options]="periods" [(ngModel)]="selectedPeriod" optionLabel="label"></p-dropdown>
-                </div>
-                <div class="filter-level-container flex flex-row justify-content-between align-items-center">
-                  <span>Entry Level</span>
-                  <p-dropdown [options]="levels" [(ngModel)]="selectedEntryLevel" optionLabel="label"></p-dropdown>
-                </div>
-              </div>
-            </ng-template>
-            </p-card>
           </div>
         </div>
       </ng-template>

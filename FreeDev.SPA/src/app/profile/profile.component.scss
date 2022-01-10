@@ -88,3 +88,81 @@
     margin-left: 0.5rem;
   }
 }
+
+@media only screen and (max-width: 1260px) and (min-width: 992px) {
+  :host ::ng-deep .p-fileupload-buttonbar {
+    .p-button-label {
+      display: none;
+    }
+  }
+}
+
+@media only screen and (max-width: 992px) {
+  .main-form-grid {
+    margin-top: 2rem !important;
+  }
+
+  .nested-grid-with-margin {
+    margin: 0 !important;
+  }
+
+  .user-avatar-col {
+    padding-left: 0.5rem !important;
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .sm\:col-12 {
+    flex: 0 0 auto;
+    padding: 0.5rem;
+    width: 100%;
+  }
+  :host ::ng-deep .p-card-content {
+    .p-surname-col {
+      padding-top: 2rem !important;
+    }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  :host ::ng-deep .header-container {
+    .header-button-group {
+      button {
+        height: 2rem;
+        padding: 0.5rem;
+        .p-button-label {
+          display: none;
+        }
+        .p-button-icon {
+          margin: 0;
+        }
+      }
+    }
+    h2 {
+      font-size: 1rem;
+    }
+  }
+}
+
+@media only screen and (max-width: 380px) {
+  :host ::ng-deep .p-fileupload {
+    width: 10rem;
+  }
+
+  :host ::ng-deep .p-fileupload-buttonbar {
+    .p-button-label {
+      display: none;
+    }
+  }
+
+  .avatar-action-container {
+    display: flex;
+    justify-content: center;
+  }
+
+  .profile-photo-container {
+    .profile-photo {
+      width: 80vw;
+    }
+  }
+}

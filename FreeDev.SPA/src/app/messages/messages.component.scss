@@ -5,6 +5,10 @@
 //     }
 //   }
 // }
+@mixin horizontalPadding($padding) {
+  padding-left: $padding;
+  padding-right: $padding;
+}
 
 ::-webkit-scrollbar {
   width: 10px;
@@ -207,5 +211,35 @@
         }
       }
     }
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  :host ::ng-deep .p-card {
+    .card-user-header {
+      display: none;
+      h4 {
+        font-size: 0.75rem;
+        max-width: 10rem;
+      }
+      .action-buttons-container {
+        button {
+          padding: 0;
+          width: 2rem !important;
+          height: 2rem !important;
+        }
+      }
+    }
+  }
+  .user-chat-col {
+    margin-top: 1rem;
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  .user-list-col {
+    margin-top: 1rem;
+    width: 100%;
+    @include horizontalPadding(1rem);
   }
 }

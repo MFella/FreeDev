@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment as env } from 'src/environments/environment';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { AfterLoginInfoDto } from '../dtos/users/afterLoginInfoDto';
 import { take, tap } from 'rxjs/operators';
 import * as moment from 'moment';
@@ -25,6 +25,8 @@ export class AuthService {
       this.storedUser = userFromLS;
     }
   }
+
+  loginAction$: Subject<void> = new Subject();
 
   storedUser: any = null;
 

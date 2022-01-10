@@ -28,6 +28,9 @@
     flex-direction: column;
     justify-content: space-between;
     .filter-salary-container {
+      strong {
+        width: 40%;
+      }
       .salary-slider {
         width: 50%;
       }
@@ -61,4 +64,42 @@
 .nothing-to-display-splash {
   font-weight: bold;
   text-align: center;
+}
+
+@media only screen and (max-width: 1000px) {
+  :host ::ng-deep .p-orderlist-offer-container {
+    .offer-short-info {
+      .offer-short-description {
+        width: auto !important;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  :host ::ng-deep .p-orderlist {
+    display: flex;
+    justify-content: center;
+    .p-orderlist-list-container {
+      max-width: 80vw !important;
+    }
+    button {
+      display: flex;
+      justify-content: center;
+      .p-button-label {
+        display: none;
+      }
+      .p-button-icon {
+        margin: 0 !important;
+      }
+    }
+    .p-badge {
+      margin-top: 0.5rem;
+    }
+  }
+  .sm\:col-12 {
+    flex: 0 0 auto;
+    padding: 0.5rem;
+    width: 100%;
+  }
 }

@@ -1,3 +1,4 @@
+import { CallComponent } from './../call/call.component';
 import { LocalStorageService } from './../services/local-storage.service';
 import { Pagination } from './../types/pagination';
 import {
@@ -25,11 +26,14 @@ import { UsersService } from '../services/users.service';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
 import { map, switchMap, take } from 'rxjs/operators';
 import { timer } from 'rxjs';
+import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { DecisionCallComponent } from '../decision-call/decision-call.component';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss'],
+  providers: [DialogService],
 })
 export class MessagesComponent implements OnInit, AfterViewInit {
   @ViewChild('paginator')
@@ -82,7 +86,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     private readonly route: ActivatedRoute,
     private readonly lsServ: LocalStorageService,
     private readonly usersServ: UsersService,
-    private readonly changeDetectorRef: ChangeDetectorRef
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly dialogService: DialogService
   ) {}
 
   ngOnInit() {
@@ -204,6 +209,34 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     // function from wsServ //
     this.wsServ.sendPrivateMessage(messageToCreateDto);
     this.userMessage = '';
+  }
+
+  startVoiceCall(): void {
+    const ref = this.dialogService.open(CallComponent, {
+      data: {
+        guestAvatarUrl: this.selectedUser?.avatar?.url,
+        yourAvatarUrl: this.authServ.storedUser?.userAvatar,
+      },
+      showHeader: false,
+      width: '90%',
+    });
+  }
+
+  startRequestCall(guestAvatarUrl = '', guestName = ''): void {
+    const ref = this.dialogService.open(DecisionCallComponent, {
+      data: {
+        guestAvatarUrl,
+        guestName,
+      },
+      header: 'Incoming call',
+      width: '50%',
+    });
+  }
+
+  private observeCloseOfConnection(ref: DynamicDialogRef): void {
+    ref.onClose.subscribe((response: any) => {
+      console.log('do something after close...');
+    });
   }
 
   private scrollToBottom(): void {

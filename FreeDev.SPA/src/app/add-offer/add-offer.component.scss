@@ -83,3 +83,24 @@ input.title-input {
 .invalid-feedback-offset {
   padding-top: 4rem;
 }
+
+@media only screen and (max-width: 576px) {
+  .sm\:col-12 {
+    flex: 0 0 auto;
+    padding: 0.5rem;
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .salary-col,
+  .skills-col {
+    margin-top: 3rem !important;
+  }
+  .input-group-prepend {
+    right: 0 !important;
+  }
+  input.title-input {
+    width: 100%;
+  }
+}

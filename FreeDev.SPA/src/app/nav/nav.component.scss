@@ -85,3 +85,12 @@
   opacity: 1;
   transform: translateY(0rem) scale(1);
 }
+
+@media only screen and (max-width: 960px) {
+  :host ::ng-deep .p-menubar {
+    a.p-menubar-button {
+      position: absolute !important;
+      right: 1rem !important;
+    }
+  }
+}

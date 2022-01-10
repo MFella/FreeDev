@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import {
   faCog,
   faComments,
@@ -48,12 +48,14 @@ export class NavComponent implements OnInit {
 
   ngOnInit(): void {
     this.setNavItems();
+    this.observeLoggedInAction();
   }
 
   logout(): void {
     this.authServ.logout();
     this.noty.success('You have been logged out');
     this.router.navigate(['home']);
+    this.setNavItems();
   }
 
   navigateToProfile(): void {
@@ -74,18 +76,46 @@ export class NavComponent implements OnInit {
     return this.localStorageService.getUser()?.role === Roles.HUNTER;
   }
 
+  observeLoggedInAction(): void {
+    this.authServ.loginAction$.subscribe(() => this.setNavItems());
+  }
+
   private setNavItems(): void {
+    this.setBasicNavItems();
+    if (this.authServ?.storedUser) {
+      this.items.push(...this.getLoggedMenuOptions());
+    } else {
+      this.items.push(...this.getNotLoggedMenuOptions());
+    }
+  }
+
+  private setBasicNavItems(): void {
     this.items = [
       {
         label: 'Home',
         icon: 'pi pi-fw pi-user',
         routerLink: 'home',
       },
+    ];
+  }
+
+  private getNotLoggedMenuOptions(): Array<object> {
+    return [
       {
-        label: 'Add Offer',
-        icon: 'pi pi-fw pi-plus',
-        routerLink: 'add-offer',
+        label: 'Login',
+        icon: 'pi pi-fw pi-sign-in',
+        routerLink: 'login',
       },
+      {
+        label: 'Sign up',
+        icon: 'pi pi-fw pi-user-plus',
+        routerLink: 'register',
+      },
+    ];
+  }
+
+  private getLoggedMenuOptions(): Array<object> {
+    let basicLoggedOptions = [
       {
         label: 'Messages',
         icon: 'pi pi-fw pi-comments',
@@ -97,14 +127,9 @@ export class NavComponent implements OnInit {
         routerLink: 'search-offers',
       },
       {
-        label: 'Login',
-        icon: 'pi pi-fw pi-sign-in',
-        routerLink: 'login',
-      },
-      {
-        label: 'Sign up',
-        icon: 'pi pi-fw pi-user-plus',
-        routerLink: 'register',
+        label: 'Add Offer',
+        icon: 'pi pi-fw pi-plus',
+        routerLink: 'add-offer',
       },
       {
         label: 'More Actions',
@@ -132,5 +157,12 @@ export class NavComponent implements OnInit {
         ],
       },
     ];
+
+    if (this.authServ.storedUser.role !== Roles.HUNTER) {
+      basicLoggedOptions = basicLoggedOptions.filter(
+        (option: any) => option.label !== 'Add Offer'
+      );
+    }
+    return basicLoggedOptions;
   }
 }

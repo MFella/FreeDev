@@ -115,16 +115,30 @@ export class UsersService {
 
   async findUserByEmail(email: string): Promise<any> {
     const hipoDeveloper = await (
-      await this.developerModel.findOne({ email }).exec()
+      await this.developerModel
+        .findOne({ email })
+        .populate('avatar', { url: 1 })
+        .exec()
     )?.toObject();
 
-    if (hipoDeveloper) return hipoDeveloper;
+    const hipoDeveloperAvatar = await this.fileServ.getSignedFileUrl(
+      hipoDeveloper?.avatar?.key,
+    );
+
+    if (hipoDeveloper)
+      return { userAvatar: hipoDeveloperAvatar, ...hipoDeveloper };
 
     const hipoHunter = (
-      await this.hunterModel.findOne({ email }).exec()
+      await this.hunterModel
+        .findOne({ email })
+        .populate('avatar', { url: 1 })
+        .exec()
     )?.toObject();
 
-    if (hipoHunter) return hipoHunter;
+    const hipoHunterAvatar = await this.fileServ.getSignedFileUrl(
+      hipoHunter?.avatar?.key,
+    );
+    if (hipoHunter) return { userAvatar: hipoHunterAvatar, ...hipoHunter };
 
     return {};
   }

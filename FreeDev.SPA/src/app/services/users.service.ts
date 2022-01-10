@@ -44,7 +44,6 @@ export class UsersService {
     name: string = '',
     typeOfUser: string | TypeOfSearchUser = TypeOfSearchUser.BOTH
   ): Observable<{ result: Array<any>; numberOfTotalRecords: number }> {
-    console.log('co jest tutajm grane', typeOfUser);
     return this.http.get<{ result: Array<any>; numberOfTotalRecords: number }>(
       this.getRestUrl() +
         `users/filtered-users-list?pageNo=${pageNo}&perPage=${perPage}&name=${name?.trim()}

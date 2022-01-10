@@ -9,7 +9,7 @@
       </ng-template>
       <ng-template pTemplate="body">
         <div class="grid">
-          <div class="col-8">
+          <div class="sm:col-12 md:col-8">
             <span class="p-float-label">
               <input type="text" class="title-input" placeholder="" pInputText name="name" formControlName="title"
               [ngClass]="{'is-valid': this.offerForm.controls.title.status === 'VALID',
@@ -21,7 +21,7 @@
               </div>
             </span>
           </div>
-          <div class="col-4">
+          <div class="sm:col-12 md:col-4 salary-col">
             <span class="p-float-label">
                 <div class="input-group-prepend">
                   <div class="input-group-text">$</div>
@@ -49,13 +49,13 @@
               </div>
             </span>
           </div>
-          <div class="col-8 invalid-feedback-offset">
+          <div class="sm:col-12 md:col-8 invalid-feedback-offset skills-col">
             <span class="p-float-label w-full">
               <p-chips formControlName="tags" styleClass="w-full" [allowDuplicate]="false" (onBlur)="onBlur()"></p-chips>
               <label for="tags">Skills</label>
             </span>
           </div>
-          <div class="col-4 invalid-feedback-offset">
+          <div class="sm:col-12 md:col-4 invalid-feedback-offset">
             <span class="p-float-label">
               <label for="name">Experience level</label>
               <p-dropdown styleClass="w-full" [options]="experienceLevels" formControlName="experienceLevel" placeholder="Select Experience"

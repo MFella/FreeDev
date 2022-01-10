@@ -1,16 +1,36 @@
 
   <form [formGroup]="profileForm">
-    <div class="grid mt-2">
+    <div class="grid mt-2 main-form-grid">
+      <div class="md:col-12 lg:col-4 pl-4 user-avatar-col">
+        <div class="grid ml-4 nested-grid-with-margin">
+          <div class="col-12">
+            <div class="profile-photo-container position-relative">
+              <img [src]="this.userProfile.avatarUrl"
+              alt="Some Placeholder"
+              class="profile-photo">
+            </div>
+          </div>
+          <div class="col-12 py-4 avatar-action-container">
+            <div class="d-flex flex-column justify-content-center px-4">
+              <p-fileUpload *ngIf="this.userProfile.amIOwner"
+              #fileUploader [showCancelButton]="true" [showUploadButton]="false" [customUpload]="true" 
+              mode="advanced" name="avatar" [disabled]="isReadonly"
+              [maxFileSize]="10000000" (onSelect)="setAvatarToUpload($event)" skinSimple="true" accept="image/*" [fileLimit]="1">
+            </p-fileUpload>
+            </div>
+          </div>
+        </div>
+      </div>
       
-    <div class="col-8">
+    <div class="md:col-12 lg:col-8">
 
       <p-card>
         <ng-template pTemplate="header">
           <div class="header-container flex justify-content-between align-items-center h-full">
             <h2 class="pl-3">Account Details</h2>
             <div class="header-button-group position-relative mr-4" *ngIf="this.userProfile.amIOwner">
-              <div class="inline-block pr-3 pb-1">
-                <i class="pi pi-spin pi-spinner" style="font-size: 2rem" *ngIf="isLoading"></i>
+              <div class="inline-block pr-3 pb-1" *ngIf="isLoading">
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
               </div>
               <button pButton pRipple *ngIf="!isReadonly" type="button" label="Cancel" icon="pi pi-times" class="p-button-danger"
               (click)="cancelEditMode()" [disabled]="this.profileForm.invalid || isLoading"></button>
@@ -29,7 +49,7 @@
         <ng-template pTemplate="body">
 
           <div class="grid mt-4">
-            <div class="col-6">
+            <div class="sm:col-12 md:col-6">
               <span class="p-float-label">
                 <input class="w-full" type="text" pInputText placeholder="" name="name" formControlName="name"
                 [ngClass]="{'is-valid': this.profileForm.controls.name.status === 'VALID' && !isReadonly,
@@ -42,7 +62,7 @@
                 </div>
               </span>
             </div>
-            <div class="col-6">
+            <div class="sm:col-12 md:col-6 p-surname-col">
               <span class="p-float-label">
                 <input pInputText type="text" class="form-control w-full" placeholder="" name="surname" formControlName="surname"
                 [ngClass]="{'is-valid': this.profileForm.controls.surname.status === 'VALID' && !isReadonly,
@@ -56,7 +76,7 @@
                 </div>
               </span>
             </div>
-            <div class="col-4 padding-with-offset">
+            <div class="sm:col-12 md:col-4 padding-with-offset">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="email" formControlName="email"
                 [ngClass]="{'is-valid': this.profileForm.controls.email.status === 'VALID' && !isReadonly,
@@ -65,7 +85,7 @@
                 <label for="email">Email</label>
               </span>
             </div>
-            <div class="col-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="country" formControlName="country"
                 [ngClass]="{'is-valid': this.profileForm.controls.country.status === 'VALID' && this.profileForm.controls.country.value.length && !isReadonly,
@@ -78,7 +98,7 @@
                 </div>
               </span>
             </div>
-            <div class="col-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="city" formControlName="city"
                 [ngClass]="{'is-valid': this.profileForm.controls.city.status === 'VALID' && this.profileForm.controls.city.value.length && !isReadonly,
@@ -92,13 +112,13 @@
               </span>
             </div>
 
-            <div class="col-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="companyName" formControlName="companyName" [readonly]="isReadonly">
                 <label for="companyName">Name of Company</label>
               </span>
             </div>
-            <div class="col-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="businessOffice" formControlName="businessOffice" [readonly]="isReadonly">
                 <label for="businessOffice">Business Office</label>
@@ -112,13 +132,13 @@
               </span>
             </div>
 
-            <div class="col-6 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
               <span class="p-float-label">
                 <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3" formControlName="technologies" [readonly]="isReadonly"></textarea>  
                 <label class="normal-label" for="technologies">Technologies*</label>
               </span>
             </div>
-            <div class="col-6 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
               <span class="p-float-label">
                 <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3" formControlName="hobbies" [readonly]="isReadonly"></textarea>  
                 <label class="normal-label" for="hobbies">Hobbies*</label>
@@ -134,26 +154,6 @@
           </div>
         </ng-template>
       </p-card>
-    </div>
-    <div class="col-4 pl-4">
-      <div class="grid ml-4">
-        <div class="col-12">
-          <div class="profile-photo-container position-relative">
-            <img [src]="this.userProfile.avatarUrl"
-            alt="Some Placeholder"
-            class="profile-photo">
-          </div>
-        </div>
-        <div class="col-12 py-4 avatar-action-container">
-          <div class="d-flex flex-column justify-content-center px-4">
-            <p-fileUpload *ngIf="this.userProfile.amIOwner"
-            #fileUploader [showCancelButton]="true" [showUploadButton]="false" [customUpload]="true" 
-            mode="advanced" name="avatar" [disabled]="isReadonly"
-            [maxFileSize]="10000000" (onSelect)="setAvatarToUpload($event)" skinSimple="true" accept="image/*" [fileLimit]="1">
-          </p-fileUpload>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </form>

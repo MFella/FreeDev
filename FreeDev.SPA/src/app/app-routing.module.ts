@@ -1,3 +1,4 @@
+import { CallComponent } from './call/call.component';
 import { SavedOffersResolver } from './resolvers/saved-offers.resolver';
 import { SavedOffersComponent } from './saved-offers/saved-offers.component';
 import { MessagesComponent } from './messages/messages.component';

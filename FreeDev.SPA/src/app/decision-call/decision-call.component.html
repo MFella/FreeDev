@@ -1,0 +1,17 @@
+<div class="grid">
+  <div class="col-4">
+    <div class="decision-call-avatar-container">
+      <img class="" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="Guest avatar">
+    </div>
+  </div>
+  <div class="col-8">
+    <div class="decision-call-container flex flex-column">
+      <h2 class="decision-call-header">Someone is calling you!</h2>
+      <p-divider></p-divider>
+      <div class="decision-call-btn-container w-full flex justify-content-around">
+        <button pButton pRipple class="p-button-success" label="Accept" icon="pi pi-phone"></button>
+        <button pButton pRipple class="p-button-danger" label="Decline" icon="pi pi-times" (click)="rejectCall()"></button>
+      </div>
+    </div>
+  </div>
+</div>

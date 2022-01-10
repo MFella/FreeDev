@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  .p-divider {
+    margin-top: 0;
+  }
+}
+
+.grid {
+  .col-4 {
+    .decision-call-avatar-container {
+      img {
+        max-width: 15rem;
+      }
+    }
+  }
+
+  .col-8 {
+    padding: 1.5rem;
+  }
+}

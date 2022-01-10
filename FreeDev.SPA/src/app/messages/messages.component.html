@@ -1,56 +1,6 @@
 <div class="container-fluid pt-4">
   <div class="grid pt-4">
-    <div class="col-8">
-      <p-card styleClass="border-round">
-        <ng-template pTemplate="header">
-          <div class="card-user-header flex p-3">
-            <div class="header-avatar-container" *ngIf="!selectedUser">
-              <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="">
-            </div>
-            <div class="header-avatar-container" *ngIf="selectedUser">
-              <img class="avatar" src="{{selectedUser.avatar?.url}}" alt="">
-            </div>
-            <div class="online-dot-container">
-              <div class="green-dot"></div>
-            </div>
-            <div class="flex justify-content-between align-items-center w-full">
-              <h4 *ngIf="selectedUser" class="mb-0 pl-2">Chat with {{selectedUser.name + ' ' + selectedUser.surname}}</h4>
-              <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user has been selected</h4>
-              <div class="action-buttons-container">
-                <button pButton pRipple type="button" icon="pi pi-phone" class="p-button-rounded p-button-success p-button-icon-only mr-2"
-                pTooltip="Start call" tooltipPosition="top"></button>
-                <button pButton pRipple type="button" icon="pi pi-video" class="p-button-rounded p-button-icon-only"
-                pTooltip="Start video" tooltipPosition="top"></button>
-              </div>
-            </div>
-
-          </div>
-        </ng-template>  
-        <ng-template pTemplate="body">
-          <div class="message-content-list p-4" #messagesContainer (scroll)="fetchMessagesOnScroll()">
-            <div class="card-text message-content-container"
-            *ngFor="let message of this.messages" pTooltip="{{message.sendTime.toString().split('T')[0]
-            + ' ' + message.sendTime.toString().split('T')[1].split('.')[0]}}"
-            [ngClass]="{'is-mine': message.amIOwner}">
-              <span class="message-content">{{message.message}}</span>
-            </div> 
-          </div>
-        </ng-template>
-        <ng-template pTemplate="footer">
-          <div class="message-input-container">
-            <input pInputText class="form-control message-input w-full mr-3" type="text" [(ngModel)]="userMessage"
-            (keydown.enter)="sendMessage()" [disabled]="privateRoomKey === ''" [placeholder]="privateRoomKey === '' ? 'Select user first' : ''">
-            <button pButton type="button" label="Send" icon="pi pi-send" iconPos="right"
-              class="p-button-md p-button-primary send-message-button" (click)="sendMessage()" [disabled]="privateRoomKey === ''"></button>
-          </div>
-        </ng-template>
-      </p-card>
-      <div class="card">
-        <div class="card-body">
-        </div>
-      </div>
-    </div>
-    <div class="col-4">
+    <div class="sm:col-12 md:col-12 lg:col-4 user-list-col">
 
       <p-card>
         <ng-template pTemplate="header">
@@ -103,6 +53,56 @@
           </p-paginator>
         </ng-template>
       </p-card>
+    </div>
+    <div class="sm:col-12 md:col-12 lg:col-8 user-chat-col">
+      <p-card styleClass="border-round">
+        <ng-template pTemplate="header">
+          <div class="card-user-header flex p-3">
+            <div class="header-avatar-container" *ngIf="!selectedUser">
+              <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="">
+            </div>
+            <div class="header-avatar-container" *ngIf="selectedUser">
+              <img class="avatar" src="{{selectedUser.avatar?.url}}" alt="">
+            </div>
+            <div class="online-dot-container">
+              <div class="green-dot"></div>
+            </div>
+            <div class="flex justify-content-between align-items-center w-full">
+              <h4 *ngIf="selectedUser" class="mb-0 pl-2">{{selectedUser.name + ' ' + selectedUser.surname}}</h4>
+              <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user selected</h4>
+              <div class="action-buttons-container">
+                <button pButton pRipple type="button" icon="pi pi-phone" class="p-button-rounded p-button-success p-button-icon-only mr-2"
+                pTooltip="Start call" tooltipPosition="top" [disabled]="privateRoomKey === ''" (click)="startRequestCall()"></button>
+                <button pButton pRipple type="button" icon="pi pi-video" class="p-button-rounded p-button-icon-only"
+                pTooltip="Start video" tooltipPosition="top" [disabled]="privateRoomKey === ''"></button>
+              </div>
+            </div>
+
+          </div>
+        </ng-template>  
+        <ng-template pTemplate="body">
+          <div class="message-content-list p-4" #messagesContainer (scroll)="fetchMessagesOnScroll()">
+            <div class="card-text message-content-container"
+            *ngFor="let message of this.messages" pTooltip="{{message.sendTime.toString().split('T')[0]
+            + ' ' + message.sendTime.toString().split('T')[1].split('.')[0]}}" tooltipPosition="left"
+            [ngClass]="{'is-mine': message.amIOwner}">
+              <span class="message-content">{{message.message}}</span>
+            </div> 
+          </div>
+        </ng-template>
+        <ng-template pTemplate="footer">
+          <div class="message-input-container">
+            <input pInputText class="form-control message-input w-full mr-3" type="text" [(ngModel)]="userMessage"
+            (keydown.enter)="sendMessage()" [disabled]="privateRoomKey === ''" [placeholder]="privateRoomKey === '' ? 'Select user first' : ''">
+            <button pButton type="button" label="Send" icon="pi pi-send" iconPos="right"
+              class="p-button-md p-button-primary send-message-button" (click)="sendMessage()" [disabled]="privateRoomKey === ''"></button>
+          </div>
+        </ng-template>
+      </p-card>
+      <div class="card">
+        <div class="card-body">
+        </div>
+      </div>
     </div>
   </div>
 </div>

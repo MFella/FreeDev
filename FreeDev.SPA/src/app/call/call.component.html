@@ -1,0 +1,43 @@
+<div class="grid p-4">
+  <div class="col-12">
+    <p-card class="whole-media-container" styleClass="w-50">
+      <ng-template pTemplate="header">
+        <div class="your-media-header-container">
+          <h2 class="m-0 p-4">
+            <div class="action-button-container w-full flex justify-content-center">
+              <span *ngIf="!isConnected" class="mr-3">
+                  <span class="pr-2">Waiting</span>
+                <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i></span>
+              <button pButton pRipple class="p-button-danger p-button-subtle" 
+              icon="pi pi-times-circle" label="End call" (click)="finishCall()"></button>
+              <button pButton pRipple class="p-button-primary p-button-subtle ml-2" 
+              icon="pi pi-volume-off" label="Toggle mic" (click)="toggleMic()"></button>
+              <button pButton pRipple class="p-button-secondary p-button-subtle ml-2" 
+              icon="pi pi-video" label="Toggle camera" (click)="toggleCamera()"></button>
+            </div>
+          </h2>
+        </div>
+        <p-divider styleClass="m-0"></p-divider>
+      </ng-template>
+      <ng-template pTemplate="content">
+        <div class="whole-media-content-container">
+          <div class="grid">
+            <div class="col-6">
+              <div class="your-avatar-container flex flex-column align-items-center justify-content-center">
+                <video #remoteVideo id="remote-video" [poster]="yourAvatarUrl" autoplay playsinline></video>
+                <strong class="text-center mt-4">You</strong>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="guest-avatar-container flex flex-column align-items-center justify-content-center">
+                <video #localVideo id="local-video" [poster]="guestAvatarUrl" autoplay playsinline [muted]=true></video>
+                <strong class="text-center mt-4">Another Guy</strong>
+              </div>
+          </div>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template pTemplate="footer"></ng-template>
+    </p-card>
+  </div>
+</div>

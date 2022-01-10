@@ -20,3 +20,30 @@
 .cursor-disabled {
   cursor: not-allowed;
 }
+
+@media only screen and (max-width: 1020px) {
+  :host ::ng-deep .offer-side-footer {
+    .action-button-container {
+      button {
+        .p-button-label {
+          display: none !important;
+        }
+      }
+    }
+  }
+  :host ::ng-deep .offer-side-header {
+    button {
+      .p-button-label {
+        display: none !important;
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 576px) {
+  .sm\:col-12 {
+    flex: 0 0 auto;
+    padding: 0.5rem;
+    width: 100%;
+  }
+}

@@ -66,3 +66,21 @@ input[type="radio"]:checked + label {
   transition: all 0.2s;
   padding-left: 1rem;
 }
+
+@media screen and (max-width: 576px) {
+  .sm\:col-12 {
+    margin-top: 2rem !important;
+    flex: 0 0 auto !important;
+    padding: 0.5rem !important;
+    width: 100% !important;
+    .invalid-feedback {
+      p {
+        margin: 0;
+      }
+    }
+
+    &.repeat-password-col {
+      margin-top: 3.5rem !important;
+    }
+  }
+}

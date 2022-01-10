@@ -9,7 +9,7 @@
       </ng-template>
       <ng-template pTemplate="body">
         <div class="grid">
-          <div class="col-4">
+          <div class="md:col-4 sm:col-12">
             <span class="p-float-label">
               <input pInputText type="text" class="form-control w-full" placeholder="" name="name" formControlName="name"
               [ngClass]="{'is-valid': this.registerForm.controls.name.status === 'VALID',
@@ -22,7 +22,7 @@
               </div>
             </span>
           </div>
-        <div class="col-4">
+        <div class="md:col-4 sm:col-12">
           <span class="p-float-label">
             <input pInputText type="text" class="form-control w-full" placeholder="" name="surname" formControlName="surname"
             [ngClass]="{'is-valid': this.registerForm.controls.surname.status === 'VALID',
@@ -35,7 +35,7 @@
             </div>
           </span>
         </div>
-        <div class="col-4">
+        <div class="md:col-4 sm:col-12">
           <span class="p-float-label">
             <input pInputText type="text" class="form-control w-full" placeholder="" name="email" formControlName="email"
             [ngClass]="{'is-valid': this.registerForm.controls.email.status === 'VALID',
@@ -52,7 +52,7 @@
             </div>
           </span>
         </div>
-        <div class="col-4 padding-with-offset">
+        <div class="md:col-4 sm:col-12 padding-with-offset">
           <span class="p-float-label">
             <input pInputText type="password" class="form-control w-full" placeholder="" name="password" formControlName="password"
             [ngClass]="{'is-valid': this.registerForm.controls.password.status === 'VALID' && !this.registerForm.errors?.mismatchPassword,
@@ -67,7 +67,7 @@
             </div>
           </span>
         </div>
-        <div class="col-4 padding-with-offset">
+        <div class="md:col-4 sm:col-12 padding-with-offset repeat-password-col">
           <span class="p-float-label">
             <input pInputText type="password" class="form-control w-full" placeholder="" name="repeatPassword" formControlName="repeatPassword"
             [ngClass]="{'is-valid': this.registerForm.controls.repeatPassword.status === 'VALID' && !this.registerForm.errors?.mismatchPassword,
@@ -76,7 +76,7 @@
             <label for="repeatPassword">Repeat Password</label>
           </span>
         </div>
-        <div class="col-4 padding-with-offset flex flex-column justify-content-center">
+        <div class="md:col-4 sm:col-12 padding-with-offset flex flex-column justify-content-center">
           <span><strong>What</strong> do you want here?</span>
           <div class="p-field-radiobutton pt-2">
             <p-radioButton class="form-check-input" name="contractName" formControlName="contractName" id="jobRadio" value="contract-job"></p-radioButton>
@@ -99,7 +99,7 @@
         </span>
       </div>
       
-          <div class="col-6 padding-with-offset" *ngIf="this.isContractJob()">
+          <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.isContractJob()">
             <span class="p-float-label">
               <input type="text" pInputText class="form-control w-full" placeholder="" name="originCountry" formControlName="originCountry"
               [ngClass]="{'is-valid': this.registerForm.controls.originCountry.status === 'VALID' && this.registerForm.controls.originCountry.value.length,
@@ -112,7 +112,7 @@
               </div>
             </span>
           </div>
-          <div class="col-6 padding-with-offset" *ngIf="this.isContractJob()">
+          <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.isContractJob()">
             <span class="p-float-label">
               <input type="text" pInputText class="form-control w-full" placeholder="" name="originCity" formControlName="originCity"
               [ngClass]="{'is-valid': this.registerForm.controls.originCity.status === 'VALID' && this.registerForm.controls.originCity.value.length,
@@ -125,31 +125,31 @@
               </div>
             </span>
           </div>
-          <div class="col-6  padding-with-offset" *ngIf="this.isContractJob()">
+          <div class="sm:col-12 md:col-6  padding-with-offset" *ngIf="this.isContractJob()">
             <span class="p-float-label">
               <textarea pInputTextarea class="w-full form-control" id="exampleFormControlTextarea2" rows="3" formControlName="technologies"></textarea>  
               <label class="normal-label" for="technologies">Technologies*</label>
             </span>
           </div>
-          <div class="col-6  padding-with-offset" *ngIf="this.isContractJob()">
+          <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.isContractJob()">
             <span class="p-float-label">
               <textarea pInputTextarea class="w-full form-control" id="exampleFormControlTextarea3" rows="3" formControlName="hobbies"></textarea>  
               <label class="normal-label" for="hobbies">Hobbies*</label>
             </span>
           </div>
-        <div class="col-4 padding-with-offset" *ngIf="!this.isContractJob()">
+        <div class="md:col-4 sm:col-12 padding-with-offset" *ngIf="!this.isContractJob()">
           <span class="p-float-label">
             <input pInputText type="text" class="form-control w-full" placeholder="" name="companyName" formControlName="companyName">
             <label for="companyName">Name of Company(*)</label>
           </span>
         </div>
-        <div class="col-4 padding-with-offset" *ngIf="!this.isContractJob()">
+        <div class="md:col-4 sm:col-12 padding-with-offset" *ngIf="!this.isContractJob()">
           <span class="p-float-label">
             <input pInputText type="text" class="form-control w-full" placeholder="" name="businessOffice" formControlName="businessOffice">
             <label for="businessOffice">Business Office(*)</label>
           </span>
         </div>
-        <div class="col-4 padding-with-offset" *ngIf="!this.isContractJob()">
+        <div class="md:col-4 sm:col-12 padding-with-offset" *ngIf="!this.isContractJob()">
           <div class="form-label-group flex flex-column">
               <p-dropdown styleClass="w-full" [options]="sizesOfCompany" formControlName="sizeOfCompany" placeholder="Select Size"
               optionLabel="name" [showClear]="true"></p-dropdown>
