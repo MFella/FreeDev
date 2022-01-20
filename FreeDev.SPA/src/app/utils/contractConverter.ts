@@ -31,7 +31,7 @@ export class ContractConverter {
       bio: rawEmployerToRegisterData.bio,
       nameOfCompany: rawEmployerToRegisterData.companyName,
       businessOffice: rawEmployerToRegisterData.businessOffice,
-      sizeOfCompany: rawEmployerToRegisterData.sizeOfCompany,
+      sizeOfCompany: rawEmployerToRegisterData.name,
     };
 
     return employeeToRegisterDto;

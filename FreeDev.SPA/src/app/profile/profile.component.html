@@ -33,7 +33,7 @@
                 <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
               </div>
               <button pButton pRipple *ngIf="!isReadonly" type="button" label="Cancel" icon="pi pi-times" class="p-button-danger"
-              (click)="cancelEditMode()" [disabled]="this.profileForm.invalid || isLoading"></button>
+              (click)="cancelEditMode()" [disabled]="isLoading"></button>
               
               <button pButton pRipple  *ngIf="!isReadonly" class="p-button-success" label="Save" icon="pi pi-save"
               (click)="updateUserInfo()" [disabled]="this.profileForm.invalid || isLoading">

@@ -12,11 +12,11 @@ export class WsService {
   private socket!: any;
 
   constructor() {
-    this.socket = io(env.socketBackUrl);
+    this.socket = io((env as any).socketBackUrl);
   }
 
   connectWithAuthSocket(authToken: string): void {
-    this.socket = io(env.socketBackUrl, {
+    this.socket = io((env as any).socketBackUrl, {
       query: { authorization: `Bearer ${authToken}` },
     });
   }

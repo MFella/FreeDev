@@ -27,9 +27,9 @@ export class SearchOffersComponent implements OnInit {
 
   rowsPerPageOptions: Array<number> = [2, 5, 10];
 
-  selectedPeriod!: OFFER_PERIOD;
+  selectedPeriod!: { name: OFFER_PERIOD; label: string };
 
-  selectedEntryLevel!: OFFER_ENTRY_LEVEL;
+  selectedEntryLevel!: { name: OFFER_ENTRY_LEVEL; label: string };
 
   tags: Array<string> = [];
 
@@ -45,7 +45,7 @@ export class SearchOffersComponent implements OnInit {
 
   levels: Array<{ name: OFFER_ENTRY_LEVEL; label: string }> = [
     { name: OFFER_ENTRY_LEVEL.ANY, label: 'Any' },
-    { name: OFFER_ENTRY_LEVEL.INTERN, label: 'Intern' },
+    { name: OFFER_ENTRY_LEVEL.ENTRY, label: 'Entry' },
     { name: OFFER_ENTRY_LEVEL.JUNIOR, label: 'Junior' },
     { name: OFFER_ENTRY_LEVEL.MID, label: 'Mid' },
     { name: OFFER_ENTRY_LEVEL.SENIOR, label: 'Senior' },
@@ -84,8 +84,8 @@ export class SearchOffersComponent implements OnInit {
       .getOfferList(
         this.tags,
         this.salaryRange,
-        this.selectedPeriod,
-        this.selectedEntryLevel
+        this.selectedPeriod.name,
+        this.selectedEntryLevel.name
       )
       .subscribe((response: OfferListPayloadDto) => {
         this.numberOfTotalRecords = response.numberOfTotalRecords;
@@ -109,8 +109,8 @@ export class SearchOffersComponent implements OnInit {
       .getOfferList(
         this.tags,
         this.salaryRange,
-        this.selectedPeriod,
-        this.selectedEntryLevel,
+        this.selectedPeriod.name,
+        this.selectedEntryLevel.name,
         String(this.pagination.itemsPerPage),
         String(this.pagination.currentPage)
       )

@@ -1,6 +1,6 @@
 export enum OFFER_ENTRY_LEVEL {
   ANY = 'ANY',
-  INTERN = 'INTERN',
+  ENTRY = 'ENTRY',
   JUNIOR = 'JUNIOR',
   MID = 'MID',
   SENIOR = 'SENIOR',

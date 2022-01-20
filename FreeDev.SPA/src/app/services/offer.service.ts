@@ -91,6 +91,6 @@ export class OfferService {
   }
 
   private getRestUrl(): string {
-    return env.backendUrl;
+    return (env as any).backendUrl;
   }
 }

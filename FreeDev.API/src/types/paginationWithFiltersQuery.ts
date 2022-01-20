@@ -18,4 +18,8 @@ export class PaginationWithFiltersQuery {
   @IsOptional()
   @IsString()
   period: string;
+
+  @IsOptional()
+  @IsString()
+  entryLevel: string;
 }

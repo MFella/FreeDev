@@ -45,6 +45,8 @@ import { CalendarModule } from 'primeng/calendar';
 import { CallComponent } from './call/call.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { DecisionCallComponent } from './decision-call/decision-call.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [	
@@ -94,6 +96,12 @@ import { DecisionCallComponent } from './decision-call/decision-call.component';
     BadgeModule,
     CalendarModule,
     DynamicDialogModule,
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
   ],
   providers: [
     NotyService,

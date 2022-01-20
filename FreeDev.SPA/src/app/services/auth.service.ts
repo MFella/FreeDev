@@ -45,6 +45,7 @@ export class AuthService {
   }
 
   login(userToLoginDto: UserToLoginDto): Observable<AfterLoginInfoDto> {
+    console.log('adres', this.getRestUrl());
     return this.http
       .post<AfterLoginInfoDto>(this.getRestUrl() + 'auth/login', userToLoginDto)
       .pipe(
@@ -86,7 +87,7 @@ export class AuthService {
   }
 
   private getRestUrl(): string {
-    return env.backendUrl;
+    return (env as any).backendUrl;
   }
 
   private setSession(authResult: AfterLoginInfoDto): void {

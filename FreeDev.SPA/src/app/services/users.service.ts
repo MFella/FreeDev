@@ -90,7 +90,7 @@ export class UsersService {
   }
 
   private getRestUrl(): string {
-    return env.backendUrl;
+    return (env as any).backendUrl;
   }
 }
 

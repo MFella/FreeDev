@@ -80,7 +80,7 @@ export class OfferService {
 
       const periodsCondition: any = !resolvedPeriods.length
         ? { $exists: true }
-        : { $gt: resolvedPeriods[0], $lt: resolvedPeriods[1] };
+        : { $gt: resolvedPeriods[1], $lt: resolvedPeriods[0] };
 
       const salaryCondition: any = !resolvedSalary.length
         ? { $exists: true }
@@ -89,11 +89,15 @@ export class OfferService {
             $lte: Math.max(...resolvedSalary),
           };
 
+      const entryLevelCondition =
+        query.entryLevel === 'ANY' ? { $exists: true } : query.entryLevel;
+
       const offersToReturn = await this.offerModel
         .find({
           tags: arrayOfTagsCondition,
           createdAt: periodsCondition,
           salary: salaryCondition,
+          experienceLevel: entryLevelCondition,
         })
         .select(selectedFields)
         .skip(Number(query.currentPage) * Number(query.itemsPerPage))
@@ -104,6 +108,7 @@ export class OfferService {
           tags: arrayOfTagsCondition,
           createdAt: periodsCondition,
           salary: salaryCondition,
+          experienceLevel: entryLevelCondition,
         })
         .count();
 
