@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { environment as env } from '../../environments/environment';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
 import { MessageToCreateDto } from '../dtos/messages/messageToCreateDto';
+import { CurrentLoggedUser } from '../types/logged-users/currentLoggedUser';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,38 @@ export class WsService {
     });
   }
 
+  observeIncomingCall(): Observable<string> {
+    return Observable.create((observer: any) => {
+      this.socket.on('callAnswer', (key: string) => {
+        observer.next(key);
+      });
+    });
+  }
+
   joinUserRoom(key: string): void {
     this.socket.emit('joinPrivateRoom', { key });
+  }
+
+  startMediaCall(key: string): void {
+    this.socket.emit('subscribeIncomingCall', { key });
+  }
+
+  observeLoggedInUsers(): Observable<Array<CurrentLoggedUser>> {
+    return new Observable((subscriber) => {
+      this.socket.on(
+        'getLoggedInUsers',
+        (payload: Array<CurrentLoggedUser>) => {
+          subscriber.next(payload);
+        }
+      );
+    });
+  }
+
+  emitVisibleUsersFromList(visibleUsersIds: Array<string>): void {
+    this.socket.emit('loggedInUsers', visibleUsersIds);
+  }
+
+  emitLogAction(logAction: CurrentLoggedUser): void {
+    this.socket.emit('ackLogAction', logAction);
   }
 }

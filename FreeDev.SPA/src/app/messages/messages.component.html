@@ -35,10 +35,11 @@
                       <div class="flex justify-content-between align-items-around w-full">
                         <div class="flex flex-column justify-content-around pl-3">
                           <strong>{{user.name}} {{user.surname}}</strong>
-                          <em class="text-xs">Last active 3hrs</em>
+                          <em class="text-xs">{{this.getUserTextActiveStatus(user._id)}}</em>
                         </div>
                         <div class="contact-attributes">
-                          <div class="green-dot"></div>
+                          <div class="green-dot" *ngIf="isUserLoggedIn(user._id)"></div>
+                          <div class="red-dot" *ngIf="!isUserLoggedIn(user._id)"></div>
                         </div>
                       </div>
                   </div>

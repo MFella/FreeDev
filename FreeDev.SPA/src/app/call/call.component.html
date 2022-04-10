@@ -24,13 +24,13 @@
           <div class="grid">
             <div class="col-6">
               <div class="your-avatar-container flex flex-column align-items-center justify-content-center">
-                <video #remoteVideo id="remote-video" [poster]="yourAvatarUrl" autoplay playsinline></video>
+                <video #localVideo id="remote-video" [poster]="yourAvatarUrl" autoplay playsinline></video>
                 <strong class="text-center mt-4">You</strong>
               </div>
             </div>
             <div class="col-6">
               <div class="guest-avatar-container flex flex-column align-items-center justify-content-center">
-                <video #localVideo id="local-video" [poster]="guestAvatarUrl" autoplay playsinline [muted]=true></video>
+                <video #remoteVideo id="local-video" [poster]="guestAvatarUrl" autoplay playsinline [muted]=true></video>
                 <strong class="text-center mt-4">Another Guy</strong>
               </div>
           </div>

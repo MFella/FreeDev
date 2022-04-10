@@ -1,5 +1,7 @@
 import { CallService } from './../services/call.service';
 import {
+  AfterViewChecked,
+  AfterViewInit,
   Component,
   ElementRef,
   OnDestroy,
@@ -7,13 +9,16 @@ import {
   ViewChild,
 } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
+import { CallMediaType } from '../types/call/callMediaType';
+import { filter } from 'rxjs/operators';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
   styleUrls: ['./call.component.scss'],
 })
-export class CallComponent implements OnInit, OnDestroy {
+export class CallComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('localVideo')
   localVideo!: ElementRef<HTMLVideoElement>;
 
@@ -38,29 +43,46 @@ export class CallComponent implements OnInit, OnDestroy {
     console.log(this.config);
     this.guestAvatarUrl = this.config.data?.guestAvatarUrl;
     this.yourAvatarUrl = this.config.data?.yourAvatarUrl;
-    this.peerId = this.callServ.initPeer();
+    this.peerId = this.callServ.initPeer(this.config.data?.peerId ?? '');
     this.observeStreams();
   }
 
-  ngOnDestroy(): void {
-    this.finishCall();
+  ngAfterViewInit(): void {
+    this.callServ.establishMediaCall(this.peerId);
   }
+
+  ngOnDestroy(): void {}
 
   finishCall(): void {
+    this.callServ.closeMediaCall();
     this.ref.close();
+    this.callServ.destroyPeer();
   }
 
-  toggleMic(): void {}
+  toggleMic(): void {
+    this.callServ.toggleMedia(CallMediaType.AUDIO);
+  }
 
-  toggleCamera(): void {}
+  toggleCamera(): void {
+    this.callServ.toggleMedia(CallMediaType.VIDEO);
+  }
 
   observeStreams(): void {
-    this.callServ.localStream$.subscribe((stream: any) => {
-      this.localVideo.nativeElement.srcObject = stream;
+    combineLatest([
+      this.callServ.localStream$.pipe(filter((res) => !!res)),
+      this.callServ.videoEnabledState$,
+    ]).subscribe(([stream, isVideoAvailable]: [any, boolean]) => {
+      if (this.localVideo?.nativeElement && stream && isVideoAvailable) {
+        this.localVideo.nativeElement.srcObject = stream;
+      }
     });
-    this.callServ.remoteStream$.subscribe((stream: any) => {
-      this.guestVideo.nativeElement.srcObject = stream;
-    });
+    this.callServ.remoteStream$
+      .pipe(filter((res) => !!res))
+      .subscribe((stream: any) => {
+        if (this.guestVideo?.nativeElement) {
+          this.guestVideo.nativeElement.srcObject = stream;
+        }
+      });
   }
 
   private observeJoinAction(): void {}

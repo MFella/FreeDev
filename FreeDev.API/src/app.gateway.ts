@@ -1,3 +1,4 @@
+import { CurrentLoggedUser } from './types/logged-users/currentLoggedUser';
 import { MessageService } from './messages/message.service';
 import {
   ConnectedSocket,
@@ -10,9 +11,10 @@ import { Server, Socket } from 'socket.io';
 import { MessageToCreateDto } from './dtos/message/messageToCreateDto';
 import { MessageToRoom } from './types/messageToRoom';
 import { UsersService } from './users/users.service';
+import { MessageAnswerCall } from './types/messageAnswerCall';
 @WebSocketGateway(443, { cors: true })
 export class AppGateway {
-  connectedUsers: any = {};
+  connectedUsers: Array<any> = [];
 
   constructor(
     private readonly userServ: UsersService,
@@ -24,6 +26,25 @@ export class AppGateway {
 
   handleConnection(): void {
     console.log('connected');
+  }
+
+  @SubscribeMessage('ackLogAction')
+  ackLogAction(@MessageBody() logPayload: CurrentLoggedUser): void {
+    this.userServ.saveLoggedUser(logPayload);
+
+    const connectedUsers = this.userServ.getConnectedUsers();
+    this.server.emit('getLoggedInUsers', connectedUsers);
+  }
+
+  @SubscribeMessage('loggedInUsers')
+  getLoggedUsers(
+    @MessageBody() visibleUsersIds: Array<string>,
+    @ConnectedSocket() connectedSocket: any,
+  ): void {
+    const connectedUsers = this.userServ
+      .getConnectedUsers()
+      .filter((user: CurrentLoggedUser) => visibleUsersIds.includes(user.id));
+    this.server.to(connectedSocket.id).emit('getLoggedInUsers', connectedUsers);
   }
 
   @SubscribeMessage('joinPrivateRoom')
@@ -59,5 +80,13 @@ export class AppGateway {
     };
 
     await this.messageServ.createMessage(messageToCreate);
+  }
+
+  @SubscribeMessage('subscribeIncomingCall')
+  async handleIncomingCall(
+    @ConnectedSocket() connectedSocket,
+    @MessageBody() data: MessageAnswerCall,
+  ): Promise<void> {
+    this.server.emit('callAnswer', data);
   }
 }

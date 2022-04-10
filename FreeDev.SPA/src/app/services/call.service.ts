@@ -1,7 +1,8 @@
+import { CallMediaType } from './../types/call/callMediaType';
 import { NotyService } from './noty.service';
 import { Injectable } from '@angular/core';
-import * as Peer from 'peerjs';
-import { BehaviorSubject, Subject } from 'rxjs';
+import Peer from 'peerjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable({
@@ -13,17 +14,38 @@ export class CallService {
 
   private localStreamBs: BehaviorSubject<MediaStream | any> =
     new BehaviorSubject(null);
+
   public localStream$ = this.localStreamBs.asObservable();
+
   private remoteStreamBs: BehaviorSubject<MediaStream | any> =
     new BehaviorSubject(null);
+
   public remoteStream$ = this.remoteStreamBs.asObservable();
 
   private isCallStartedBs = new Subject<boolean>();
   public isCallStarted$ = this.isCallStartedBs.asObservable();
 
+  private connection!: Peer.DataConnection;
+
+  // private stream!: MediaStream;
+
+  public audioEnabledState$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(true);
+
+  public videoEnabledState$: BehaviorSubject<boolean> =
+    new BehaviorSubject<boolean>(true);
+
+  private audioEnabled: boolean = true;
+
+  private videoEnabled: boolean = true;
+
+  private isCallEnded$: Subject<void> = new Subject<void>();
+
+  private stream: any;
+
   constructor(private readonly noty: NotyService) {}
 
-  public initPeer(): string {
+  public initPeer(peerId: string): string {
     if (!this.peer || this.peer.disconnected) {
       const peerJsOptions: Peer.PeerJSOption = {
         debug: 3,
@@ -39,9 +61,8 @@ export class CallService {
         },
       };
       try {
-        let id = uuidv4();
-        this.peer = new Peer(id, peerJsOptions);
-        return id;
+        this.peer = new Peer(peerId, peerJsOptions);
+        return peerId;
       } catch (error) {
         console.error(error);
       }
@@ -52,24 +73,32 @@ export class CallService {
 
   public async establishMediaCall(remotePeerId: string) {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true,
+      this.stream = await navigator.mediaDevices.getUserMedia({
+        video: this.videoEnabled,
+        audio: this.audioEnabled,
       });
 
-      const connection = this.peer.connect(remotePeerId);
-      connection.on('error', (err) => {
+      if (!this.connection) {
+        this.connection = this.peer.connect(remotePeerId);
+      }
+
+      this.connection.on('error', (err) => {
         console.error(err);
         this.noty.error('Connection closed');
       });
 
-      this.mediaCall = this.peer.call(remotePeerId, stream);
+      this.connection.on('close', () => {
+        this.onCallClose();
+      });
+
+      this.mediaCall = this.peer.call(remotePeerId, this.stream);
       if (!this.mediaCall) {
         let errorMessage = 'Unable to connect to remote peer';
         this.noty.error('Connection closed');
-        throw new Error(errorMessage);
+        return;
+        // throw new Error(errorMessage);
       }
-      this.localStreamBs.next(stream);
+      this.localStreamBs.next(this.stream);
       this.isCallStartedBs.next(true);
 
       this.mediaCall.on('stream', (remoteStream) => {
@@ -80,7 +109,9 @@ export class CallService {
         console.error(err);
         this.isCallStartedBs.next(false);
       });
-      this.mediaCall.on('close', () => this.onCallClose());
+      this.mediaCall.on('close', () => {
+        this.onCallClose();
+      });
     } catch (ex) {
       console.error(ex);
       this.noty.error('Connection closed');
@@ -118,20 +149,28 @@ export class CallService {
   }
 
   private onCallClose() {
-    this.remoteStreamBs?.value.getTracks().forEach((track: any) => {
-      track.stop();
-    });
-    this.localStreamBs?.value.getTracks().forEach((track: any) => {
-      track.stop();
-    });
-    this.noty.error('Connection closed');
+    if (this.remoteStreamBs?.value) {
+      this.remoteStreamBs?.value.getTracks().forEach((track: any) => {
+        track.stop();
+      });
+    }
+
+    if (this.localStreamBs?.value) {
+      this.localStreamBs?.value.getTracks().forEach((track: any) => {
+        track.stop();
+      });
+    }
+
+    this.noty.success('Connection closed');
+    this.isCallEnded$.next();
   }
 
   public closeMediaCall() {
     this.mediaCall?.close();
-    if (!this.mediaCall) {
-      this.onCallClose();
-    }
+    // if (!this.mediaCall) {
+    this.onCallClose();
+    // }
+    this.connection?.close();
     this.isCallStartedBs.next(false);
   }
 
@@ -139,5 +178,28 @@ export class CallService {
     this.mediaCall?.close();
     this.peer?.disconnect();
     this.peer?.destroy();
+  }
+
+  public async toggleMedia(mediaToToggle: CallMediaType): Promise<void> {
+    switch (mediaToToggle) {
+      case CallMediaType.VIDEO:
+        this.videoEnabled = !this.videoEnabled;
+        this.videoEnabledState$.next(this.videoEnabled);
+        this.stream.getVideoTracks()[0].enabled =
+          !this.stream.getVideoTracks()[0].enabled;
+        return;
+      case CallMediaType.AUDIO:
+        this.audioEnabled = !this.audioEnabled;
+        this.audioEnabledState$.next(this.audioEnabled);
+        this.stream.getAudioTracks()[0].enabled =
+          !this.stream.getAudioTracks()[0].enabled;
+        return;
+      default:
+        return;
+    }
+  }
+
+  public getIsCallEnded(): Observable<void> {
+    return this.isCallEnded$.asObservable();
   }
 }

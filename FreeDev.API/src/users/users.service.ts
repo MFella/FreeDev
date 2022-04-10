@@ -19,6 +19,7 @@ import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
 import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
 import { UserChatListParamsDto } from 'src/dtos/userChatListParamsDto';
 import { RoomKey, RoomKeyDocument } from 'src/messages/room-key.schema';
+import { CurrentLoggedUser } from 'src/types/logged-users/currentLoggedUser';
 
 @Injectable()
 export class UsersService {
@@ -34,6 +35,43 @@ export class UsersService {
 
   private static readonly DEFAULT_IMAGE_LINK: string =
     'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png';
+
+  private currentConnectedUsers: Array<CurrentLoggedUser> = [];
+
+  saveLoggedUser(loggedUser: CurrentLoggedUser): void {
+    if (!this.getCurrentConnectedUserIds().includes(loggedUser.id)) {
+      this.currentConnectedUsers.push(loggedUser);
+    } else {
+      let storedLoggedUserIndex = this.currentConnectedUsers.findIndex(
+        (user: CurrentLoggedUser) => user.id === loggedUser.id,
+      );
+      this.updateConnectedUserPayload(storedLoggedUserIndex, loggedUser);
+    }
+
+    console.log('storedLoggedUsers', this.currentConnectedUsers);
+  }
+
+  updateConnectedUserPayload(
+    loggedUserIndex: number,
+    loggedUser: CurrentLoggedUser,
+  ): void {
+    if (loggedUserIndex > -1) {
+      this.currentConnectedUsers[loggedUserIndex].isActive =
+        loggedUser.isActive;
+      this.currentConnectedUsers[loggedUserIndex].lastLogged =
+        loggedUser.lastLogged;
+    }
+  }
+
+  getCurrentConnectedUserIds(): Array<string> {
+    return this.currentConnectedUsers.map(
+      (loggedUser: CurrentLoggedUser) => loggedUser.id,
+    );
+  }
+
+  getConnectedUsers(): Array<CurrentLoggedUser> {
+    return this.currentConnectedUsers;
+  }
 
   async createDeveloper(
     developerToCreateDto: DeveloperToCreateDto,

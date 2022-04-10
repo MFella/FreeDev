@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CallService } from '../services/call.service';
 
@@ -26,4 +26,6 @@ export class DecisionCallComponent implements OnInit {
   rejectCall(): void {
     this.ref.close();
   }
+
+  acceptCall(): void {}
 }

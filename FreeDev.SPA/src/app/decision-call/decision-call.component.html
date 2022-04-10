@@ -9,7 +9,7 @@
       <h2 class="decision-call-header">Someone is calling you!</h2>
       <p-divider></p-divider>
       <div class="decision-call-btn-container w-full flex justify-content-around">
-        <button pButton pRipple class="p-button-success" label="Accept" icon="pi pi-phone"></button>
+        <button pButton pRipple class="p-button-success" label="Accept" icon="pi pi-phone" (click)="acceptCall()"></button>
         <button pButton pRipple class="p-button-danger" label="Decline" icon="pi pi-times" (click)="rejectCall()"></button>
       </div>
     </div>

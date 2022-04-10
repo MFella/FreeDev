@@ -1,3 +1,5 @@
+import { CurrentLoggedUser } from './../../../../FreeDev.API/dist/types/logged-users/currentLoggedUser.d';
+import { CallService } from './../services/call.service';
 import { CallComponent } from './../call/call.component';
 import { LocalStorageService } from './../services/local-storage.service';
 import { Pagination } from './../types/pagination';
@@ -24,10 +26,11 @@ import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { ResolverPagination } from '../types/resolvedPagination';
 import { UsersService } from '../services/users.service';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
-import { map, switchMap, take } from 'rxjs/operators';
+import { debounceTime, map, switchMap, take } from 'rxjs/operators';
 import { timer } from 'rxjs';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DecisionCallComponent } from '../decision-call/decision-call.component';
+import { VisibleUserActiveTimeCalculator } from '../utils/visibleUserActiveTimeCalculator';
 
 @Component({
   selector: 'app-messages',
@@ -74,6 +77,12 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   searchUserPhrase!: string;
 
+  storedCallRequestModalRef!: DynamicDialogRef | null;
+
+  storedCallModalRef!: DynamicDialogRef | null;
+
+  visibleLoggedInUsers: Array<CurrentLoggedUser> = [];
+
   searchRolesNames: Array<{ name: string }> = [
     { name: 'Both' },
     { name: 'Developer' },
@@ -87,7 +96,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     private readonly lsServ: LocalStorageService,
     private readonly usersServ: UsersService,
     private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly dialogService: DialogService
+    private readonly dialogService: DialogService,
+    private readonly callServ: CallService
   ) {}
 
   ngOnInit() {
@@ -96,10 +106,14 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       this.numberOfTotalRecords =
         resolvedMessagePageInfo.users.numberOfTotalRecords;
       this.pagination = this.getDefaultPagination();
+      this.emitVisibleUsersIdsFromList();
       this.changeDetectorRef.detectChanges();
     });
 
     this.observePrivateMessage();
+    this.observeIncomingCall();
+    this.observeDialogClosed();
+    this.observeLoggedInUsers();
   }
 
   ngAfterViewInit(): void {
@@ -163,6 +177,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       .subscribe((paginatedList: any) => {
         this.userList = paginatedList.result ?? [];
         this.numberOfTotalRecords = paginatedList.numberOfTotalRecords;
+
+        this.emitVisibleUsersIdsFromList();
       });
   }
 
@@ -212,25 +228,65 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   }
 
   startVoiceCall(): void {
-    const ref = this.dialogService.open(CallComponent, {
+    if (this.storedCallModalRef || this.storedCallRequestModalRef) {
+      return;
+    }
+
+    this.storedCallModalRef = this.dialogService.open(CallComponent, {
       data: {
         guestAvatarUrl: this.selectedUser?.avatar?.url,
         yourAvatarUrl: this.authServ.storedUser?.userAvatar,
+        peerId: this.selectedUser?._id,
       },
       showHeader: false,
       width: '90%',
     });
+
+    this.wsServ.startMediaCall(this.selectedUser?._id ?? '');
   }
 
   startRequestCall(guestAvatarUrl = '', guestName = ''): void {
-    const ref = this.dialogService.open(DecisionCallComponent, {
-      data: {
-        guestAvatarUrl,
-        guestName,
-      },
-      header: 'Incoming call',
-      width: '50%',
-    });
+    if (this.storedCallModalRef || this.storedCallRequestModalRef) {
+      return;
+    }
+
+    this.storedCallRequestModalRef = this.dialogService.open(
+      DecisionCallComponent,
+      {
+        data: {
+          guestAvatarUrl,
+          guestName,
+        },
+        header: 'Incoming call',
+        width: '50%',
+      }
+    );
+    this.observeCloseOfConnection(this.storedCallRequestModalRef);
+  }
+
+  isUserLoggedIn(userId: string): boolean {
+    const visibleLoggedInUser = this.visibleLoggedInUsers.find(
+      (user: CurrentLoggedUser) => user.id === userId
+    );
+    return (visibleLoggedInUser as any)?.isActive;
+  }
+
+  getUserTextActiveStatus(userId: string): string {
+    const visibleUser = this.visibleLoggedInUsers.find(
+      (user: CurrentLoggedUser) => user.id === userId
+    );
+    if (!visibleUser) {
+      return 'Offline';
+    }
+
+    if (!visibleUser.isActive) {
+      const lastLogged = VisibleUserActiveTimeCalculator.getClosestTimePeriod(
+        visibleUser.lastLogged
+      );
+      return 'Last active ' + lastLogged;
+    } else {
+      return 'Active';
+    }
   }
 
   private observeCloseOfConnection(ref: DynamicDialogRef): void {
@@ -291,5 +347,65 @@ export class MessagesComponent implements OnInit, AfterViewInit {
         this.messages.push(response);
         this.scrollToBottom();
       });
+  }
+
+  private observeIncomingCall(): void {
+    this.wsServ.observeIncomingCall().subscribe((response: any) => {
+      if (
+        response.key === this.authServ?.storedUser?._id &&
+        !this.storedCallModalRef
+      ) {
+        this.storedCallRequestModalRef = this.dialogService.open(
+          DecisionCallComponent,
+          {
+            data: {
+              guestAvatarUrl: this.selectedUser?.avatar?.url,
+              yourAvatarUrl: this.authServ.storedUser?.userAvatar,
+              peerId: this.selectedUser?._id,
+            },
+            showHeader: false,
+            width: '90%',
+          }
+        );
+      }
+    });
+  }
+
+  private observeLoggedInUsers(): void {
+    this.wsServ
+      .observeLoggedInUsers()
+      .subscribe((loggedInUsers: Array<any>) => {
+        console.log('loggedUsers', loggedInUsers);
+        this.visibleLoggedInUsers = loggedInUsers;
+      });
+  }
+
+  private observeDialogClosed(): void {
+    this.callServ
+      .getIsCallEnded()
+      .pipe(debounceTime(450))
+      .subscribe(() => {
+        this.clearDynamicDialogRefs();
+      });
+  }
+
+  private observeDynamicDialogRefDestroyed(
+    dynamicDialogRef: DynamicDialogRef | null
+  ): void {
+    dynamicDialogRef?.onDestroy.subscribe(() => {
+      dynamicDialogRef = null;
+    });
+  }
+
+  private clearDynamicDialogRefs(): void {
+    this.storedCallRequestModalRef = null;
+    this.storedCallModalRef = null;
+  }
+
+  private emitVisibleUsersIdsFromList(): void {
+    const usersIdsFromList = this.userList.map(
+      (user: UserToMessageListDto) => user._id
+    );
+    this.wsServ.emitVisibleUsersFromList(usersIdsFromList);
   }
 }

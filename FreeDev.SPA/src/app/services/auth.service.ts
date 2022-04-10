@@ -4,13 +4,15 @@ import { environment as env } from 'src/environments/environment';
 import { Observable, of, Subject } from 'rxjs';
 import { AfterLoginInfoDto } from '../dtos/users/afterLoginInfoDto';
 import { take, tap } from 'rxjs/operators';
-import * as moment from 'moment';
+import moment from 'moment';
 import { LocalStorageService } from './local-storage.service';
 import { UserToCreateDto } from '../dtos/users/userToCreateDto';
 import { UserToLoginDto } from '../dtos/users/userToLoginDto';
 import { UserToProfileDto } from '../dtos/users/userToProfileDto';
 import { DeveloperToCreateDto } from '../dtos/users/developerToCreateDto';
 import { HunterToCreateDto } from '../dtos/users/hunterToCreateDto';
+import { WsService } from './ws.service';
+import { CurrentLoggedUser } from '../types/logged-users/currentLoggedUser';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +20,8 @@ import { HunterToCreateDto } from '../dtos/users/hunterToCreateDto';
 export class AuthService {
   constructor(
     private readonly http: HttpClient,
-    private readonly localStorageService: LocalStorageService
+    private readonly localStorageService: LocalStorageService,
+    private readonly wsServ: WsService
   ) {
     const userFromLS: any = this.localStorageService.getUser();
     if (userFromLS) {
@@ -45,16 +48,20 @@ export class AuthService {
   }
 
   login(userToLoginDto: UserToLoginDto): Observable<AfterLoginInfoDto> {
-    console.log('adres', this.getRestUrl());
+    // console.log('adres', this.getRestUrl());
     return this.http
       .post<AfterLoginInfoDto>(this.getRestUrl() + 'auth/login', userToLoginDto)
       .pipe(
         take(1),
-        tap((authResult: AfterLoginInfoDto) => this.setSession(authResult))
+        tap((authResult: AfterLoginInfoDto) => {
+          this.setSession(authResult);
+          this.wsServ.emitLogAction(this.getLogAction(true));
+        })
       );
   }
 
   logout(): void {
+    this.wsServ.emitLogAction(this.getLogAction(false));
     this.storedUser = null;
     this.localStorageService.removeAuthCredentials();
   }
@@ -98,5 +105,14 @@ export class AuthService {
       authResult.access_token,
       JSON.stringify(expirationDate.valueOf())
     );
+  }
+
+  private getLogAction(isActive: boolean): CurrentLoggedUser {
+    const id = this.storedUser?._id;
+    return {
+      id,
+      lastLogged: new Date(),
+      isActive,
+    };
   }
 }
