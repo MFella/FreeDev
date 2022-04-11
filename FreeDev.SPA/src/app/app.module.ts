@@ -42,14 +42,16 @@ import { BadgeModule } from 'primeng/badge';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { SavedOffersComponent } from './saved-offers/saved-offers.component';
 import { CalendarModule } from 'primeng/calendar';
+import { ContextMenuModule } from 'primeng/contextmenu';
 import { CallComponent } from './call/call.component';
 import { DynamicDialogModule } from 'primeng/dynamicdialog';
 import { DecisionCallComponent } from './decision-call/decision-call.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
 
 @NgModule({
-  declarations: [	
+  declarations: [
     AppComponent,
     NavComponent,
     HomeComponent,
@@ -63,8 +65,8 @@ import { environment } from '../environments/environment';
     OfferDetailsComponent,
     SavedOffersComponent,
     CallComponent,
-      DecisionCallComponent
-   ],
+    DecisionCallComponent,
+  ],
   imports: [
     BrowserModule,
     HttpClientModule,
@@ -96,11 +98,12 @@ import { environment } from '../environments/environment';
     BadgeModule,
     CalendarModule,
     DynamicDialogModule,
+    ContextMenuModule,
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: environment.production,
       // Register the ServiceWorker as soon as the app is stable
       // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
+      registrationStrategy: 'registerWhenStable:30000',
     }),
   ],
   providers: [
@@ -110,6 +113,7 @@ import { environment } from '../environments/environment';
       useClass: AuthInterceptor,
       multi: true,
     },
+    MessagesUserListRightClickItemsResolver,
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

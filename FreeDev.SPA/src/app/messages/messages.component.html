@@ -25,9 +25,10 @@
                 <button pButton type="button" label="Find" icon="pi pi-search" iconPos="right"
               class="p-button-md p-button-secondary ml-2" (click)="findUser()"></button>
             </div>
-            <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3">
+            <p-contextMenu #cm [model]="dropdownRightClickItems"></p-contextMenu>
+            <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3" #rightClickUserContextMenu>
               <ng-template let-user pTemplate="item">
-                  <div class="flex justify-content-start p-orderlist-user" (click)="getUserRoomKey(user._id)">
+                  <div class="flex justify-content-start p-orderlist-user" (click)="getUserRoomKey(user._id)" (contextmenu)="showRightClickMenu(cm, $event, user._id)" >
                     <div class="user-avatar-container">
                       <img src="{{user.avatar.url}}"
                       class="user-avatar">

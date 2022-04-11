@@ -1,3 +1,4 @@
+import { MessagesUserListRightClickItemsResolver } from './../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
 import { CurrentLoggedUser } from './../../../../FreeDev.API/dist/types/logged-users/currentLoggedUser.d';
 import { CallService } from './../services/call.service';
 import { CallComponent } from './../call/call.component';
@@ -21,7 +22,7 @@ import {
 import { WsService } from '../services/ws.service';
 import { MessageToCreateDto } from '../dtos/messages/messageToCreateDto';
 import { AuthService } from '../services/auth.service';
-import { ActivatedRoute, Data } from '@angular/router';
+import { ActivatedRoute, Data, Router } from '@angular/router';
 import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { ResolverPagination } from '../types/resolvedPagination';
 import { UsersService } from '../services/users.service';
@@ -31,6 +32,9 @@ import { timer } from 'rxjs';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DecisionCallComponent } from '../decision-call/decision-call.component';
 import { VisibleUserActiveTimeCalculator } from '../utils/visibleUserActiveTimeCalculator';
+import { DropdownItem } from '../infrastructure/types/dropdownItem';
+import { MenuItem } from 'primeng/api';
+import { ContextMenu } from 'primeng/contextmenu';
 
 @Component({
   selector: 'app-messages',
@@ -44,6 +48,9 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   @ViewChild('messagesContainer')
   messagesContainer!: ElementRef;
+
+  @ViewChild('rightClickUserContextMenu')
+  rightClickUserContextMenu!: ElementRef;
 
   private static readonly SCROLL_TIME_OFFSET = 20;
 
@@ -83,11 +90,17 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   visibleLoggedInUsers: Array<CurrentLoggedUser> = [];
 
+  lastRightClickUserId: string = '';
+
   searchRolesNames: Array<{ name: string }> = [
     { name: 'Both' },
     { name: 'Developer' },
     { name: 'Hunter' },
   ];
+
+  selectedUserFromRightClickMenu!: any;
+
+  dropdownRightClickItems: Array<MenuItem> = [];
 
   constructor(
     private readonly wsServ: WsService,
@@ -97,7 +110,9 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     private readonly usersServ: UsersService,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly dialogService: DialogService,
-    private readonly callServ: CallService
+    private readonly callServ: CallService,
+    private readonly messagesUserListRightClickItemsResolver: MessagesUserListRightClickItemsResolver,
+    private readonly router: Router
   ) {}
 
   ngOnInit() {
@@ -114,6 +129,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     this.observeIncomingCall();
     this.observeDialogClosed();
     this.observeLoggedInUsers();
+    this.observeRightClickDropdownItems();
   }
 
   ngAfterViewInit(): void {
@@ -289,6 +305,16 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     }
   }
 
+  showRightClickMenu(
+    contextMenu: ContextMenu,
+    event: MouseEvent,
+    selectedUserId: string
+  ): void {
+    this.lastRightClickUserId = selectedUserId;
+    contextMenu.show(event);
+    event.stopPropagation();
+  }
+
   private observeCloseOfConnection(ref: DynamicDialogRef): void {
     ref.onClose.subscribe((response: any) => {
       console.log('do something after close...');
@@ -407,5 +433,23 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       (user: UserToMessageListDto) => user._id
     );
     this.wsServ.emitVisibleUsersFromList(usersIdsFromList);
+  }
+
+  private observeRightClickDropdownItems(): void {
+    this.messagesUserListRightClickItemsResolver
+      .getItemList(this.getPossibleRightClickActionCallbacks())
+      .pipe(take(1))
+      .subscribe((dropdownRightClickItems: Array<DropdownItem>) => {
+        this.dropdownRightClickItems = dropdownRightClickItems;
+      });
+  }
+
+  private getPossibleRightClickActionCallbacks(): Array<Function> {
+    return [() => this.navigateToUserProfile()];
+  }
+
+  private navigateToUserProfile(): void {
+    console.log(this.lastRightClickUserId);
+    this.router.navigateByUrl(`profile?id=${this.lastRightClickUserId}`);
   }
 }
