@@ -18,8 +18,12 @@ import { FileService } from 'src/files/file.service';
 import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
 import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
 import { UserChatListParamsDto } from 'src/dtos/userChatListParamsDto';
-import { RoomKey, RoomKeyDocument } from 'src/messages/room-key.schema';
+import {
+  RoomKey,
+  RoomKeyDocument,
+} from 'src/web-socket-messages/room-key.schema';
 import { CurrentLoggedUser } from 'src/types/logged-users/currentLoggedUser';
+import { of, Observable } from 'rxjs';
 
 @Injectable()
 export class UsersService {
@@ -134,7 +138,7 @@ export class UsersService {
 
   async findUserById(userId: string): Promise<any> {
     const hipoDeveloper = await (
-      await await this.developerModel
+      await this.developerModel
         .findOne({ _id: userId })
         .populate('avatar')
         .exec()
@@ -447,6 +451,24 @@ export class UsersService {
     } catch (e) {
       throw new InternalServerErrorException('Internal server error');
     }
+  }
+
+  async getUserContactsList(
+    userId: string,
+    storedUser: any,
+  ): Promise<Array<any>> {
+    const userFromDb = await this.findUserById(userId);
+    if (!Object.values(userFromDb)) {
+      throw new NotFoundException('User with that id doesnt exists');
+    }
+
+    const userPopulatedWtihContacts = userFromDb.populate('contacts').exec();
+
+    return userPopulatedWtihContacts.contacts;
+  }
+
+  async saveAddContactRequest(): Promise<Observable<boolean>> {
+    return of(true);
   }
 
   private paginate(

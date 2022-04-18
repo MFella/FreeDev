@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, SchemaTypes, Types } from 'mongoose';
-import { Developer } from 'src/users/developer.schema';
 import { Hunter } from 'src/users/hunter.schema';
 
 export type OfferDocument = Offer & Document;
@@ -22,13 +21,13 @@ export class Offer {
   @Prop({ required: true })
   experienceLevel: string;
 
-  @Prop({ type: SchemaTypes.ObjectId, ref: Hunter.name })
+  @Prop({ required: true })
   createdBy: Types.ObjectId;
 
   @Prop({ required: true, default: new Date() })
   createdAt: Date;
 
-  @Prop({ type: [SchemaTypes.ObjectId], ref: Hunter.name })
+  @Prop({ required: true })
   appliedDevelopers: Array<Types.ObjectId>;
 }
 

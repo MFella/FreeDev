@@ -7,8 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppGateway } from './app.gateway';
-import { MessageModule } from './messages/message.module';
-import { MessageService } from './messages/message.service';
+import { MessageModule } from './web-socket-messages/message.module';
+import { WebSocketMessageService } from './web-socket-messages/webSocketMessage.service';
 
 @Module({
   imports: [

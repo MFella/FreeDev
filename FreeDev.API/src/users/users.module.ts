@@ -7,8 +7,11 @@ import { UsersService } from './users.service';
 import { File, FileSchema } from '../files/file.schema';
 import { ConfigService } from '@nestjs/config';
 import { UsersController } from './users.controller';
-import { RoomKey, RoomKeySchema } from 'src/messages/room-key.schema';
-import { MessageModule } from 'src/messages/message.module';
+import {
+  RoomKey,
+  RoomKeySchema,
+} from 'src/web-socket-messages/room-key.schema';
+import { MessageModule } from 'src/web-socket-messages/message.module';
 
 @Module({
   imports: [

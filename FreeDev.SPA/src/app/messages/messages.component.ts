@@ -5,8 +5,6 @@ import { CallComponent } from './../call/call.component';
 import { LocalStorageService } from './../services/local-storage.service';
 import { Pagination } from './../types/pagination';
 import {
-  AfterContentChecked,
-  AfterViewChecked,
   AfterViewInit,
   ChangeDetectorRef,
   Component,
@@ -35,6 +33,9 @@ import { VisibleUserActiveTimeCalculator } from '../utils/visibleUserActiveTimeC
 import { DropdownItem } from '../infrastructure/types/dropdownItem';
 import { MenuItem } from 'primeng/api';
 import { ContextMenu } from 'primeng/contextmenu';
+import { MessagesService } from '../services/messages.service';
+import { MessageToSendDto } from '../types/message/messageToSendDto';
+import { MessageType } from '../types/message/messageType';
 
 @Component({
   selector: 'app-messages',
@@ -112,7 +113,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     private readonly dialogService: DialogService,
     private readonly callServ: CallService,
     private readonly messagesUserListRightClickItemsResolver: MessagesUserListRightClickItemsResolver,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly messageServ: MessagesService
   ) {}
 
   ngOnInit() {
@@ -437,19 +439,44 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   private observeRightClickDropdownItems(): void {
     this.messagesUserListRightClickItemsResolver
-      .getItemList(this.getPossibleRightClickActionCallbacks())
+      .getItemList(this.getPossibleRightClickDropdownItems())
       .pipe(take(1))
       .subscribe((dropdownRightClickItems: Array<DropdownItem>) => {
         this.dropdownRightClickItems = dropdownRightClickItems;
       });
   }
 
-  private getPossibleRightClickActionCallbacks(): Array<Function> {
-    return [() => this.navigateToUserProfile()];
+  private getPossibleRightClickDropdownItems(): Array<DropdownItem> {
+    return [
+      new DropdownItem('View Profile', 'pi pi-search', () =>
+        this.navigateToUserProfile()
+      ),
+      new DropdownItem(
+        'Add Friend',
+        'pi pi-plus-circle',
+        () => this.addProfileToContact(),
+        // to change =>
+        true
+      ),
+    ];
   }
 
   private navigateToUserProfile(): void {
-    console.log(this.lastRightClickUserId);
     this.router.navigateByUrl(`profile?id=${this.lastRightClickUserId}`);
+  }
+
+  private addProfileToContact(): void {
+    const messageToSendDto = new MessageToSendDto(
+      this.lastRightClickUserId,
+      new Date(),
+      MessageType.INVITE,
+      ''
+    );
+    this.messageServ
+      .sendMessageToUser(messageToSendDto)
+      .pipe(take(1))
+      .subscribe((response: any) => {
+        console.log('response klocki', response);
+      });
   }
 }

@@ -5,8 +5,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { FileSchema, File } from 'src/files/file.schema';
 import { FileService } from 'src/files/file.service';
-import { MessageModule } from 'src/messages/message.module';
-import { RoomKey, RoomKeySchema } from 'src/messages/room-key.schema';
+import { MessageModule } from 'src/web-socket-messages/message.module';
+import {
+  RoomKey,
+  RoomKeySchema,
+} from 'src/web-socket-messages/room-key.schema';
 import { Developer, DeveloperSchema } from 'src/users/developer.schema';
 import { Hunter, HunterSchema } from 'src/users/hunter.schema';
 import { UsersModule } from 'src/users/users.module';

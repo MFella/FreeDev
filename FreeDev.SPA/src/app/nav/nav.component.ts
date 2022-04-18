@@ -17,6 +17,7 @@ import { LocalStorageService } from '../services/local-storage.service';
 import { NotyService } from '../services/noty.service';
 import { Roles } from '../types/roles.enum';
 import { MenuItem } from 'primeng/api';
+import { NavLinkItem } from '../types/nav/navLinkItem';
 
 @Component({
   selector: 'app-nav',
@@ -114,7 +115,7 @@ export class NavComponent implements OnInit {
     ];
   }
 
-  private getLoggedMenuOptions(): Array<object> {
+  private getLoggedMenuOptions(): Array<NavLinkItem> {
     let basicLoggedOptions = [
       {
         label: 'Messages',
@@ -130,6 +131,11 @@ export class NavComponent implements OnInit {
         label: 'Add Offer',
         icon: 'pi pi-fw pi-plus',
         routerLink: 'add-offer',
+      },
+      {
+        label: 'Contacts',
+        icon: 'pi pi-fw pi-users',
+        routerLink: 'contacts',
       },
       {
         label: 'More Actions',

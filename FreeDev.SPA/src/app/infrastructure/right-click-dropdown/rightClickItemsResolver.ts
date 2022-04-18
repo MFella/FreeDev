@@ -3,6 +3,6 @@ import { DropdownItem } from '../types/dropdownItem';
 
 export interface RightClickItemResolver {
   getItemList(
-    possbleActionCallbacks: Array<Function>
+    possbleActionCallbacks: Array<DropdownItem>
   ): Observable<Array<DropdownItem>>;
 }

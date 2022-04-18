@@ -49,6 +49,7 @@ import { DecisionCallComponent } from './decision-call/decision-call.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
+import { ContactsComponent } from './contacts/contacts.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-
     SavedOffersComponent,
     CallComponent,
     DecisionCallComponent,
+    ContactsComponent,
   ],
   imports: [
     BrowserModule,

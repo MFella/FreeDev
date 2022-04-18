@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Roles } from 'src/types/roles';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, SchemaTypes } from 'mongoose';
 import { File } from '../files/file.schema';
+import { Developer } from './developer.schema';
 
 export type HunterDocument = Hunter & Document;
 
@@ -43,6 +44,12 @@ export class Hunter {
 
   @Prop({ required: true })
   role: Roles;
+
+  @Prop({
+    type: [SchemaTypes.String],
+    ref: Developer.name || Hunter.name,
+  })
+  contacts: Array<Developer | Hunter>;
 }
 
 export const HunterSchema = SchemaFactory.createForClass(Hunter);

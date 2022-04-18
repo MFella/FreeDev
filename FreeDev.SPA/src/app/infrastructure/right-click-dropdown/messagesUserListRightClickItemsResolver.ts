@@ -8,13 +8,11 @@ export class MessagesUserListRightClickItemsResolver
   implements RightClickItemResolver
 {
   getItemList(
-    possbleActionCallbacks: Array<Function>
+    possbleDropdownItems: Array<DropdownItem>
   ): Observable<Array<DropdownItem>> {
     return of(
-      possbleActionCallbacks.map((possibleCallback: Function) => {
-        return new DropdownItem('View Profile', 'pi pi-fw pi-search', () =>
-          possibleCallback()
-        );
+      possbleDropdownItems.map((possibleDropdownItem: DropdownItem) => {
+        return possibleDropdownItem;
       })
     );
   }

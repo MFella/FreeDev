@@ -12,8 +12,6 @@ import { UserToUpdateDto } from 'src/dtos/userToUpdateDto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { SignedFileUrlDto } from 'src/dtos/signedFileUrlDto';
 import { UserChatListParamsDto } from 'src/dtos/userChatListParamsDto';
-import { UserToMessageListDto } from 'src/dtos/userToMessageListDto';
-import { request } from 'http';
 
 @Controller('users')
 export class UsersController {

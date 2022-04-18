@@ -1,3 +1,4 @@
+import { ContactsComponent } from './contacts/contacts.component';
 import { CallComponent } from './call/call.component';
 import { SavedOffersResolver } from './resolvers/saved-offers.resolver';
 import { SavedOffersComponent } from './saved-offers/saved-offers.component';
@@ -67,10 +68,16 @@ const routes: Routes = [
   },
   {
     path: 'messages',
+    canActivate: [AuthGuard],
     component: MessagesComponent,
     resolve: {
       users: UsersChatListResolver,
     },
+  },
+  {
+    path: 'contacts',
+    canActivate: [AuthGuard],
+    component: ContactsComponent,
   },
   { path: '**', redirectTo: 'home' },
 ];

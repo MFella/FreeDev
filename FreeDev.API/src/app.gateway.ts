@@ -1,5 +1,5 @@
 import { CurrentLoggedUser } from './types/logged-users/currentLoggedUser';
-import { MessageService } from './messages/message.service';
+import { WebSocketMessageService } from './web-socket-messages/webSocketMessage.service';
 import {
   ConnectedSocket,
   MessageBody,
@@ -8,7 +8,7 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { MessageToCreateDto } from './dtos/message/messageToCreateDto';
+import { MessageToCreateDto } from './dtos/websocket-message/messageToCreateDto';
 import { MessageToRoom } from './types/messageToRoom';
 import { UsersService } from './users/users.service';
 import { MessageAnswerCall } from './types/messageAnswerCall';
@@ -18,7 +18,7 @@ export class AppGateway {
 
   constructor(
     private readonly userServ: UsersService,
-    private readonly messageServ: MessageService,
+    private readonly messageServ: WebSocketMessageService,
   ) {}
 
   @WebSocketServer()

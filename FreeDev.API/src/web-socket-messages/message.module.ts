@@ -2,7 +2,7 @@ import { Message, MessageSchema } from './message.schema';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RoomKey, RoomKeySchema } from './room-key.schema';
-import { MessageService } from './message.service';
+import { WebSocketMessageService } from './webSocketMessage.service';
 import { MessageController } from './message.controller';
 
 @Module({
@@ -13,7 +13,7 @@ import { MessageController } from './message.controller';
     ]),
   ],
   controllers: [MessageController],
-  providers: [MessageService],
-  exports: [MessageService],
+  providers: [WebSocketMessageService],
+  exports: [WebSocketMessageService],
 })
 export class MessageModule {}

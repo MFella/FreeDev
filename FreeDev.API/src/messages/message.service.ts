@@ -1,57 +1,59 @@
-import { InternalServerErrorException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { MessageToCreateDto } from 'src/dtos/message/messageToCreateDto';
+import { MessageToSendDto } from 'src/dtos/messages/messageToSendDto';
+import { UsersService } from 'src/users/users.service';
 import { Message, MessageDocument } from './message.schema';
 
 export class MessageService {
   constructor(
+    private readonly usersServ: UsersService,
     @InjectModel(Message.name)
     private readonly messageModel: Model<MessageDocument>,
   ) {}
 
-  async createMessage(messageToCreateDto: MessageToCreateDto): Promise<void> {
-    try {
-      await this.messageModel.create(messageToCreateDto);
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'Error occured during saving data.',
-      );
-    }
-  }
+  async tryToSaveMessage(
+    userId: string,
+    messageToSendDto: MessageToSendDto,
+  ): Promise<boolean> {
+    const senderFromDb = await this.usersServ.findUserById(userId);
+    const receiverFromDb = await this.usersServ.findUserById(
+      messageToSendDto?.receiverId,
+    );
 
-  async getSavedMessages(roomKey: string): Promise<any> {
+    if (!Object.values(senderFromDb) || !Object.values(receiverFromDb)) {
+      throw new NotFoundException('Users with this details doesnt exists!');
+    }
+
+    const messageFromDb = await this.messageModel.find({
+      senderId: userId,
+      receiverId: messageToSendDto.receiverId,
+      type: messageToSendDto.messageType,
+    });
+
+    if (Object.values(messageFromDb).length > 0) {
+      throw new BadRequestException('Request has already been sent!');
+    }
+
     try {
-      console.log(roomKey);
-      const messagesFromDb = await this.messageModel.find({
-        key: roomKey,
+      await this.messageModel.create({
+        content: messageToSendDto.content,
+        type: messageToSendDto.messageType,
+        senderId: userId,
+        receiverId: messageToSendDto.receiverId,
+        sendTime: new Date(),
+        isRead: false,
       });
-      return messagesFromDb;
-    } catch (e) {
-      throw new InternalServerErrorException(
-        'Error occured during fetching data.',
-      );
-    }
-  }
 
-  async getPartialSavedMessages(
-    messageFrom: number,
-    messageStep: number,
-    roomKey: string,
-  ): Promise<any> {
-    try {
-      const messagesFromDb = await this.messageModel
-        .find({
-          key: roomKey,
-        })
-        .sort({ sendTime: -1 })
-        .skip(messageFrom)
-        .limit(messageStep);
-
-      return messagesFromDb;
-    } catch (error: unknown) {
+      return true;
+    } catch (ex: any) {
+      console.error(ex);
       throw new InternalServerErrorException(
-        'Error occured during fetching partial data.',
+        'Error occured during saving message',
       );
     }
   }

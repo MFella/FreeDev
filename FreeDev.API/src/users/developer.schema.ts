@@ -1,13 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import {
-  Document,
-  Schema as MongooseSchema,
-  SchemaTypes,
-  Types,
-} from 'mongoose';
+import { Document, Schema as MongooseSchema, SchemaTypes } from 'mongoose';
 import { Offer } from 'src/offers/offer.schema';
 import { Roles } from 'src/types/roles';
 import { File } from '../files/file.schema';
+import { Hunter } from './hunter.schema';
 
 export type DeveloperDocument = Developer & Document;
 
@@ -55,6 +51,12 @@ export class Developer {
 
   @Prop({ type: [SchemaTypes.String], ref: Offer.name })
   favouriteOffers: Array<string>;
+
+  @Prop({
+    type: [SchemaTypes.String],
+    ref: Developer.name || Hunter.name,
+  })
+  contacts: Array<Developer | Hunter>;
 }
 
 export const DeveloperSchema = SchemaFactory.createForClass(Developer);

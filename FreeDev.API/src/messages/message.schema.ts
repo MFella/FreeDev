@@ -1,23 +1,42 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema, SchemaTypes } from 'mongoose';
+import { Developer } from 'src/users/developer.schema';
+import { Hunter } from 'src/users/hunter.schema';
 
 export type MessageDocument = Message & Document;
 
 @Schema()
 export class Message {
   @Prop({ required: true })
-  sender: string;
+  type: string;
 
-  @Prop({ required: true })
-  receiver: string;
+  @Prop({ required: false })
+  content?: string;
 
-  @Prop({ required: true, default: new Date() })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    required: false,
+    ref: Hunter.name || Developer.name,
+  })
+  senderId: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    required: false,
+    ref: Hunter.name || Developer.name,
+  })
+  receiverId: string;
+
+  @Prop({
+    default: new Date(),
+    required: true,
+  })
   sendTime: Date;
 
-  @Prop({ required: true })
-  content: string;
-
-  @Prop({ required: true })
-  key: string;
+  @Prop({
+    required: true,
+  })
+  isRead: boolean;
 }
 
 export const MessageSchema = SchemaFactory.createForClass(Message);
