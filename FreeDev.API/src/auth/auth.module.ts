@@ -5,7 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { PassportModule } from '@nestjs/passport';
 import { FileSchema, File } from 'src/files/file.schema';
 import { FileService } from 'src/files/file.service';
-import { MessageModule } from 'src/web-socket-messages/message.module';
+import { WebSocketMessageModule } from 'src/web-socket-messages/web-socket-message.module';
 import {
   RoomKey,
   RoomKeySchema,
@@ -19,15 +19,17 @@ import { AuthService } from './auth.service';
 import { constans } from './constans';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtStrategy } from './jwt.strategy';
+import { Message, MessageSchema } from 'src/messages/message.schema';
 
 @Module({
   imports: [
-    MessageModule,
+    WebSocketMessageModule,
     MongooseModule.forFeature([
       { name: Developer.name, schema: DeveloperSchema },
       { name: Hunter.name, schema: HunterSchema },
       { name: File.name, schema: FileSchema },
       { name: RoomKey.name, schema: RoomKeySchema },
+      { name: Message.name, schema: MessageSchema },
     ]),
     UsersModule,
     PassportModule,

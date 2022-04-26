@@ -12,8 +12,9 @@ export class MessageController {
     @Req() request: any,
     @Body() messageToSendDto: MessageToSendDto,
   ): Promise<boolean> {
+    console.log(request.user);
     return await this.messageServ.tryToSaveMessage(
-      request?.user?._id,
+      request?.user?.userId,
       messageToSendDto,
     );
   }

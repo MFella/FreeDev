@@ -11,16 +11,18 @@ import {
   RoomKey,
   RoomKeySchema,
 } from 'src/web-socket-messages/room-key.schema';
-import { MessageModule } from 'src/web-socket-messages/message.module';
+import { WebSocketMessageModule } from 'src/web-socket-messages/web-socket-message.module';
+import { Message, MessageSchema } from 'src/messages/message.schema';
 
 @Module({
   imports: [
-    MessageModule,
+    WebSocketMessageModule,
     MongooseModule.forFeature([
       { name: Developer.name, schema: DeveloperSchema },
       { name: Hunter.name, schema: HunterSchema },
       { name: File.name, schema: FileSchema },
       { name: RoomKey.name, schema: RoomKeySchema },
+      { name: Message.name, schema: MessageSchema },
     ]),
   ],
   providers: [UsersService, FileService, ConfigService],

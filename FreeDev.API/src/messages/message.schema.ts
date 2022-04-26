@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema, SchemaTypes } from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 import { Developer } from 'src/users/developer.schema';
 import { Hunter } from 'src/users/hunter.schema';
 

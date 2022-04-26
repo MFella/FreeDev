@@ -1,14 +1,20 @@
-import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { MessageType } from './messageType';
 
 export class MessageToSendDto {
-  @IsEnum(() => MessageType)
+  @IsEnum(MessageType)
   messageType: MessageType;
 
   @IsString()
   receiverId: string;
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   sendTime: Date = new Date();
 

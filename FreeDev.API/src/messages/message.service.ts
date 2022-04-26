@@ -29,13 +29,14 @@ export class MessageService {
       throw new NotFoundException('Users with this details doesnt exists!');
     }
 
-    const messageFromDb = await this.messageModel.find({
+    const messageFromDb = await this.messageModel.findOne({
       senderId: userId,
       receiverId: messageToSendDto.receiverId,
       type: messageToSendDto.messageType,
     });
 
-    if (Object.values(messageFromDb).length > 0) {
+    console.log(userId);
+    if (Object.values(messageFromDb ?? {}).length > 0) {
       throw new BadRequestException('Request has already been sent!');
     }
 

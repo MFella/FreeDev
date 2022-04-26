@@ -1,1 +1,42 @@
-<p>contacts works!</p>
+
+<div class="container-fluid mt-4">
+    <div class="grid">
+        <div class="md:col-8 sm:col-12">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <h3 class="m-0 pt-4 flex justify-content-around">
+                        <button pButton pRipple type="button" label="Info" class="p-button-raised p-button-info p-button-text"></button>
+                        <button pButton pRipple type="button" label="Warning" class="p-button-raised p-button-warning p-button-text"></button>
+                        <button pButton pRipple type="button" label="New Message" class="p-button-raised p-button-help p-button-text"></button>
+                    </h3>
+                    <p-divider></p-divider>
+                </ng-template>
+                <ng-template pTemplate="body">
+                    Header content here
+                </ng-template>
+                Body Content
+                <ng-template pTemplate="footer">
+                    Footer content here
+                </ng-template>
+            </p-card>
+        </div>
+        <div class="md:col-4 sm:col-12">
+            <p-card>
+                <ng-template pTemplate="header">
+                    <div class="user-list-header">
+                        <h2 class="m-0 pt-4 flex justify-content-center">Users</h2>
+                    </div>
+                    <p-divider></p-divider>
+                </ng-template>
+                <ng-template pTemplate="body">
+                    Header content here
+                </ng-template>
+                Body Content
+                <ng-template pTemplate="footer">
+                    Footer content here
+                </ng-template>
+            </p-card>
+        </div>
+    </div>
+</div>
+

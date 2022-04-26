@@ -103,6 +103,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   dropdownRightClickItems: Array<MenuItem> = [];
 
+  friendIds: Set<string> = new Set<string>();
+
   constructor(
     private readonly wsServ: WsService,
     private readonly authServ: AuthService,
@@ -119,6 +121,9 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.route.data.subscribe((resolvedMessagePageInfo: Data) => {
+      this.friendIds = new Set(
+        resolvedMessagePageInfo.users.friendsOrRequestedFriendsIds
+      );
       this.userList = resolvedMessagePageInfo.users.result ?? [];
       this.numberOfTotalRecords =
         resolvedMessagePageInfo.users.numberOfTotalRecords;
@@ -195,7 +200,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       .subscribe((paginatedList: any) => {
         this.userList = paginatedList.result ?? [];
         this.numberOfTotalRecords = paginatedList.numberOfTotalRecords;
-
+        console.log(paginatedList);
+        this.friendIds = new Set(paginatedList.friendsOrRequestedFriendsIds);
         this.emitVisibleUsersIdsFromList();
       });
   }
@@ -313,6 +319,9 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     selectedUserId: string
   ): void {
     this.lastRightClickUserId = selectedUserId;
+    this.dropdownRightClickItems = this.getPossibleRightClickDropdownItems(
+      this.friendIds.has(this.lastRightClickUserId)
+    );
     contextMenu.show(event);
     event.stopPropagation();
   }
@@ -403,7 +412,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     this.wsServ
       .observeLoggedInUsers()
       .subscribe((loggedInUsers: Array<any>) => {
-        console.log('loggedUsers', loggedInUsers);
         this.visibleLoggedInUsers = loggedInUsers;
       });
   }
@@ -415,14 +423,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       .subscribe(() => {
         this.clearDynamicDialogRefs();
       });
-  }
-
-  private observeDynamicDialogRefDestroyed(
-    dynamicDialogRef: DynamicDialogRef | null
-  ): void {
-    dynamicDialogRef?.onDestroy.subscribe(() => {
-      dynamicDialogRef = null;
-    });
   }
 
   private clearDynamicDialogRefs(): void {
@@ -439,14 +439,16 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   private observeRightClickDropdownItems(): void {
     this.messagesUserListRightClickItemsResolver
-      .getItemList(this.getPossibleRightClickDropdownItems())
+      .getItemList(this.getPossibleRightClickDropdownItems(true))
       .pipe(take(1))
       .subscribe((dropdownRightClickItems: Array<DropdownItem>) => {
         this.dropdownRightClickItems = dropdownRightClickItems;
       });
   }
 
-  private getPossibleRightClickDropdownItems(): Array<DropdownItem> {
+  private getPossibleRightClickDropdownItems(
+    areFriends: boolean
+  ): Array<DropdownItem> {
     return [
       new DropdownItem('View Profile', 'pi pi-search', () =>
         this.navigateToUserProfile()
@@ -455,8 +457,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
         'Add Friend',
         'pi pi-plus-circle',
         () => this.addProfileToContact(),
-        // to change =>
-        true
+        areFriends
       ),
     ];
   }
@@ -472,11 +473,14 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       MessageType.INVITE,
       ''
     );
+
     this.messageServ
       .sendMessageToUser(messageToSendDto)
       .pipe(take(1))
-      .subscribe((response: any) => {
-        console.log('response klocki', response);
+      .subscribe((isSaved: boolean) => {
+        if (isSaved) {
+          this.friendIds.add(this.lastRightClickUserId);
+        }
       });
   }
 }

@@ -2,12 +2,15 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { MessageToCreateDto } from 'src/dtos/websocket-message/messageToCreateDto';
-import { Message, MessageDocument } from './message.schema';
+import {
+  WebSocketMessage,
+  WebSocketMessageDocument,
+} from './web-socket-message.schema';
 
 export class WebSocketMessageService {
   constructor(
-    @InjectModel(Message.name)
-    private readonly messageModel: Model<MessageDocument>,
+    @InjectModel(WebSocketMessage.name)
+    private readonly messageModel: Model<WebSocketMessageDocument>,
   ) {}
 
   async createMessage(messageToCreateDto: MessageToCreateDto): Promise<void> {

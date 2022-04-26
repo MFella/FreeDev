@@ -7,8 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { AppGateway } from './app.gateway';
-import { MessageModule } from './web-socket-messages/message.module';
-import { WebSocketMessageService } from './web-socket-messages/webSocketMessage.service';
+import { WebSocketMessageModule } from './web-socket-messages/web-socket-message.module';
+import { MessageModule } from './messages/message.module';
 
 @Module({
   imports: [
@@ -16,6 +16,7 @@ import { WebSocketMessageService } from './web-socket-messages/webSocketMessage.
     UsersModule,
     AuthModule,
     OfferModule,
+    WebSocketMessageModule,
     MessageModule,
     ConfigModule.forRoot({
       envFilePath: '.dev.env',

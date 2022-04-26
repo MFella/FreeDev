@@ -50,6 +50,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
 import { ContactsComponent } from './contacts/contacts.component';
+import { HttpErrorResponseHandler } from './common/handlers/httpErrorResponseHandler';
 
 @NgModule({
   declarations: [
@@ -110,6 +111,7 @@ import { ContactsComponent } from './contacts/contacts.component';
   ],
   providers: [
     NotyService,
+    HttpErrorResponseHandler,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,

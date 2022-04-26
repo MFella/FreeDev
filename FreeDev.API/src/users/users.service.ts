@@ -24,6 +24,7 @@ import {
 } from 'src/web-socket-messages/room-key.schema';
 import { CurrentLoggedUser } from 'src/types/logged-users/currentLoggedUser';
 import { of, Observable } from 'rxjs';
+import { Message, MessageDocument } from 'src/messages/message.schema';
 
 @Injectable()
 export class UsersService {
@@ -34,6 +35,8 @@ export class UsersService {
     private hunterModel: Model<HunterDocument>,
     @InjectModel(RoomKey.name)
     private readonly roomKeyModel: Model<RoomKeyDocument>,
+    @InjectModel(Message.name)
+    private readonly messageModel: Model<MessageDocument>,
     private readonly fileServ: FileService,
   ) {}
 
@@ -324,7 +327,11 @@ export class UsersService {
   async getFilteredUserChatList(
     userId: ObjectId,
     query: any,
-  ): Promise<{ result: Array<any>; numberOfTotalRecords: number }> {
+  ): Promise<{
+    result: Array<any>;
+    numberOfTotalRecords: number;
+    friendsOrRequestedFriendsIds: Array<string>;
+  }> {
     const attributesToSelect = { _id: 1, name: 1, surname: 1, avatar: 1 };
     const trimmedName = new RegExp(query.name?.trim(), 'i');
 
@@ -409,8 +416,37 @@ export class UsersService {
       }
     });
 
+    const friendsOrRequestedFriendsIds = [];
+    await Promise.all(
+      resultArray.map(async (userEntity) => {
+        const isFriendRequestByReceiverInBox = await this.messageModel
+          .findOne({
+            senderId: userEntity._id,
+            receiverId: userId.toString(),
+          })
+          .exec();
+
+        const isFriendRequestBySenderInBox = await this.messageModel
+          .findOne({
+            senderId: userId.toString(),
+            receiverId: userEntity._id,
+          })
+          .exec();
+        const isFriend = userEntity.contacts?.includes(userId.toString());
+        if (
+          isFriend ||
+          isFriendRequestByReceiverInBox ||
+          isFriendRequestBySenderInBox
+        ) {
+          console.log('pushed', userEntity._id);
+          friendsOrRequestedFriendsIds.push(userEntity._id);
+        }
+      }),
+    );
+
     return {
       result: resultArray,
+      friendsOrRequestedFriendsIds: friendsOrRequestedFriendsIds,
       numberOfTotalRecords,
     };
   }
@@ -488,5 +524,14 @@ export class UsersService {
         return v.toString(16);
       },
     );
+  }
+
+  private async filterArray(arr, callback) {
+    const fail = Symbol();
+    return (
+      await Promise.all(
+        arr.map(async (item) => ((await callback(item)) ? item : fail)),
+      )
+    ).filter((i) => i !== fail);
   }
 }
