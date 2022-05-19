@@ -1,0 +1,24 @@
+<div class="container-fluid p-4">
+    <div class="grid">
+        <div class="md:col-12">
+            <p-table [value]="mailList">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Title</th>
+                        <th>From</th>
+                        <th>Kind</th>
+                        <th>Date</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-mail>
+                    <tr>
+                        <td>{{!mail.title?.length ? '(Empty)' : mail.title}}</td>
+                        <td>{{mail.receiver?.name + ' ' + mail.receiver?.surname}}</td>
+                        <td>{{mail.type}}</td>
+                        <td>{{mail.sendTime | date}}</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
