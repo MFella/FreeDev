@@ -49,7 +49,7 @@ export class UsersService {
     if (!this.getCurrentConnectedUserIds().includes(loggedUser.id)) {
       this.currentConnectedUsers.push(loggedUser);
     } else {
-      let storedLoggedUserIndex = this.currentConnectedUsers.findIndex(
+      const storedLoggedUserIndex = this.currentConnectedUsers.findIndex(
         (user: CurrentLoggedUser) => user.id === loggedUser.id,
       );
       this.updateConnectedUserPayload(storedLoggedUserIndex, loggedUser);
@@ -336,7 +336,7 @@ export class UsersService {
     const trimmedName = new RegExp(query.name?.trim(), 'i');
 
     let usersToReturn = [];
-    let numberOfTotalRecords: number = 0;
+    let numberOfTotalRecords = 0;
 
     const lengthOfHunter = !!query.name?.trim()?.length
       ? await this.hunterModel
@@ -421,15 +421,15 @@ export class UsersService {
       resultArray.map(async (userEntity) => {
         const isFriendRequestByReceiverInBox = await this.messageModel
           .findOne({
-            senderId: userEntity._id,
-            receiverId: userId.toString(),
+            sender: userEntity._id,
+            receiver: userId.toString(),
           })
           .exec();
 
         const isFriendRequestBySenderInBox = await this.messageModel
           .findOne({
-            senderId: userId.toString(),
-            receiverId: userEntity._id,
+            sender: userId.toString(),
+            receiver: userEntity._id,
           })
           .exec();
         const isFriend = userEntity.contacts?.includes(userId.toString());
@@ -519,7 +519,7 @@ export class UsersService {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
       /[xy]/g,
       function (c) {
-        var r = (Math.random() * 16) | 0,
+        const r = (Math.random() * 16) | 0,
           v = c == 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
       },

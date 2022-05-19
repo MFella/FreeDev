@@ -20,4 +20,7 @@ export class MessageToSendDto {
 
   @IsString()
   content: string;
+
+  @IsString()
+  title: string;
 }

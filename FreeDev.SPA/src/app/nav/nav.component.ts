@@ -133,9 +133,9 @@ export class NavComponent implements OnInit {
         routerLink: 'add-offer',
       },
       {
-        label: 'Contacts',
-        icon: 'pi pi-fw pi-users',
-        routerLink: 'contacts',
+        label: 'Notes',
+        icon: 'pi pi-fw pi-folder',
+        routerLink: 'notes',
       },
       {
         label: 'More Actions',

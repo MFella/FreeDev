@@ -1,9 +1,11 @@
-import { MessagesUserListRightClickItemsResolver } from './../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
-import { CurrentLoggedUser } from './../../../../FreeDev.API/dist/types/logged-users/currentLoggedUser.d';
-import { CallService } from './../services/call.service';
-import { CallComponent } from './../call/call.component';
-import { LocalStorageService } from './../services/local-storage.service';
-import { Pagination } from './../types/pagination';
+import {
+  MessagesUserListRightClickItemsResolver
+} from './../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
+import {CurrentLoggedUser} from './../../../../FreeDev.API/dist/types/logged-users/currentLoggedUser.d';
+import {CallService} from './../services/call.service';
+import {CallComponent} from './../call/call.component';
+import {LocalStorageService} from './../services/local-storage.service';
+import {Pagination} from './../types/pagination';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -17,25 +19,26 @@ import {
   faSearch,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
-import { WsService } from '../services/ws.service';
-import { MessageToCreateDto } from '../dtos/messages/messageToCreateDto';
-import { AuthService } from '../services/auth.service';
-import { ActivatedRoute, Data, Router } from '@angular/router';
-import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
-import { ResolverPagination } from '../types/resolvedPagination';
-import { UsersService } from '../services/users.service';
-import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
-import { debounceTime, map, switchMap, take } from 'rxjs/operators';
-import { timer } from 'rxjs';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { DecisionCallComponent } from '../decision-call/decision-call.component';
-import { VisibleUserActiveTimeCalculator } from '../utils/visibleUserActiveTimeCalculator';
-import { DropdownItem } from '../infrastructure/types/dropdownItem';
-import { MenuItem } from 'primeng/api';
-import { ContextMenu } from 'primeng/contextmenu';
-import { MessagesService } from '../services/messages.service';
-import { MessageToSendDto } from '../types/message/messageToSendDto';
-import { MessageType } from '../types/message/messageType';
+import {WsService} from '../services/ws.service';
+import {MessageToCreateDto} from '../dtos/messages/messageToCreateDto';
+import {AuthService} from '../services/auth.service';
+import {ActivatedRoute, Data, Router} from '@angular/router';
+import {UserToMessageListDto} from '../dtos/users/userToMessageListDto';
+import {ResolverPagination} from '../types/resolvedPagination';
+import {UsersService} from '../services/users.service';
+import {MessageResponseDto} from '../dtos/messages/messageResponseDto';
+import {debounceTime, map, switchMap, take} from 'rxjs/operators';
+import {timer} from 'rxjs';
+import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {DecisionCallComponent} from '../decision-call/decision-call.component';
+import {VisibleUserActiveTimeCalculator} from '../utils/visibleUserActiveTimeCalculator';
+import {DropdownItem} from '../infrastructure/types/dropdownItem';
+import {MenuItem} from 'primeng/api';
+import {ContextMenu} from 'primeng/contextmenu';
+import {MessagesService} from '../services/messages.service';
+import {MessageToSendDto} from '../types/message/messageToSendDto';
+import {MessageType} from '../types/message/messageType';
+import {NotyService} from "../services/noty.service";
 
 @Component({
   selector: 'app-messages',
@@ -94,9 +97,9 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   lastRightClickUserId: string = '';
 
   searchRolesNames: Array<{ name: string }> = [
-    { name: 'Both' },
-    { name: 'Developer' },
-    { name: 'Hunter' },
+    {name: 'Both'},
+    {name: 'Developer'},
+    {name: 'Hunter'},
   ];
 
   selectedUserFromRightClickMenu!: any;
@@ -116,8 +119,10 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     private readonly callServ: CallService,
     private readonly messagesUserListRightClickItemsResolver: MessagesUserListRightClickItemsResolver,
     private readonly router: Router,
-    private readonly messageServ: MessagesService
-  ) {}
+    private readonly messageServ: MessagesService,
+    private readonly notyService: NotyService
+  ) {
+  }
 
   ngOnInit() {
     this.route.data.subscribe((resolvedMessagePageInfo: Data) => {
@@ -467,11 +472,14 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   }
 
   private addProfileToContact(): void {
+    const titleInvitation = 'Invitation';
+    const contentInvitation = 'A want to be your friend. Add me to your contacts';
     const messageToSendDto = new MessageToSendDto(
       this.lastRightClickUserId,
       new Date(),
       MessageType.INVITE,
-      ''
+      titleInvitation,
+      contentInvitation
     );
 
     this.messageServ
@@ -480,6 +488,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       .subscribe((isSaved: boolean) => {
         if (isSaved) {
           this.friendIds.add(this.lastRightClickUserId);
+          this.notyService.success('Invitation has been sent');
         }
       });
   }

@@ -1,18 +1,20 @@
 import { Pagination } from './../types/pagination';
 import { Injectable } from '@angular/core';
-import { AfterLoginInfoDto } from '../dtos/users/afterLoginInfoDto';
+import { LocalStorageBaseService } from './local-storage-base.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LocalStorageService {
+export class LocalStorageService extends LocalStorageBaseService {
   private static readonly USER_CREDENTIAL_FIELDS: Array<string> = [
     'user',
     'token',
     'expiration',
   ];
 
-  constructor() {}
+  constructor() {
+    super();
+  }
 
   setAuthCredentials(user: string, token: string, expiration: string): void {
     localStorage.setItem('user', user);

@@ -27,6 +27,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DividerModule } from 'primeng/divider';
+import { TableModule } from 'primeng/table';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { RadioButtonModule } from 'primeng/radiobutton';
@@ -38,6 +39,7 @@ import { OrderListModule } from 'primeng/orderlist';
 import { TooltipModule } from 'primeng/tooltip';
 import { ChipsModule } from 'primeng/chips';
 import { SliderModule } from 'primeng/slider';
+import { SelectButtonModule } from 'primeng/selectbutton';
 import { BadgeModule } from 'primeng/badge';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { SavedOffersComponent } from './saved-offers/saved-offers.component';
@@ -51,6 +53,8 @@ import { environment } from '../environments/environment';
 import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
 import { ContactsComponent } from './contacts/contacts.component';
 import { HttpErrorResponseHandler } from './common/handlers/httpErrorResponseHandler';
+import { MailListComponent } from './generics/mail-list/mail-list.component';
+import { CreateMailComponent } from './create-mail/create-mail.component';
 
 @NgModule({
   declarations: [
@@ -69,6 +73,8 @@ import { HttpErrorResponseHandler } from './common/handlers/httpErrorResponseHan
     CallComponent,
     DecisionCallComponent,
     ContactsComponent,
+    MailListComponent,
+    CreateMailComponent,
   ],
   imports: [
     BrowserModule,
@@ -99,6 +105,8 @@ import { HttpErrorResponseHandler } from './common/handlers/httpErrorResponseHan
     ChipsModule,
     SliderModule,
     BadgeModule,
+    TableModule,
+    SelectButtonModule,
     CalendarModule,
     DynamicDialogModule,
     ContextMenuModule,

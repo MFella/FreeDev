@@ -75,7 +75,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'contacts',
+    path: 'notes',
     canActivate: [AuthGuard],
     component: ContactsComponent,
   },

@@ -13,19 +13,22 @@ export class Message {
   @Prop({ required: false })
   content?: string;
 
-  @Prop({
-    type: MongooseSchema.Types.ObjectId,
-    required: false,
-    ref: Hunter.name || Developer.name,
-  })
-  senderId: string;
+  @Prop({ required: false })
+  title?: string;
 
   @Prop({
     type: MongooseSchema.Types.ObjectId,
     required: false,
     ref: Hunter.name || Developer.name,
   })
-  receiverId: string;
+  sender: string;
+
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    required: false,
+    ref: Hunter.name || Developer.name,
+  })
+  receiver: string;
 
   @Prop({
     default: new Date(),
