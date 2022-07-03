@@ -1,60 +1,63 @@
-import { SelectedBadgeComponent } from './generics/selected-badge/selected-badge.component';
-import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {SelectedBadgeComponent} from './generics/selected-badge/selected-badge.component';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { NavComponent } from './nav/nav.component';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { HomeComponent } from './home/home.component';
-import { RegisterComponent } from './register/register.component';
-import { AuthComponent } from './auth/auth.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NotyService } from './services/noty.service';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastrModule } from 'ngx-toastr';
-import { AuthInterceptor } from './auth/auth.interceptor';
-import { AddOfferComponent } from './add-offer/add-offer.component';
-import { SearchOffersComponent } from './search-offers/search-offers.component';
-import { ProfileComponent } from './profile/profile.component';
-import { NgxSpinnerModule } from 'ngx-spinner';
-import { MessagesComponent } from './messages/messages.component';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { MenubarModule } from 'primeng/menubar';
-import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { DividerModule } from 'primeng/divider';
-import { TableModule } from 'primeng/table';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { InputTextareaModule } from 'primeng/inputtextarea';
-import { DropdownModule } from 'primeng/dropdown';
-import { FileUploadModule } from 'primeng/fileupload';
-import { PaginatorModule } from 'primeng/paginator';
-import { OrderListModule } from 'primeng/orderlist';
-import { TooltipModule } from 'primeng/tooltip';
-import { ChipsModule } from 'primeng/chips';
-import { SliderModule } from 'primeng/slider';
-import { SelectButtonModule } from 'primeng/selectbutton';
-import { BadgeModule } from 'primeng/badge';
-import { OfferDetailsComponent } from './offer-details/offer-details.component';
-import { SavedOffersComponent } from './saved-offers/saved-offers.component';
-import { CalendarModule } from 'primeng/calendar';
-import { ContextMenuModule } from 'primeng/contextmenu';
-import { CallComponent } from './call/call.component';
-import { DynamicDialogModule } from 'primeng/dynamicdialog';
-import { DecisionCallComponent } from './decision-call/decision-call.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
-import { ContactsComponent } from './contacts/contacts.component';
-import { HttpErrorResponseHandler } from './common/handlers/httpErrorResponseHandler';
-import { MailListComponent } from './generics/mail-list/mail-list.component';
-import { CreateMailComponent } from './create-mail/create-mail.component';
+import {AppRoutingModule} from './app-routing.module';
+import {AppComponent} from './app.component';
+import {NavComponent} from './nav/nav.component';
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {HomeComponent} from './home/home.component';
+import {RegisterComponent} from './register/register.component';
+import {AuthComponent} from './auth/auth.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NotyService} from './services/noty.service';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {ToastrModule} from 'ngx-toastr';
+import {AuthInterceptor} from './auth/auth.interceptor';
+import {AddOfferComponent} from './add-offer/add-offer.component';
+import {SearchOffersComponent} from './search-offers/search-offers.component';
+import {ProfileComponent} from './profile/profile.component';
+import {NgxSpinnerModule} from 'ngx-spinner';
+import {MessagesComponent} from './messages/messages.component';
+import {NgxPaginationModule} from 'ngx-pagination';
+import {MenubarModule} from 'primeng/menubar';
+import {CardModule} from 'primeng/card';
+import {ButtonModule} from 'primeng/button';
+import {InputTextModule} from 'primeng/inputtext';
+import {InputNumberModule} from 'primeng/inputnumber';
+import {DividerModule} from 'primeng/divider';
+import {TableModule} from 'primeng/table';
+import {RouterModule} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {RadioButtonModule} from 'primeng/radiobutton';
+import {InputTextareaModule} from 'primeng/inputtextarea';
+import {DropdownModule} from 'primeng/dropdown';
+import {FileUploadModule} from 'primeng/fileupload';
+import {PaginatorModule} from 'primeng/paginator';
+import {OrderListModule} from 'primeng/orderlist';
+import {TooltipModule} from 'primeng/tooltip';
+import {ChipsModule} from 'primeng/chips';
+import {SliderModule} from 'primeng/slider';
+import {SelectButtonModule} from 'primeng/selectbutton';
+import {BadgeModule} from 'primeng/badge';
+import {OfferDetailsComponent} from './offer-details/offer-details.component';
+import {SavedOffersComponent} from './saved-offers/saved-offers.component';
+import {CalendarModule} from 'primeng/calendar';
+import {ContextMenuModule} from 'primeng/contextmenu';
+import {CallComponent} from './call/call.component';
+import {DynamicDialogModule} from 'primeng/dynamicdialog';
+import {DecisionCallComponent} from './decision-call/decision-call.component';
+import {ServiceWorkerModule} from '@angular/service-worker';
+import {environment} from '../environments/environment';
+import {
+  MessagesUserListRightClickItemsResolver
+} from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
+import {ContactsComponent} from './contacts/contacts.component';
+import {HttpErrorResponseHandler} from './common/handlers/httpErrorResponseHandler';
+import {MailListComponent} from './generics/mail-list/mail-list.component';
+import {CreateMailComponent} from './create-mail/create-mail.component';
+import {MailService} from "./services/mail.service";
 
 @NgModule({
   declarations: [
@@ -120,6 +123,7 @@ import { CreateMailComponent } from './create-mail/create-mail.component';
   providers: [
     NotyService,
     HttpErrorResponseHandler,
+    MailService,
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
@@ -130,4 +134,5 @@ import { CreateMailComponent } from './create-mail/create-mail.component';
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
-export class AppModule {}
+export class AppModule {
+}
