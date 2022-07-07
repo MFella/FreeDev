@@ -5,7 +5,6 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {NavComponent} from './nav/nav.component';
-import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {HomeComponent} from './home/home.component';
 import {RegisterComponent} from './register/register.component';
 import {AuthComponent} from './auth/auth.component';
@@ -18,7 +17,6 @@ import {AuthInterceptor} from './auth/auth.interceptor';
 import {AddOfferComponent} from './add-offer/add-offer.component';
 import {SearchOffersComponent} from './search-offers/search-offers.component';
 import {ProfileComponent} from './profile/profile.component';
-import {NgxSpinnerModule} from 'ngx-spinner';
 import {MessagesComponent} from './messages/messages.component';
 import {NgxPaginationModule} from 'ngx-pagination';
 import {MenubarModule} from 'primeng/menubar';
@@ -58,6 +56,8 @@ import {HttpErrorResponseHandler} from './common/handlers/httpErrorResponseHandl
 import {MailListComponent} from './generics/mail-list/mail-list.component';
 import {CreateMailComponent} from './create-mail/create-mail.component';
 import {MailService} from "./services/mail.service";
+import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
+import {NgxSpinnerModule} from "ngx-spinner";
 
 @NgModule({
   declarations: [
@@ -90,7 +90,6 @@ import {MailService} from "./services/mail.service";
     FormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    NgxSpinnerModule,
     NgxPaginationModule,
     MenubarModule,
     CardModule,
@@ -101,6 +100,7 @@ import {MailService} from "./services/mail.service";
     RadioButtonModule,
     InputTextareaModule,
     DropdownModule,
+    NgxSpinnerModule,
     FileUploadModule,
     PaginatorModule,
     OrderListModule,
@@ -118,6 +118,12 @@ import {MailService} from "./services/mail.service";
       // Register the ServiceWorker as soon as the app is stable
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000',
+    }),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000'
     }),
   ],
   providers: [

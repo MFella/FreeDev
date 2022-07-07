@@ -1,28 +1,27 @@
-import { Roles } from '../types/roles.enum';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import {Roles} from '../types/roles.enum';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {
   ChangeDetectorRef,
   Component,
-  ElementRef,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { IconDefinition } from '@fortawesome/fontawesome-common-types';
+import {IconDefinition} from '@fortawesome/fontawesome-common-types';
 import {
   faEdit,
   faSave,
   faTimesCircle,
 } from '@fortawesome/free-solid-svg-icons';
-import { ActivatedRoute, Data } from '@angular/router';
-import { UsersService } from '../services/users.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { NotyService } from '../services/noty.service';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
-import { FileUpload } from 'primeng/fileupload';
-import { Dropdown } from 'primeng/dropdown';
-import { UserToProfileDto } from '../dtos/users/userToProfileDto';
-import { UserToUpdateDto } from '../dtos/users/userToUpdateDto';
+import {ActivatedRoute, Data} from '@angular/router';
+import {UsersService} from '../services/users.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {NotyService} from '../services/noty.service';
+import {NgxSpinnerService} from 'ngx-spinner';
+import {SignedFileUrlDto} from '../dtos/signedFileUrlDto';
+import {FileUpload} from 'primeng/fileupload';
+import {Dropdown} from 'primeng/dropdown';
+import {UserToProfileDto} from '../dtos/users/userToProfileDto';
+import {UserToUpdateDto} from '../dtos/users/userToUpdateDto';
 
 @Component({
   selector: 'app-profile',
@@ -53,9 +52,9 @@ export class ProfileComponent implements OnInit {
   icons: Array<IconDefinition> = [faEdit, faSave, faTimesCircle];
 
   readonly sizesOfCompany: Array<object> = [
-    { name: 'Small' },
-    { name: 'Medium' },
-    { name: 'Large' },
+    {name: 'Small'},
+    {name: 'Medium'},
+    {name: 'Large'},
   ];
 
   constructor(
@@ -65,7 +64,8 @@ export class ProfileComponent implements OnInit {
     private readonly noty: NotyService,
     private readonly spinner: NgxSpinnerService,
     private readonly changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.route.data.subscribe((response: Data) => {
@@ -95,7 +95,7 @@ export class ProfileComponent implements OnInit {
     });
     this.isLoading = true;
 
-    const { avatar, sizeOfCompany, ...pipedProfileFormRawValue } =
+    const {avatar, sizeOfCompany, ...pipedProfileFormRawValue} =
       this.profileForm.getRawValue();
 
     const userToUpdateDto: UserToUpdateDto = {
@@ -200,7 +200,7 @@ export class ProfileComponent implements OnInit {
           Validators.pattern(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/),
         ],
       ],
-      bio: [this.userProfile.bio, { validators: [] }],
+      bio: [this.userProfile.bio, {validators: []}],
       city: [
         this.userProfile.city,
         {
@@ -219,8 +219,8 @@ export class ProfileComponent implements OnInit {
           ],
         },
       ],
-      technologies: [this.userProfile.technologies, { validators: [] }],
-      hobbies: [this.userProfile.hobbies, { validators: [] }],
+      technologies: [this.userProfile.technologies, {validators: []}],
+      hobbies: [this.userProfile.hobbies, {validators: []}],
       avatar: [],
     });
   }
@@ -254,8 +254,8 @@ export class ProfileComponent implements OnInit {
           Validators.pattern(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/),
         ],
       ],
-      bio: [this.userProfile.bio, { validators: [] }],
-      businessOffice: [this.userProfile.businessOffice, { validators: [] }],
+      bio: [this.userProfile.bio, {validators: []}],
+      businessOffice: [this.userProfile.businessOffice, {validators: []}],
       companyName: [
         this.userProfile.nameOfCompany,
         {
@@ -265,8 +265,8 @@ export class ProfileComponent implements OnInit {
         },
       ],
       sizeOfCompany: [
-        { name: this.capitalizeString(this.userProfile.sizeOfCompany) },
-        { validators: [] },
+        {name: this.capitalizeString(this.userProfile.sizeOfCompany)},
+        {validators: []},
       ],
       avatar: [],
     });

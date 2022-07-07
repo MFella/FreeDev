@@ -1,16 +1,15 @@
-import { CallMediaType } from './../types/call/callMediaType';
-import { NotyService } from './noty.service';
-import { Injectable } from '@angular/core';
-import Peer from 'peerjs';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
+import {CallMediaType} from './../types/call/callMediaType';
+import {NotyService} from './noty.service';
+import {Injectable} from '@angular/core';
+import Peer, {DataConnection, MediaConnection, PeerJSOption} from 'peerjs';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CallService {
   private peer!: Peer;
-  private mediaCall!: Peer.MediaConnection;
+  private mediaCall!: MediaConnection;
 
   private localStreamBs: BehaviorSubject<MediaStream | any> =
     new BehaviorSubject(null);
@@ -25,7 +24,7 @@ export class CallService {
   private isCallStartedBs = new Subject<boolean>();
   public isCallStarted$ = this.isCallStartedBs.asObservable();
 
-  private connection!: Peer.DataConnection;
+  private connection!: DataConnection;
 
   // private stream!: MediaStream;
 
@@ -43,11 +42,12 @@ export class CallService {
 
   private stream: any;
 
-  constructor(private readonly noty: NotyService) {}
+  constructor(private readonly noty: NotyService) {
+  }
 
   public initPeer(peerId: string): string {
     if (!this.peer || this.peer.disconnected) {
-      const peerJsOptions: Peer.PeerJSOption = {
+      const peerJsOptions: PeerJSOption = {
         debug: 3,
         config: {
           iceServers: [
@@ -82,7 +82,7 @@ export class CallService {
         this.connection = this.peer.connect(remotePeerId);
       }
 
-      this.connection.on('error', (err) => {
+      this.connection.on('error', (err: any) => {
         console.error(err);
         this.noty.error('Connection closed');
       });
