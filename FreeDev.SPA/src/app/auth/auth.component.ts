@@ -1,12 +1,18 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { faGem, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { Subject } from 'rxjs';
-import { UserToLoginDto } from '../dtos/users/userToLoginDto';
-import { AuthService } from '../services/auth.service';
-import { NotyService } from '../services/noty.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {faGem, IconDefinition} from '@fortawesome/free-solid-svg-icons';
+import {UserToLoginDto} from '../dtos/users/userToLoginDto';
+import {AuthService} from '../services/auth.service';
+import {NotyService} from '../services/noty.service';
+import {combineLatest, Observable} from "rxjs";
+import {defaultIfEmpty, filter, startWith} from "rxjs/operators";
+
+export enum LoginFormFieldKeys {
+  EMAIL = 'email',
+  PASSWORD = 'password'
+}
 
 @Component({
   selector: 'app-auth',
@@ -22,16 +28,17 @@ export class AuthComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly noty: NotyService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.initForm();
+    this.observeFieldsStatusChange();
   }
 
   login($event: Event): void {
-    console.log(this.loginForm);
     $event.preventDefault();
-    const userToLoginDto: UserToLoginDto = { ...this.loginForm.getRawValue() };
+    const userToLoginDto: UserToLoginDto = {...this.loginForm.getRawValue()};
     this.authService.login(userToLoginDto).subscribe(
       (response: any) => {
         this.loginForm.reset();
@@ -47,7 +54,7 @@ export class AuthComponent implements OnInit {
 
   private initForm(): void {
     this.loginForm = this.fb.group({
-      email: [
+      [LoginFormFieldKeys.EMAIL]: [
         '',
         {
           validators: [
@@ -60,7 +67,7 @@ export class AuthComponent implements OnInit {
           ],
         },
       ],
-      password: [
+      [LoginFormFieldKeys.PASSWORD]: [
         '',
         {
           validators: [
@@ -71,5 +78,23 @@ export class AuthComponent implements OnInit {
         },
       ],
     });
+  }
+
+  private observeFieldsStatusChange(): void {
+    const emailField = this.loginForm?.get(LoginFormFieldKeys.EMAIL);
+    const passwordField = this.loginForm?.get(LoginFormFieldKeys.PASSWORD);
+
+    emailField && passwordField && combineLatest([
+      emailField?.valueChanges.pipe(startWith('')),
+      passwordField?.valueChanges.pipe(startWith(''))
+    ])
+      .subscribe(([emailFieldValue, passwordFieldValue]: [string | null, string | null]) => {
+        if (emailFieldValue === '') {
+          emailField?.markAsPristine();
+        }
+        if (passwordFieldValue === '') {
+          passwordField?.markAsPristine();
+        }
+      });
   }
 }

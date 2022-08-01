@@ -5,6 +5,8 @@ import {MailService} from "../services/mail.service";
 import {MailMessageToSend} from "../types/contacts/mailMessageToSend";
 import {take} from "rxjs/operators";
 import {NotyService} from "../services/noty.service";
+import {DirectMessageToSendDto} from "../types/message/directMessageToSendDto";
+import {IndirectMessageToSendDto} from "../types/message/indirectMessageToSendDto";
 
 export enum FormInputKeys {
   RECEIVER = 'receiver',
@@ -111,7 +113,7 @@ export class CreateMailComponent implements OnInit {
   }
 
   sendMailMessage(): void {
-    this.mailService.sendMailMessage(this.getMailToSendDto())
+    this.mailService.sendIndirectMailMessage(this.getIndirectMessageToSendDto())
       .pipe(take(1))
       .subscribe((saved: boolean) => {
         if (saved) {
@@ -142,9 +144,9 @@ export class CreateMailComponent implements OnInit {
     this.mailForm.reset();
   }
 
-  private getMailToSendDto(): MailMessageToSend {
+  private getIndirectMessageToSendDto(): IndirectMessageToSendDto {
     const mailFormValue = {...this.mailForm.getRawValue()};
-    return new MailMessageToSend(mailFormValue[FormInputKeys.RECEIVER], mailFormValue[FormInputKeys.KIND_OF_MESSAGE],
-      mailFormValue[FormInputKeys.CONTENT], mailFormValue[FormInputKeys.TITLE]);
+    return new IndirectMessageToSendDto(mailFormValue[FormInputKeys.RECEIVER], mailFormValue[FormInputKeys.KIND_OF_MESSAGE],
+      mailFormValue[FormInputKeys.TITLE], mailFormValue[FormInputKeys.CONTENT]);
   }
 }

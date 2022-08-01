@@ -1,10 +1,10 @@
-// :host ::ng-deep .p-card {
-//   .p-card-content {
-//     .message-content-list {
-//       min-height: 20rem;
-//     }
-//   }
-// }
+:host ::ng-deep .p-card {
+  .p-orderlist-item.p-highlight {
+    background: rgba(196, 181, 253, 0.16) !important;
+    color: var(--gray-100);
+  }
+}
+
 @mixin horizontalPadding($padding) {
   padding-left: $padding;
   padding-right: $padding;
@@ -78,11 +78,13 @@
     border-radius: 2rem;
     padding-right: 6rem;
   }
+
   button.send-message-button {
     position: absolute;
     border-radius: 2rem;
     width: 5.5rem;
     right: 1rem;
+
     .ng-fa-icon {
       padding-left: 0.4rem;
     }
@@ -102,6 +104,7 @@
 .card-user-header {
   background-color: var(--bluegray-700);
   border-radius: var(--border-radius);
+
   .header-avatar-container {
     border: 1px solid rgba(0, 0, 0, 0.4);
     overflow: hidden;
@@ -111,6 +114,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+
     .avatar {
       max-height: 4rem;
       max-width: 4rem;
@@ -127,6 +131,7 @@
   overflow-y: scroll;
   box-shadow: inset 0px 0px 20px -4px rgba(0, 0, 0, 0.75);
   border-radius: var(--border-radius);
+
   .message-content-container {
     display: flex;
     width: fit-content;
@@ -146,6 +151,10 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
+
+  &__input-container {
+    width: 75% !important;
+  }
 }
 
 .contact-list {
@@ -157,6 +166,7 @@
     justify-content: space-between;
     align-items: center;
     transition: all 0.4s;
+
     &:hover {
       cursor: pointer;
       background-color: rgba(0, 0, 0, 0.05);
@@ -166,24 +176,29 @@
       display: flex;
       align-items: center;
       max-height: 4rem;
+
       .avatar-container {
         border: 1px solid rgba(0, 0, 0, 0.4);
         border-radius: 100%;
         overflow: hidden;
+
         .avatar {
           max-height: 3rem;
         }
       }
+
       .name-active-container {
         padding-left: 1rem;
         display: flex;
         flex-direction: column;
         justify-content: start;
+
         em {
           font-size: 0.8rem;
         }
       }
     }
+
     @include online-dot();
   }
 }
@@ -204,8 +219,10 @@
     .p-orderlist-controls {
       display: none;
     }
+
     .p-orderlist-user {
       @include online-dot();
+
       .user-avatar-container {
         height: 60px;
         max-width: 50px;
@@ -213,6 +230,7 @@
         flex-direction: column;
         justify-content: center;
         overflow: hidden;
+
         .user-avatar {
           margin: 0;
           top: 50%;
@@ -230,10 +248,12 @@
   :host ::ng-deep .p-card {
     .card-user-header {
       display: none;
+
       h4 {
         font-size: 0.75rem;
         max-width: 10rem;
       }
+
       .action-buttons-container {
         button {
           padding: 0;

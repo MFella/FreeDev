@@ -18,7 +18,6 @@ import {AddOfferComponent} from './add-offer/add-offer.component';
 import {SearchOffersComponent} from './search-offers/search-offers.component';
 import {ProfileComponent} from './profile/profile.component';
 import {MessagesComponent} from './messages/messages.component';
-import {NgxPaginationModule} from 'ngx-pagination';
 import {MenubarModule} from 'primeng/menubar';
 import {CardModule} from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
@@ -47,6 +46,7 @@ import {CallComponent} from './call/call.component';
 import {DynamicDialogModule} from 'primeng/dynamicdialog';
 import {DecisionCallComponent} from './decision-call/decision-call.component';
 import {ServiceWorkerModule} from '@angular/service-worker';
+import {AccordionModule} from 'primeng/accordion';
 import {environment} from '../environments/environment';
 import {
   MessagesUserListRightClickItemsResolver
@@ -58,6 +58,11 @@ import {CreateMailComponent} from './create-mail/create-mail.component';
 import {MailService} from "./services/mail.service";
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {NgxSpinnerModule} from "ngx-spinner";
+import {RippleModule} from "primeng/ripple";
+import {ListboxModule} from "primeng/listbox";
+import {ToCapitalizePipe} from './pipes/to-capitalize.pipe';
+import {MenuModule} from "primeng/menu";
+import {PanelModule} from "primeng/panel";
 
 @NgModule({
   declarations: [
@@ -78,6 +83,7 @@ import {NgxSpinnerModule} from "ngx-spinner";
     ContactsComponent,
     MailListComponent,
     CreateMailComponent,
+    ToCapitalizePipe,
   ],
   imports: [
     BrowserModule,
@@ -90,7 +96,6 @@ import {NgxSpinnerModule} from "ngx-spinner";
     FormsModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    NgxPaginationModule,
     MenubarModule,
     CardModule,
     ButtonModule,
@@ -105,6 +110,7 @@ import {NgxSpinnerModule} from "ngx-spinner";
     PaginatorModule,
     OrderListModule,
     TooltipModule,
+    AccordionModule,
     ChipsModule,
     SliderModule,
     BadgeModule,
@@ -125,6 +131,10 @@ import {NgxSpinnerModule} from "ngx-spinner";
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000'
     }),
+    RippleModule,
+    ListboxModule,
+    MenuModule,
+    PanelModule,
   ],
   providers: [
     NotyService,

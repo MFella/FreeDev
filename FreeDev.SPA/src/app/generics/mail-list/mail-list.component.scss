@@ -1,0 +1,19 @@
+:host ::ng-deep {
+  .header-panel {
+    .p-panel-header {
+      .mail-list {
+        &__header-paginator {
+          width: 100% !important;
+
+          .p-paginator {
+            width: 100% !important;
+          }
+        }
+      }
+    }
+
+    .p-panel-content {
+      display: none !important;
+    }
+  }
+}

@@ -1,44 +1,35 @@
 <div class="container-fluid mt-4">
   <div class="grid">
-    <div class="md:col-8 sm:col-12">
-      <p-card styleClass="bg-secondary">
-        <ng-template pTemplate="header">
-          <h3 class="m-0 pt-4 flex justify-content-around">
-            <p-selectButton [options]="folderOptions" [(ngModel)]="selectedFolder" optionValue="folderType"
-                            (onChange)="optionChanged($event)">
-              <ng-template let-folderOption>
-                <div class="folder-option-container">
-                  <i [class]="folderOption.iconClass"></i>
-                  <span class="ml-2">{{folderOption.label}}</span>
-                </div>
-              </ng-template>
-            </p-selectButton>
-          </h3>
-          <p-divider></p-divider>
-        </ng-template>
-        <ng-template pTemplate="body">
-          <mail-list [mailList]="mailList" *ngIf="selectedFolder !== 'NEW_MESSAGE'"></mail-list>
-          <create-mail *ngIf="selectedFolder === 'NEW_MESSAGE'"></create-mail>
-        </ng-template>
-        <ng-template pTemplate="footer">
-          Footer content here
-        </ng-template>
-      </p-card>
-    </div>
     <div class="md:col-4 sm:col-12">
       <p-card>
         <ng-template pTemplate="header">
           <div class="user-list-header">
-            <h2 class="m-0 pt-4 flex justify-content-center">Users</h2>
+            <h2 class="m-0 pt-4 flex justify-content-center"></h2>
           </div>
           <p-divider></p-divider>
         </ng-template>
         <ng-template pTemplate="body">
-          Header content here
+          <p-listbox #folderOptionsRef
+                     [options]="folders" [(ngModel)]="selectedFolder" optionLabel="name"
+                     (onChange)="optionChanged($event)">
+            <ng-template let-folder pTemplate="item">
+              <div class="w-full flex justify-content-between align-items-center">
+                <span>{{folder.folderType | toCapitalize }}</span>
+                <span>1/2</span>
+              </div>
+            </ng-template>
+          </p-listbox>
         </ng-template>
-        Body Content
-        <ng-template pTemplate="footer">
-          Footer content here
+      </p-card>
+    </div>
+    <div class="md:col-8 sm:col-12">
+      <p-card styleClass="bg-secondary ">
+        <ng-template pTemplate="header">
+          <p-divider></p-divider>
+        </ng-template>
+        <ng-template pTemplate="body">
+          <create-mail *ngIf="shouldDisplayNewMailForm()"></create-mail>
+          <mail-list [mailList]="mailList" *ngIf="!shouldDisplayNewMailForm()"></mail-list>
         </ng-template>
       </p-card>
     </div>

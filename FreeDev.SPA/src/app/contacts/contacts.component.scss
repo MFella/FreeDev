@@ -1,0 +1,13 @@
+:host ::ng-deep {
+  .p-listbox .p-listbox-list .p-listbox-item.p-highlight {
+    background: var(--surface-d);
+    color: var(--gray-100);
+    font-weight: 700;
+  }
+
+  .header-panel {
+    .panel-content {
+      display: none !important;
+    }
+  }
+}

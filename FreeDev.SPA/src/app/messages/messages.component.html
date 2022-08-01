@@ -6,7 +6,7 @@
         <ng-template pTemplate="header">
           <div class="card-search-header border-round flex align-items-center justify-content-center">
             <i class="pi pi-angle-double-right pr-4"></i>
-              <h2 class="m-0">Find Person</h2>
+            <h2 class="m-0">Find Person</h2>
             <i class="pi pi-angle-double-left pl-4"></i>
           </div>
 
@@ -15,43 +15,46 @@
           <div class="filter-options-container d-flex flex-column">
             <div class="type-of-user-container d-flex flex-row align-items-center justify-content-between">
               <p-dropdown styleClass="w-full mb-2" [options]="searchRolesNames" optionLabel="name" [showClear]="true"
-              [(ngModel)]="selectedPersonType"></p-dropdown>
+                          [(ngModel)]="selectedPersonType"></p-dropdown>
             </div>
             <div class="search-container pt-4">
-              <span class="p-float-label w-full">
+              <span class="p-float-label w-full search-container__input-container">
                 <input pInputText class="w-full" type="text" name="search-user-input" [(ngModel)]="searchUserPhrase">
                 <label for="search-user-input">Name</label>
-              </span>                
-                <button pButton type="button" label="Find" icon="pi pi-search" iconPos="right"
-              class="p-button-md p-button-secondary ml-2" (click)="findUser()"></button>
+              </span>
+              <button pButton type="button" label="Find" icon="pi pi-search" iconPos="right"
+                      class="p-button-md p-button-secondary ml-2 text-overflow-ellipsis"
+                      (click)="findUser()"></button>
             </div>
             <p-contextMenu #cm [model]="dropdownRightClickItems"></p-contextMenu>
-            <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3" #rightClickUserContextMenu>
+            <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3"
+                         #rightClickUserContextMenu>
               <ng-template let-user pTemplate="item">
-                  <div class="flex justify-content-start p-orderlist-user" (click)="getUserRoomKey(user._id)" (contextmenu)="showRightClickMenu(cm, $event, user._id)" >
-                    <div class="user-avatar-container">
-                      <img src="{{user.avatar.url}}"
-                      class="user-avatar">
-                    </div>
-                      <div class="flex justify-content-between align-items-around w-full">
-                        <div class="flex flex-column justify-content-around pl-3">
-                          <strong>{{user.name}} {{user.surname}}</strong>
-                          <em class="text-xs">{{this.getUserTextActiveStatus(user._id)}}</em>
-                        </div>
-                        <div class="contact-attributes">
-                          <div class="green-dot" *ngIf="isUserLoggedIn(user._id)"></div>
-                          <div class="red-dot" *ngIf="!isUserLoggedIn(user._id)"></div>
-                        </div>
-                      </div>
+                <div class="flex justify-content-start p-orderlist-user" (click)="getUserRoomKey(user._id)"
+                     (contextmenu)="showRightClickMenu(cm, $event, user._id)">
+                  <div class="user-avatar-container">
+                    <img src="{{user.avatar.url}}"
+                         class="user-avatar">
                   </div>
+                  <div class="flex justify-content-between align-items-around w-full">
+                    <div class="flex flex-column justify-content-around pl-3">
+                      <strong>{{user.name}} {{user.surname}}</strong>
+                      <em class="text-xs">{{this.getUserTextActiveStatus(user._id)}}</em>
+                    </div>
+                    <div class="contact-attributes">
+                      <div class="green-dot" *ngIf="isUserLoggedIn(user._id)"></div>
+                      <div class="red-dot" *ngIf="!isUserLoggedIn(user._id)"></div>
+                    </div>
+                  </div>
+                </div>
               </ng-template>
-          </p-orderList>
+            </p-orderList>
           </div>
         </ng-template>
         <ng-template pTemplate="footer">
           <p-paginator [rows]="this.pagination.itemsPerPage" [totalRecords]="numberOfTotalRecords"
-          [rowsPerPageOptions]="rowsPerPageOptions"
-          (onPageChange)="pageChanged($event)" #paginator>
+                       [rowsPerPageOptions]="rowsPerPageOptions"
+                       (onPageChange)="pageChanged($event)" #paginator>
           </p-paginator>
         </ng-template>
       </p-card>
@@ -61,7 +64,9 @@
         <ng-template pTemplate="header">
           <div class="card-user-header flex p-3">
             <div class="header-avatar-container" *ngIf="!selectedUser">
-              <img class="avatar" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png" alt="">
+              <img class="avatar"
+                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Placeholder_no_text.svg/1200px-Placeholder_no_text.svg.png"
+                   alt="">
             </div>
             <div class="header-avatar-container" *ngIf="selectedUser">
               <img class="avatar" src="{{selectedUser.avatar?.url}}" alt="">
@@ -73,31 +78,35 @@
               <h4 *ngIf="selectedUser" class="mb-0 pl-2">{{selectedUser.name + ' ' + selectedUser.surname}}</h4>
               <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user selected</h4>
               <div class="action-buttons-container">
-                <button pButton pRipple type="button" icon="pi pi-phone" class="p-button-rounded p-button-success p-button-icon-only mr-2"
-                pTooltip="Start call" tooltipPosition="top" [disabled]="privateRoomKey === ''" (click)="startVoiceCall()"></button>
+                <button pButton pRipple type="button" icon="pi pi-phone"
+                        class="p-button-rounded p-button-success p-button-icon-only mr-2"
+                        pTooltip="Start call" tooltipPosition="top" [disabled]="privateRoomKey === ''"
+                        (click)="startVoiceCall()"></button>
                 <button pButton pRipple type="button" icon="pi pi-video" class="p-button-rounded p-button-icon-only"
-                pTooltip="Start video" tooltipPosition="top" [disabled]="privateRoomKey === ''"></button>
+                        pTooltip="Start video" tooltipPosition="top" [disabled]="privateRoomKey === ''"></button>
               </div>
             </div>
 
           </div>
-        </ng-template>  
+        </ng-template>
         <ng-template pTemplate="body">
           <div class="message-content-list p-4" #messagesContainer (scroll)="fetchMessagesOnScroll()">
             <div class="card-text message-content-container"
-            *ngFor="let message of this.messages" pTooltip="{{message.sendTime.toString().split('T')[0]
+                 *ngFor="let message of this.messages" pTooltip="{{message.sendTime.toString().split('T')[0]
             + ' ' + message.sendTime.toString().split('T')[1].split('.')[0]}}" tooltipPosition="left"
-            [ngClass]="{'is-mine': message.amIOwner}">
+                 [ngClass]="{'is-mine': message.amIOwner}">
               <span class="message-content">{{message.message}}</span>
-            </div> 
+            </div>
           </div>
         </ng-template>
         <ng-template pTemplate="footer">
           <div class="message-input-container">
             <input pInputText class="form-control message-input w-full mr-3" type="text" [(ngModel)]="userMessage"
-            (keydown.enter)="sendMessage()" [disabled]="privateRoomKey === ''" [placeholder]="privateRoomKey === '' ? 'Select user first' : ''">
+                   (keydown.enter)="sendMessage()" [disabled]="privateRoomKey === ''"
+                   [placeholder]="privateRoomKey === '' ? 'Select user first' : ''">
             <button pButton type="button" label="Send" icon="pi pi-send" iconPos="right"
-              class="p-button-md p-button-primary send-message-button" (click)="sendMessage()" [disabled]="privateRoomKey === ''"></button>
+                    class="p-button-md p-button-primary send-message-button" (click)="sendMessage()"
+                    [disabled]="privateRoomKey === ''"></button>
           </div>
         </ng-template>
       </p-card>

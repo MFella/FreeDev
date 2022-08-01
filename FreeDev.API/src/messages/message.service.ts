@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import {InjectModel} from '@nestjs/mongoose';
 import {Model} from 'mongoose';
-import {MessageToSendDto} from 'src/dtos/messages/messageToSendDto';
+import {DirectMessageToSendDto} from 'src/dtos/messages/directMessageToSendDto';
 import {FolderType} from 'src/types/notes/folderType';
 import {UsersService} from 'src/users/users.service';
 import {Message, MessageDocument} from './message.schema';
@@ -20,7 +20,7 @@ export class MessageService {
 
     async tryToSaveMessage(
         userId: string,
-        messageToSendDto: MessageToSendDto,
+        messageToSendDto: DirectMessageToSendDto,
     ): Promise<boolean> {
         const senderFromDb = await this.usersServ.findUserById(userId);
         const receiverFromDb = await this.usersServ.findUserById(

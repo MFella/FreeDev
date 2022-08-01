@@ -1,11 +1,11 @@
 import {
   MessagesUserListRightClickItemsResolver
-} from './../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
+} from '../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
 import {CurrentLoggedUser} from './../../../../FreeDev.API/dist/types/logged-users/currentLoggedUser.d';
-import {CallService} from './../services/call.service';
-import {CallComponent} from './../call/call.component';
-import {LocalStorageService} from './../services/local-storage.service';
-import {Pagination} from './../types/pagination';
+import {CallService} from '../services/call.service';
+import {CallComponent} from '../call/call.component';
+import {LocalStorageService} from '../services/local-storage.service';
+import {Pagination} from '../types/pagination';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -35,10 +35,10 @@ import {VisibleUserActiveTimeCalculator} from '../utils/visibleUserActiveTimeCal
 import {DropdownItem} from '../infrastructure/types/dropdownItem';
 import {MenuItem} from 'primeng/api';
 import {ContextMenu} from 'primeng/contextmenu';
-import {MessagesService} from '../services/messages.service';
-import {MessageToSendDto} from '../types/message/messageToSendDto';
+import {DirectMessageToSendDto} from '../types/message/directMessageToSendDto';
 import {MessageType} from '../types/message/messageType';
 import {NotyService} from "../services/noty.service";
+import {MailService} from "../services/mail.service";
 
 @Component({
   selector: 'app-messages',
@@ -102,8 +102,6 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     {name: 'Hunter'},
   ];
 
-  selectedUserFromRightClickMenu!: any;
-
   dropdownRightClickItems: Array<MenuItem> = [];
 
   friendIds: Set<string> = new Set<string>();
@@ -119,7 +117,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     private readonly callServ: CallService,
     private readonly messagesUserListRightClickItemsResolver: MessagesUserListRightClickItemsResolver,
     private readonly router: Router,
-    private readonly messageServ: MessagesService,
+    private readonly mailService: MailService,
     private readonly notyService: NotyService
   ) {
   }
@@ -474,16 +472,15 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   private addProfileToContact(): void {
     const titleInvitation = 'Invitation';
     const contentInvitation = 'A want to be your friend. Add me to your contacts';
-    const messageToSendDto = new MessageToSendDto(
+    const messageToSendDto = new DirectMessageToSendDto(
       this.lastRightClickUserId,
-      new Date(),
       MessageType.INVITE,
       titleInvitation,
       contentInvitation
     );
 
-    this.messageServ
-      .sendMessageToUser(messageToSendDto)
+    this.mailService
+      .sendDirectMailMessage(messageToSendDto)
       .pipe(take(1))
       .subscribe((isSaved: boolean) => {
         if (isSaved) {

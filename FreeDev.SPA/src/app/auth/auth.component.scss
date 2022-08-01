@@ -2,6 +2,7 @@
   .p-card-body {
     padding-top: 0;
     background-color: var(--bluegray-900);
+
     .p-card-content {
       padding-top: 0;
     }
@@ -35,9 +36,16 @@ button.login-btn {
 .p-float-label {
   .invalid-feedback {
     position: absolute;
-    padding-top: 1.3rem;
+    padding-top: 1rem;
   }
 }
+
+input.ng-pristine.ng-invalid {
+  -webkit-box-shadow: none;
+  -ms-box-shadow: none;
+  box-shadow: none;
+}
+
 
 @media only screen and (max-width: 576px) {
   .sm\:col-12 {
