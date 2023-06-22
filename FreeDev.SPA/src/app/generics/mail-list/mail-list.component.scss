@@ -17,3 +17,13 @@
     }
   }
 }
+
+.mail-list-records {
+  &__mail-heading-ceil {
+    &:not(:first-child) {
+      text-align: center;
+    }
+
+    flex: 0 1 20%;
+  }
+}

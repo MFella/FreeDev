@@ -5,8 +5,8 @@ import {Observable} from "rxjs";
 import {DirectMessageToSendDto} from "../types/message/directMessageToSendDto";
 import {IndirectMessageToSendDto} from "../types/message/indirectMessageToSendDto";
 import {FolderType} from "../types/contacts/folderType";
-import {take} from "rxjs/operators";
 import {FolderMessageDto} from "../dtos/notes/folderMessageDto";
+import {MailMessageContentDto} from "../types/contacts/mailMessageContentDto";
 
 @Injectable()
 export class MailService {
@@ -24,8 +24,8 @@ export class MailService {
     return this.http.post<boolean>(this.getRestUrl() + 'indirect', indirectMessageToSendDto);
   }
 
-  getMessageContent(messageId: string): Observable<string> {
-    return this.http.get<string>(this.getRestUrl() + `content?messageId=${messageId}`);
+  getMessageContent(messageId: string): Observable<MailMessageContentDto> {
+    return this.http.get<MailMessageContentDto>(this.getRestUrl() + `content?messageId=${messageId}`);
   }
 
   getFolderMessageList(folderType: FolderType): Observable<Array<FolderMessageDto>> {
@@ -33,6 +33,10 @@ export class MailService {
       .get<Array<FolderMessageDto>>(
         `${this.getRestUrl()}folder?folderType=${folderType.toLocaleLowerCase()}`
       );
+  }
+
+  changeMessageReadStatus(messageId: string): Observable<boolean> {
+    return this.http.put<boolean>(`${this.getRestUrl()}content`, {messageId});
   }
 
   getRestUrl(): string {

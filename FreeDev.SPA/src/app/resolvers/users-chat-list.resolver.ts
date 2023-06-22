@@ -41,7 +41,7 @@ export class UsersChatListResolver
       .pipe(
         catchError((error: HttpErrorResponse) => {
           this.noty.error('Error occured during fetching users chat list');
-          console.log(error);
+          error;
           return throwError(error);
         })
       );

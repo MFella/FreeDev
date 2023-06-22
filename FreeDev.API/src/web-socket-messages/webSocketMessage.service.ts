@@ -25,7 +25,6 @@ export class WebSocketMessageService {
 
   async getSavedMessages(roomKey: string): Promise<any> {
     try {
-      console.log(roomKey);
       const messagesFromDb = await this.messageModel.find({
         key: roomKey,
       });

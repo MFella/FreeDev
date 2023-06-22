@@ -1,32 +1,37 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { FileService } from 'src/files/file.service';
-import { Developer, DeveloperSchema } from './developer.schema';
-import { Hunter, HunterSchema } from './hunter.schema';
-import { UsersService } from './users.service';
-import { File, FileSchema } from '../files/file.schema';
-import { ConfigService } from '@nestjs/config';
-import { UsersController } from './users.controller';
+import {Module} from '@nestjs/common';
+import {MongooseModule} from '@nestjs/mongoose';
+import {FileService} from 'src/files/file.service';
+import {Developer, DeveloperSchema} from './developer.schema';
+import {Hunter, HunterSchema} from './hunter.schema';
+import {UsersService} from './users.service';
+import {File, FileSchema} from '../files/file.schema';
+import {ConfigService} from '@nestjs/config';
+import {UsersController} from './users.controller';
 import {
-  RoomKey,
-  RoomKeySchema,
+    RoomKey,
+    RoomKeySchema,
 } from 'src/web-socket-messages/room-key.schema';
-import { WebSocketMessageModule } from 'src/web-socket-messages/web-socket-message.module';
-import { Message, MessageSchema } from 'src/messages/message.schema';
+import {WebSocketMessageModule} from 'src/web-socket-messages/web-socket-message.module';
+import {Message, MessageSchema} from 'src/messages/message.schema';
+import {Mail, MailSchema} from "../mail/mail.schema";
+import {MailModule} from "../mail/mail.module";
 
 @Module({
-  imports: [
-    WebSocketMessageModule,
-    MongooseModule.forFeature([
-      { name: Developer.name, schema: DeveloperSchema },
-      { name: Hunter.name, schema: HunterSchema },
-      { name: File.name, schema: FileSchema },
-      { name: RoomKey.name, schema: RoomKeySchema },
-      { name: Message.name, schema: MessageSchema },
-    ]),
-  ],
-  providers: [UsersService, FileService, ConfigService],
-  controllers: [UsersController],
-  exports: [UsersService],
+    imports: [
+        WebSocketMessageModule,
+        MailModule,
+        MongooseModule.forFeature([
+            {name: Developer.name, schema: DeveloperSchema},
+            {name: Hunter.name, schema: HunterSchema},
+            {name: File.name, schema: FileSchema},
+            {name: RoomKey.name, schema: RoomKeySchema},
+            {name: Message.name, schema: MessageSchema},
+            {name: Mail.name, schema: MailSchema}
+        ]),
+    ],
+    providers: [UsersService, FileService, ConfigService],
+    controllers: [UsersController],
+    exports: [UsersService],
 })
-export class UsersModule {}
+export class UsersModule {
+}

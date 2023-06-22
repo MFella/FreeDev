@@ -13,6 +13,14 @@
     .p-card-content {
       padding-top: 0;
     }
+
+    .p-autocomplete {
+      width: 100%;
+
+      .p-autocomplete-input {
+        width: 100%;
+      }
+    }
   }
 }
 

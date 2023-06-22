@@ -16,10 +16,11 @@ export class LocalStorageService extends LocalStorageBaseService {
     super();
   }
 
-  setAuthCredentials(user: string, token: string, expiration: string): void {
-    localStorage.setItem('user', user);
-    localStorage.setItem('token', token);
-    localStorage.setItem('expiration', expiration);
+  setAuthCredentials(authCredentials: [string, string, string]): void {
+    LocalStorageService.USER_CREDENTIAL_FIELDS.forEach(
+      (key: string, index: number) =>
+        localStorage.setItem(key, authCredentials[index])
+    );
   }
 
   removeAuthCredentials(): void {

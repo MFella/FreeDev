@@ -11,7 +11,10 @@ export class ContractConverter {
       email: rawEmployeeToRegisterDto.email,
       password: rawEmployeeToRegisterDto.password,
       bio: rawEmployeeToRegisterDto.bio,
-      country: rawEmployeeToRegisterDto.originCountry,
+      country:
+        typeof rawEmployeeToRegisterDto.originCountry === 'string'
+          ? rawEmployeeToRegisterDto.originCountry
+          : rawEmployeeToRegisterDto.originCountry?.name,
       city: rawEmployeeToRegisterDto.originCity,
       technologies: rawEmployeeToRegisterDto.technologies,
       hobbies: rawEmployeeToRegisterDto.hobbies,

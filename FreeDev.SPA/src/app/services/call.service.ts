@@ -1,8 +1,9 @@
-import {CallMediaType} from './../types/call/callMediaType';
-import {NotyService} from './noty.service';
-import {Injectable} from '@angular/core';
-import Peer, {DataConnection, MediaConnection, PeerJSOption} from 'peerjs';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import { CallMediaType } from './../types/call/callMediaType';
+import { NotyService } from './noty.service';
+import { Injectable } from '@angular/core';
+import Peer, { DataConnection, MediaConnection, PeerJSOption } from 'peerjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { WsService } from './ws.service';
 
 @Injectable({
   providedIn: 'root',
@@ -42,8 +43,10 @@ export class CallService {
 
   private stream: any;
 
-  constructor(private readonly noty: NotyService) {
-  }
+  constructor(
+    private readonly noty: NotyService,
+    private readonly wsService: WsService
+  ) {}
 
   public initPeer(peerId: string): string {
     if (!this.peer || this.peer.disconnected) {

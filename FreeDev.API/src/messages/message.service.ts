@@ -68,7 +68,7 @@ export class MessageService {
         const userAttributesToSelect = ['_id', 'name', 'surname'];
         const messageAttributesToSelect = ['_id', 'isRead', 'sendTime', 'title', 'type'];
         switch (folderType) {
-            case FolderType.inbox: {
+            case FolderType.INBOX: {
                 const messagesFromInbox = await this.messageModel
                     .find({
                         $or: [{receiver: userId}],
@@ -77,7 +77,7 @@ export class MessageService {
                     .exec();
                 return messagesFromInbox;
             }
-            case FolderType.send: {
+            case FolderType.SEND: {
                 const messagesFromInbox = await this.messageModel
                     .find({
                         $or: [{sender: userId}],

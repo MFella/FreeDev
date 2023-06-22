@@ -42,8 +42,6 @@ export class SavedOffersComponent implements OnInit {
   }
 
   pageChanged(resolverPagination: ResolverPagination): void {
-    console.log(resolverPagination);
-
     this.pagination =
       PaginationResolver.parseResolvedPagination(resolverPagination);
     this.lsServ.setPagination(
@@ -64,9 +62,7 @@ export class SavedOffersComponent implements OnInit {
       });
   }
 
-  onDateClickOutside(): void {
-    console.log('blurred vision', this.dateRange);
-  }
+  onDateClickOutside(): void {}
 
   searchSavedOffers(): void {
     this.offerServ

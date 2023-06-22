@@ -12,6 +12,8 @@ import { MessageToCreateDto } from './dtos/websocket-message/messageToCreateDto'
 import { MessageToRoom } from './types/messageToRoom';
 import { UsersService } from './users/users.service';
 import { MessageAnswerCall } from './types/messageAnswerCall';
+import { CancellationCallMessage } from './types/cancellationCallMessage';
+import { IncomingCallPayload } from './types/incomingCallPayload';
 @WebSocketGateway(443, { cors: true })
 export class AppGateway {
   connectedUsers: Array<any> = [];
@@ -84,9 +86,20 @@ export class AppGateway {
 
   @SubscribeMessage('subscribeIncomingCall')
   async handleIncomingCall(
-    @ConnectedSocket() connectedSocket,
-    @MessageBody() data: MessageAnswerCall,
+    @MessageBody() incomingCallPayload: IncomingCallPayload,
   ): Promise<void> {
-    this.server.emit('callAnswer', data);
+    const sourceUserFromDb = await this.userServ.findUserById(
+      incomingCallPayload.sourceUserId,
+    );
+    console.log(sourceUserFromDb);
+    this.server.emit('callAnswer', incomingCallPayload);
+  }
+
+  @SubscribeMessage('cancelCall')
+  async onCancellationOfCall(
+    @MessageBody() cancellationCallMessage: CancellationCallMessage,
+  ): Promise<void> {
+    console.log(cancellationCallMessage);
+    this.server.emit('onCallCancelled', cancellationCallMessage);
   }
 }

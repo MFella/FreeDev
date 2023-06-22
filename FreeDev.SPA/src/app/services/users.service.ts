@@ -3,17 +3,28 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, take, tap } from 'rxjs/operators';
 import { environment as env } from 'src/environments/environment';
-import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
 import { SignedFileUrlDto } from '../dtos/signedFileUrlDto';
 import { ResolvedMessagePageInfo } from '../dtos/users/resolvedMessagePageInfo';
-import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { UserToUpdateDto } from '../dtos/users/userToUpdateDto';
 import { AuthService } from './auth.service';
+import { FilteredUserChatListDto } from '../types/users/filteredUserChatListDto';
+
+export type CountrySelectItem = {
+  name: string;
+  code: string;
+};
+
+export type CountryFilePayload = {
+  data: Array<CountrySelectItem>;
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
+  private static readonly COUNTRY_LIST_URL: string =
+    '/assets/data/countries.json';
+
   constructor(
     private readonly http: HttpClient,
     private readonly authServ: AuthService
@@ -43,12 +54,24 @@ export class UsersService {
     perPage: number,
     name: string = '',
     typeOfUser: string | TypeOfSearchUser = TypeOfSearchUser.BOTH
-  ): Observable<{ result: Array<any>; numberOfTotalRecords: number }> {
-    return this.http.get<{ result: Array<any>; numberOfTotalRecords: number }>(
-      this.getRestUrl() +
-        `users/filtered-users-list?pageNo=${pageNo}&perPage=${perPage}&name=${name?.trim()}
+  ): Observable<FilteredUserChatListDto> {
+    return this.http
+      .get<FilteredUserChatListDto>(
+        this.getRestUrl() +
+          `users/filtered-users-list?pageNo=${pageNo}&perPage=${perPage}&name=${name?.trim()}
     &typeOfUser=${typeOfUser}`
-    );
+      )
+      .pipe(
+        map((filteredUserList: any) => {
+          filteredUserList.result.forEach(
+            (filteredUser: any) =>
+              (filteredUser.role =
+                filteredUser.role.charAt(0).toUpperCase() +
+                filteredUser.role.slice(1).toLowerCase())
+          );
+          return filteredUserList;
+        })
+      );
   }
 
   getUserChatKeyRoom(userId: string): Observable<any> {
@@ -87,6 +110,12 @@ export class UsersService {
           return newResponse.reverse();
         })
       );
+  }
+
+  selectCountryList(): Promise<CountryFilePayload> {
+    return fetch(UsersService.COUNTRY_LIST_URL).then(async (response) => {
+      return await response?.json();
+    });
   }
 
   private getRestUrl(): string {

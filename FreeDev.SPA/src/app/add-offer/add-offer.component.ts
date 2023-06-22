@@ -51,9 +51,7 @@ export class AddOfferComponent implements OnInit {
     this.initForm();
   }
 
-  onBlur(): void {
-    console.log(this.offerForm.getRawValue());
-  }
+  onBlur(): void {}
 
   addOffer(): void {
     const { skills, experienceLevel, ...rest } = this.offerForm.getRawValue();

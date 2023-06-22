@@ -13,11 +13,21 @@
                      (onOpen)="observeMessageContent(mail?._id)">
           <p-accordionTab>
             <ng-template pTemplate="header">
-              <div class="w-full flex justify-content-between px-4">
-                <span>{{!mail.title?.length ? '(Empty)' : mail.title}}</span>
-                <span>{{mail.receiver?.name + ' ' + mail.receiver?.surname}}</span>
-                <span>{{mail.type}}</span>
-                <span>{{mail.sendTime | date}}</span>
+              <div class="mail-list-records w-full flex justify-content-between px-4">
+                <span class="mail-list-records__mail-heading-ceil">{{mail | userNameExtract}}</span>
+                <span class="mail-list-records__mail-heading-ceil">{{mail.type}}</span>
+                <span class="mail-list-records__mail-heading-ceil">{{mail.sendTime | date}}</span>
+                <p-tag *ngIf="shouldShowNewTag(mail)" styleClass="mr-2" severity="warning" value="New"
+                       [rounded]="true"></p-tag>
+              </div>
+            </ng-template>
+            <ng-template pTemplate="body">
+              <div class="message-content__container">
+                <div class="message-content__container-heading w-full flex justify-content-start">
+                  <strong></strong>
+                  <strong>Title: {{getMessageContentDto(mail._id)?.title}}</strong>
+                </div>
+                <p>{{getMessageContentDto(mail._id)?.content}}</p>
               </div>
             </ng-template>
           </p-accordionTab>

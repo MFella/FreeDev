@@ -1,10 +1,9 @@
-import {
-  Component,
-  Input,
-} from '@angular/core';
-import {FolderType} from 'src/app/types/contacts/folderType';
-import {take} from "rxjs/operators";
-import {MailService} from "../../services/mail.service";
+import { Component, Input } from '@angular/core';
+import { FolderType } from 'src/app/types/contacts/folderType';
+import { take } from 'rxjs/operators';
+import { MailService } from '../../services/mail.service';
+import { FolderMessageDto } from '../../dtos/notes/folderMessageDto';
+import { MailMessageContentDto } from '../../types/contacts/mailMessageContentDto';
 
 @Component({
   selector: 'mail-list',
@@ -12,27 +11,63 @@ import {MailService} from "../../services/mail.service";
   styleUrls: ['./mail-list.component.scss'],
 })
 export class MailListComponent {
-
   @Input()
-  mailList!: Array<any>;
+  mailList!: Array<FolderMessageDto>;
 
   @Input()
   folder!: FolderType;
 
-  constructor(
-    private readonly mailService: MailService
-  ) {
-  }
+  messagesContentMap: Map<string, MailMessageContentDto> = new Map<
+    string,
+    MailMessageContentDto
+  >();
 
-  observeMessageContent(messageId: string): void {
-    this.mailService.getMessageContent(messageId)
+  constructor(private readonly mailService: MailService) {}
+
+  observeMessageContent(messageId: string | undefined): void {
+    if (this.messagesContentMap.has(messageId ?? '')) {
+      return;
+    }
+
+    this.mailService
+      .getMessageContent(messageId ?? '')
       .pipe(take(1))
-      .subscribe((messageContent: string) => {
-        console.log('msgContent', messageContent);
-      })
+      .subscribe((messageContent: MailMessageContentDto) => {
+        this.messagesContentMap.set(messageContent._id, messageContent);
+        // send, that message has been read ;p
+        this.tryChangeMessageReadStatus(messageContent._id);
+      });
   }
 
-  trackByFn(index: number, item: any): number {
-    return index;
+  getMessageContentDto(messageId: string): MailMessageContentDto | null {
+    return this.messagesContentMap.get(messageId) ?? null;
+  }
+
+  shouldShowNewTag(mail: FolderMessageDto): boolean {
+    return this.folder !== FolderType.SEND && !mail.isRead;
+  }
+
+  private tryChangeMessageReadStatus(messageId: string): void {
+    if (
+      this.mailList.find(
+        (message: FolderMessageDto) => message._id === messageId
+      )?.isRead
+    ) {
+      return;
+    }
+
+    this.mailService
+      .changeMessageReadStatus(messageId)
+      .pipe(take(1))
+      .subscribe((isSaved: boolean) => {
+        if (isSaved) {
+          for (let i = 0; i < this.mailList.length; i++) {
+            if (this.mailList[i]._id === messageId) {
+              this.mailList[i].isRead = true;
+              return;
+            }
+          }
+        }
+      });
   }
 }

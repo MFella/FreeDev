@@ -31,7 +31,7 @@
           <label for="Password">Password</label>
           <div class="invalid-feedback">
             <p class="m-0" *ngIf="this.loginForm.get('password')?.errors?.pattern">&#x2192; 1 special character, 1 number</p>
-            <p *ngIf="this.loginForm.get('password')?.errors?.minlength">&#x2192; Min length 10</p>
+            <p *ngIf="this.loginForm.get('password')?.errors?.minlength">&#x2192; Min length 8</p>
           </div>
         </span>
         </form>

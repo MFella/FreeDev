@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Query, Req, UseGuards} from "@nestjs/common";
+import {Body, Controller, Get, Post, Put, Query, Req, UseGuards} from "@nestjs/common";
 import {MailService} from "./mail.service";
 import {ContentMessageQuery} from "../types/notes/contentMessageQuery";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
@@ -6,6 +6,7 @@ import {DirectMessageToSendDto} from "../dtos/messages/directMessageToSendDto";
 import {IndirectMessageToSendDto} from "../dtos/messages/indirectMessageToSend";
 import {FolderType} from "../types/notes/folderType";
 import {Mail} from "./mail.schema";
+import {MoveMailDto} from "../dtos/mail/moveMailDto";
 
 @Controller('mail')
 export class MailController {
@@ -28,8 +29,20 @@ export class MailController {
 
     @Get('content')
     @UseGuards(JwtAuthGuard)
-    async getMessageContent(@Query() contentMessageQuery: ContentMessageQuery, @Req() request): Promise<string> {
-        return await this.mailService.getMessage(contentMessageQuery?.messageId, request.user.userId);
+    async getMessageContent(@Query() contentMessageQuery: ContentMessageQuery, @Req() request): Promise<Partial<Mail>> {
+        return await this.mailService.getMessageContent(contentMessageQuery?.messageId, request.user.userId);
+    }
+
+    @Put('content')
+    @UseGuards(JwtAuthGuard)
+    async updateMessageReadStatus(@Body() messageIdDto: { messageId: string }): Promise<boolean> {
+        return await this.mailService.updateMessageReadStatus(messageIdDto.messageId);
+    }
+
+    @Put('')
+    @UseGuards(JwtAuthGuard)
+    async moveMessageToFolder(@Body() moveMailDto: MoveMailDto, @Req() request: any): Promise<boolean> {
+        return await this.mailService.moveMailToFolder(moveMailDto.mailId, moveMailDto.targetFolder, request.user.userId);
     }
 
     @Get('folder')

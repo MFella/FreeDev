@@ -48,7 +48,6 @@ export class AuthService {
   }
 
   login(userToLoginDto: UserToLoginDto): Observable<AfterLoginInfoDto> {
-    // console.log('adres', this.getRestUrl());
     return this.http
       .post<AfterLoginInfoDto>(this.getRestUrl() + 'auth/login', userToLoginDto)
       .pipe(
@@ -78,6 +77,10 @@ export class AuthService {
     );
   }
 
+  getStoredUser(): any {
+    return this.storedUser;
+  }
+
   private createDeveloper(
     developerToCreateDto: DeveloperToCreateDto | null
   ): Observable<any> {
@@ -100,11 +103,11 @@ export class AuthService {
   private setSession(authResult: AfterLoginInfoDto): void {
     this.storedUser = authResult.user;
     const expirationDate = moment().add(authResult.expiresIn, 'second');
-    this.localStorageService.setAuthCredentials(
+    this.localStorageService.setAuthCredentials([
       JSON.stringify(this.storedUser),
       authResult.access_token,
-      JSON.stringify(expirationDate.valueOf())
-    );
+      JSON.stringify(expirationDate.valueOf()),
+    ]);
   }
 
   private getLogAction(isActive: boolean): CurrentLoggedUser {

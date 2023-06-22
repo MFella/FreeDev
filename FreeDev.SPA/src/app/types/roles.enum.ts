@@ -1,4 +1,5 @@
 export enum Roles {
-  HUNTER = 'HUNTER',
-  DEVELOPER = 'DEVELOPER',
+  NONE = 'None',
+  HUNTER = 'Hunter',
+  DEVELOPER = 'Developer',
 }

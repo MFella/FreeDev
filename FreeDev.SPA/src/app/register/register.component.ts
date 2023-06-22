@@ -1,10 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,6 +17,16 @@ import { EmployeeToRegisterDto } from '../types/employeeToRegisterDto';
 import { EmployerToRegisterDto } from '../types/employerToRegisterDto';
 import { ContractConverter } from '../utils/contractConverter';
 import { IsEmailTakenValidator } from './validators/isEmailTakenValidator';
+import {
+  CountryFilePayload,
+  CountrySelectItem,
+  UsersService,
+} from '../services/users.service';
+
+interface AutoCompleteCompleteEvent {
+  originalEvent: Event;
+  query: string;
+}
 
 @Component({
   selector: 'app-register',
@@ -23,6 +34,10 @@ import { IsEmailTakenValidator } from './validators/isEmailTakenValidator';
   styleUrls: ['./register.component.scss'],
 })
 export class RegisterComponent implements OnInit {
+  private static readonly NOT_AVAILABLE_COUNTRY_OPTION: CountrySelectItem = {
+    code: 'N/A',
+    name: 'Not available',
+  };
   registerForm!: FormGroup;
   isEmailAlreadyTaken: boolean = false;
   sizesOfCompany: Array<{ name: string }> = [
@@ -31,15 +46,21 @@ export class RegisterComponent implements OnInit {
     { name: 'Large' },
   ];
 
+  filteredCountries: Array<CountrySelectItem> = [];
+
+  countryList: Array<CountrySelectItem> = [];
+
   constructor(
-    private fb: FormBuilder,
     private router: Router,
     private authServ: AuthService,
-    private noty: NotyService
+    private noty: NotyService,
+    private readonly usersService: UsersService,
+    private readonly changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.initForm();
+    this.observeCountryList();
   }
 
   register(): void {
@@ -62,29 +83,29 @@ export class RegisterComponent implements OnInit {
   }
 
   private initForm(): void {
-    this.registerForm = this.fb.group(
+    this.registerForm = new FormGroup(
       {
-        name: [
-          '',
-          {
-            validators: [
-              Validators.required,
-              Validators.minLength(2),
-              Validators.pattern(/^[A-Za-z]+$/),
-            ],
-          },
-        ],
-        surname: [
-          '',
-          {
-            validators: [
-              Validators.required,
-              Validators.minLength(2),
-              Validators.pattern(/^[A-Za-z]+$/),
-            ],
-          },
-        ],
-        email: [
+        name: new FormControl('', [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.pattern(/^[A-Za-z]+$/),
+        ]),
+        // [
+        //   '',
+        //   {
+        // validators: [
+        // Validators.required,
+        // Validators.minLength(2),
+        // Validators.pattern(/^[A-Za-z]+$/),
+        // ],
+        //   },
+        // ],
+        surname: new FormControl('', [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.pattern(/^[A-Za-z]+$/),
+        ]),
+        email: new FormControl(
           '',
           [
             Validators.required,
@@ -92,76 +113,65 @@ export class RegisterComponent implements OnInit {
               /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/
             ),
           ],
-          [IsEmailTakenValidator.createIsEmailTakenValidator(this.authServ)],
-        ],
-        password: [
-          '',
-          {
-            validators: [
-              Validators.required,
-              Validators.pattern(
-                /^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/
-              ),
-            ],
-          },
-        ],
-        repeatPassword: [
-          '',
-          {
-            validators: [
-              Validators.required,
-              Validators.pattern(
-                /^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/
-              ),
-            ],
-          },
-        ],
-        contractName: ['contract-job', { validators: [Validators.required] }],
-        bio: ['', { validators: [] }],
-        technologies: ['', { validators: [] }],
-        companyName: [
-          '',
-          {
-            validators: [
-              Validators.pattern(/^[0-9A-Za-zÀ-ÿ\s,._+;()*~'#@!?&-]+$/),
-            ],
-          },
-        ],
-        businessOffice: ['', { validators: [] }],
-        originCountry: [
-          '',
-          {
-            validators: [
-              Validators.minLength(2),
-              Validators.pattern(/^[A-Za-z]+$/),
-            ],
-          },
-        ],
-        originCity: [
-          '',
-          {
-            validators: [
-              Validators.minLength(2),
-              Validators.pattern(/^[A-Za-z]+$/),
-            ],
-          },
-        ],
-        hobbies: ['', { validators: [] }],
-        sizeOfCompany: ['small', { validators: [] }],
+          [IsEmailTakenValidator.createIsEmailTakenValidator(this.authServ)]
+        ),
+        password: new FormControl('', [
+          Validators.required,
+          Validators.pattern(
+            /^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/
+          ),
+        ]),
+
+        repeatPassword: new FormControl('', [
+          Validators.required,
+          Validators.pattern(
+            /^^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/
+          ),
+        ]),
+
+        contractName: new FormControl('contract-job', [Validators.required]),
+        bio: new FormControl('', []),
+        technologies: new FormControl(''),
+        companyName: new FormControl('', [
+          Validators.pattern(/^[0-9A-Za-zÀ-ÿ\s,._+;()*~'#@!?&-]+$/),
+        ]),
+        businessOffice: new FormControl(''),
+        originCountry: new FormControl('', [
+          // Validators.minLength(2),
+          // Validators.pattern(/^[A-Za-z]+$/),
+          this.isCountryWithinList.bind(this),
+        ]),
+        originCity: new FormControl('', [
+          Validators.minLength(2),
+          Validators.pattern(/^[A-Za-z]+$/),
+        ]),
+        hobbies: new FormControl(''),
+        sizeOfCompany: new FormControl('small'),
       },
-      {
-        validators: [this.passwordMatch],
-      }
+      [this.passwordMatch.bind(this)]
     );
   }
 
-  passwordMatch(formGroup: FormGroup): Object | null {
-    return formGroup.get('password')!.value ===
-      formGroup.get('repeatPassword')!.value
+  passwordMatch(abstractControl: AbstractControl): Object | null {
+    return abstractControl.get('password')!.value ===
+      abstractControl.get('repeatPassword')!.value
       ? null
       : {
           mismatchPassword: true,
         };
+  }
+
+  isCountryWithinList(
+    abstractControl: AbstractControl
+  ): ValidationErrors | null {
+    return this.countryList.find(
+      (country: CountrySelectItem) =>
+        (country.name === abstractControl?.value?.name &&
+          country.code === abstractControl?.value?.code) ||
+        abstractControl?.value === country.name
+    )
+      ? null
+      : { wrongCountry: true };
   }
 
   isFormValid(): boolean {
@@ -171,6 +181,27 @@ export class RegisterComponent implements OnInit {
         .map((control) => control.errors)
         .filter((error: any) => !error?.required && error !== null).length === 0
     );
+  }
+
+  applyFilterForCountries($event: AutoCompleteCompleteEvent): void {
+    const filteredCountries = this.countryList.filter(
+      (country: CountrySelectItem) =>
+        country.name.toLowerCase().indexOf($event.query.toLowerCase()) === 0 ||
+        country.code.toLowerCase().indexOf($event.query.toLowerCase()) === 0
+    );
+
+    Object.assign(this.filteredCountries, filteredCountries);
+
+    this.filteredCountries = [...filteredCountries];
+  }
+
+  countrySelected(): void {
+    if (
+      this.registerForm.get('originCountry')?.value?.code ===
+      RegisterComponent.NOT_AVAILABLE_COUNTRY_OPTION.code
+    ) {
+      this.registerForm.get('originCountry')?.reset();
+    }
   }
 
   private convertToRegisterDto(
@@ -192,5 +223,13 @@ export class RegisterComponent implements OnInit {
       default:
         return null;
     }
+  }
+
+  private observeCountryList(): void {
+    this.usersService
+      .selectCountryList()
+      .then((countryFilePayload: CountryFilePayload) => {
+        this.countryList = countryFilePayload.data;
+      });
   }
 }

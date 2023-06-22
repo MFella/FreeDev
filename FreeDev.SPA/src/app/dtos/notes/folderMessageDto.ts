@@ -7,7 +7,8 @@ export interface FolderMessageDto {
   isRead: boolean;
   sendTime: Date;
   title: string;
-  senderId: UserData;
+  senderId?: UserData;
+  receiverId?: UserData;
 }
 
 export interface UserData {

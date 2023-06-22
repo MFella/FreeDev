@@ -9,7 +9,9 @@
         <p-divider></p-divider>
         <p>Feel free to browse offers which meet your expectations.</p>
         <button *ngIf="!authServ.storedUser" pButton class="btn btn-primary btn-lg w-10rem" styleClass="flex justify-content-between" 
-        role="button" icon="pi pi-arrow-right" [routerLink]="['/register']">Go to Register</button>
+        role="button" icon="pi pi-arrow-right pl-2" [routerLink]="['/register']">
+        <span>Go to Register</span>
+      </button>
       </div>
     </div>
 </div>

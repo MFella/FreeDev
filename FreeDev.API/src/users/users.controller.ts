@@ -55,8 +55,6 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get('user-key-room')
   async getUserKeyRoom(@Req() request, @Query() query: { _id: string }) {
-    console.log(request.user);
-    console.log(query);
     return await this.userServ.getUserKeyRoom(
       request.user.userId.toString(),
       query._id,

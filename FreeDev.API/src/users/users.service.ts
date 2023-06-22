@@ -24,7 +24,7 @@ import {
 } from 'src/web-socket-messages/room-key.schema';
 import { CurrentLoggedUser } from 'src/types/logged-users/currentLoggedUser';
 import { of, Observable } from 'rxjs';
-import { Message, MessageDocument } from 'src/messages/message.schema';
+import { Mail, MailDocument } from '../mail/mail.schema';
 
 @Injectable()
 export class UsersService {
@@ -35,8 +35,8 @@ export class UsersService {
     private hunterModel: Model<HunterDocument>,
     @InjectModel(RoomKey.name)
     private readonly roomKeyModel: Model<RoomKeyDocument>,
-    @InjectModel(Message.name)
-    private readonly messageModel: Model<MessageDocument>,
+    @InjectModel(Mail.name)
+    private readonly mailModel: Model<MailDocument>,
     private readonly fileServ: FileService,
   ) {}
 
@@ -54,8 +54,6 @@ export class UsersService {
       );
       this.updateConnectedUserPayload(storedLoggedUserIndex, loggedUser);
     }
-
-    console.log('storedLoggedUsers', this.currentConnectedUsers);
   }
 
   updateConnectedUserPayload(
@@ -139,7 +137,7 @@ export class UsersService {
     }
   }
 
-  async findUserById(userId: string): Promise<any> {
+  async findUserById(userId: string, attributes?: Array<string>): Promise<any> {
     const hipoDeveloper = await (
       await this.developerModel
         .findOne({ _id: userId })
@@ -332,7 +330,13 @@ export class UsersService {
     numberOfTotalRecords: number;
     friendsOrRequestedFriendsIds: Array<string>;
   }> {
-    const attributesToSelect = { _id: 1, name: 1, surname: 1, avatar: 1 };
+    const attributesToSelect = {
+      _id: 1,
+      name: 1,
+      surname: 1,
+      avatar: 1,
+      role: 1,
+    };
     const trimmedName = new RegExp(query.name?.trim(), 'i');
 
     let usersToReturn = [];
@@ -419,17 +423,17 @@ export class UsersService {
     const friendsOrRequestedFriendsIds = [];
     await Promise.all(
       resultArray.map(async (userEntity) => {
-        const isFriendRequestByReceiverInBox = await this.messageModel
+        const isFriendRequestByReceiverInBox = await this.mailModel
           .findOne({
-            sender: userEntity._id,
-            receiver: userId.toString(),
+            senderId: userEntity._id,
+            receiverId: userId.toString(),
           })
           .exec();
 
-        const isFriendRequestBySenderInBox = await this.messageModel
+        const isFriendRequestBySenderInBox = await this.mailModel
           .findOne({
-            sender: userId.toString(),
-            receiver: userEntity._id,
+            senderId: userId.toString(),
+            receiverId: userEntity._id,
           })
           .exec();
         const isFriend = userEntity.contacts?.includes(userId.toString());
@@ -438,7 +442,6 @@ export class UsersService {
           isFriendRequestByReceiverInBox ||
           isFriendRequestBySenderInBox
         ) {
-          console.log('pushed', userEntity._id);
           friendsOrRequestedFriendsIds.push(userEntity._id);
         }
       }),

@@ -10,8 +10,10 @@ import {
 } from '@angular/core';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { CallMediaType } from '../types/call/callMediaType';
-import { filter } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject, combineLatest } from 'rxjs';
+import { WsService } from '../services/ws.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-call',
@@ -31,32 +33,42 @@ export class CallComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isConnected: boolean = false;
 
-  private peerId!: string;
+  private destroy$: Subject<void> = new Subject<void>();
+
+  private guestId!: string;
 
   constructor(
     private readonly callServ: CallService,
+    private readonly authService: AuthService,
+    private readonly wsService: WsService,
     public ref: DynamicDialogRef,
     public config: DynamicDialogConfig
   ) {}
 
   ngOnInit() {
-    console.log(this.config);
     this.guestAvatarUrl = this.config.data?.guestAvatarUrl;
     this.yourAvatarUrl = this.config.data?.yourAvatarUrl;
-    this.peerId = this.callServ.initPeer(this.config.data?.peerId ?? '');
+    this.guestId = this.callServ.initPeer(this.config.data?.guestId ?? '');
     this.observeStreams();
   }
 
   ngAfterViewInit(): void {
-    this.callServ.establishMediaCall(this.peerId);
+    this.callServ.establishMediaCall(this.guestId);
+    this.observeCancellationOfCall();
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
 
   finishCall(): void {
     this.callServ.closeMediaCall();
     this.ref.close();
     this.callServ.destroyPeer();
+    this.wsService.sendCancellationOfCall(
+      this.authService.getStoredUser()?._id,
+      this.guestId
+    );
   }
 
   toggleMic(): void {
@@ -88,4 +100,16 @@ export class CallComponent implements OnInit, OnDestroy, AfterViewInit {
   private observeJoinAction(): void {}
 
   private observeDeclineAction(): void {}
+
+  observeCancellationOfCall(): void {
+    this.wsService
+      .observeCancellationOfCall()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((response) => {
+        console.log('should be closed!');
+        this.callServ.closeMediaCall();
+        this.ref.close();
+        this.callServ.destroyPeer();
+      });
+  }
 }

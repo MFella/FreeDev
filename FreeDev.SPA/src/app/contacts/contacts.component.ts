@@ -1,12 +1,18 @@
-import {LocalStorageService} from './../services/local-storage.service';
-import {FolderType} from './../types/contacts/folderType';
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {FolderOption} from "../types/contacts/folderOption";
-import {NgModel} from "@angular/forms";
-import {ListBoxOptionChangedEvent} from "../types/events/listBoxOptionChangedEvent";
-import {MailService} from "../services/mail.service";
-import {take} from "rxjs/operators";
-import {FolderMessageDto} from "../dtos/notes/folderMessageDto";
+import { LocalStorageService } from './../services/local-storage.service';
+import { FolderType } from './../types/contacts/folderType';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
+import { FolderOption } from '../types/contacts/folderOption';
+import { NgModel } from '@angular/forms';
+import { ListBoxOptionChangedEvent } from '../types/events/listBoxOptionChangedEvent';
+import { MailService } from '../services/mail.service';
+import { take } from 'rxjs/operators';
+import { FolderMessageDto } from '../dtos/notes/folderMessageDto';
 
 @Component({
   selector: 'app-contacts',
@@ -14,8 +20,7 @@ import {FolderMessageDto} from "../dtos/notes/folderMessageDto";
   styleUrls: ['./contacts.component.scss'],
 })
 export class ContactsComponent implements OnInit, AfterViewInit {
-
-  @ViewChild('folderOptionsRef', {read: NgModel})
+  @ViewChild('folderOptionsRef', { read: NgModel })
   listBoxFolderOptionsRef!: NgModel;
 
   private static readonly LAST_SAVED_OPTION_LS_KEY =
@@ -29,8 +34,7 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     private readonly lsServ: LocalStorageService,
     private readonly mailService: MailService,
     private readonly changeDetectorRef: ChangeDetectorRef
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.initFolderOptions();
@@ -62,14 +66,13 @@ export class ContactsComponent implements OnInit, AfterViewInit {
 
   private observeFolderMessages(): void {
     !this.selectedFolder.isEqual(FolderType.NEW_MESSAGE) &&
-    this.mailService
-      .getFolderMessageList(this.selectedFolder.type)
-      .pipe(take(1))
-      .subscribe((folderMessages: Array<FolderMessageDto>) => {
-        console.log(folderMessages);
-        this.mailList = folderMessages;
-        this.changeDetectorRef.detectChanges();
-      });
+      this.mailService
+        .getFolderMessageList(this.selectedFolder.type)
+        .pipe(take(1))
+        .subscribe((folderMessages: Array<FolderMessageDto>) => {
+          this.mailList = folderMessages;
+          this.changeDetectorRef.detectChanges();
+        });
   }
 
   private initFolderOptions(): void {

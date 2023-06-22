@@ -1,27 +1,27 @@
-
-  <form [formGroup]="profileForm">
-    <div class="grid mt-2 main-form-grid">
-      <div class="md:col-12 lg:col-4 pl-4 user-avatar-col">
-        <div class="grid ml-4 nested-grid-with-margin">
-          <div class="col-12">
-            <div class="profile-photo-container position-relative">
-              <img [src]="this.userProfile.avatarUrl"
-              alt="Some Placeholder"
-              class="profile-photo">
-            </div>
+<form *ngIf="profileForm" [formGroup]="profileForm">
+  <div class="grid mt-2 main-form-grid">
+    <div class="md:col-12 lg:col-4 pl-4 user-avatar-col">
+      <div class="grid ml-4 nested-grid-with-margin">
+        <div class="col-12">
+          <div class="profile-photo-container position-relative">
+            <img [src]="this.userProfile.avatarUrl"
+                 alt="Some Placeholder"
+                 class="profile-photo">
           </div>
-          <div class="col-12 py-4 avatar-action-container">
-            <div class="d-flex flex-column justify-content-center px-4">
-              <p-fileUpload *ngIf="this.userProfile.amIOwner"
-              #fileUploader [showCancelButton]="true" [showUploadButton]="false" [customUpload]="true" 
-              mode="advanced" name="avatar" [disabled]="isReadonly"
-              [maxFileSize]="10000000" (onSelect)="setAvatarToUpload($event)" skinSimple="true" accept="image/*" [fileLimit]="1">
+        </div>
+        <div class="col-12 py-4 avatar-action-container">
+          <div class="d-flex flex-column justify-content-center px-4">
+            <p-fileUpload *ngIf="this.userProfile.amIOwner"
+                          #fileUploader [showCancelButton]="true" [showUploadButton]="false" [customUpload]="true"
+                          mode="advanced" name="avatar" [disabled]="isReadonly"
+                          [maxFileSize]="10000000" (onSelect)="setAvatarToUpload($event)" skinSimple="true"
+                          accept="image/*" [fileLimit]="1">
             </p-fileUpload>
-            </div>
           </div>
         </div>
       </div>
-      
+    </div>
+
     <div class="md:col-12 lg:col-8">
 
       <p-card>
@@ -32,14 +32,15 @@
               <div class="inline-block pr-3 pb-1" *ngIf="isLoading">
                 <i class="pi pi-spin pi-spinner" style="font-size: 2rem"></i>
               </div>
-              <button pButton pRipple *ngIf="!isReadonly" type="button" label="Cancel" icon="pi pi-times" class="p-button-danger"
-              (click)="cancelEditMode()" [disabled]="isLoading"></button>
-              
-              <button pButton pRipple  *ngIf="!isReadonly" class="p-button-success" label="Save" icon="pi pi-save"
-              (click)="updateUserInfo()" [disabled]="this.profileForm.invalid || isLoading">
+              <button pButton pRipple *ngIf="!isReadonly" type="button" label="Cancel" icon="pi pi-times"
+                      class="p-button-danger"
+                      (click)="cancelEditMode()" [disabled]="isLoading"></button>
+
+              <button pButton pRipple *ngIf="!isReadonly" class="p-button-success" label="Save" icon="pi pi-save"
+                      (click)="updateUserInfo()" [disabled]="this.profileForm.invalid || isLoading">
               </button>
-              <button pButton pRipple  *ngIf="isReadonly" class="p-button-warning" 
-              (click)="setEditMode()" label="Edit" icon="pi pi-pencil"
+              <button pButton pRipple *ngIf="isReadonly" class="p-button-warning"
+                      (click)="setEditMode()" label="Edit" icon="pi pi-pencil"
               >
               </button>
             </div>
@@ -52,20 +53,22 @@
             <div class="sm:col-12 md:col-6">
               <span class="p-float-label">
                 <input class="w-full" type="text" pInputText placeholder="" name="name" formControlName="name"
-                [ngClass]="{'is-valid': this.profileForm.controls.name.status === 'VALID' && !isReadonly,
+                       [ngClass]="{'is-valid': this.profileForm.controls.name.status === 'VALID' && !isReadonly,
                 'is-invalid': this.profileForm.controls.name.status === 'INVALID' && this.profileForm.controls.name.touched
                 && this.profileForm.controls.name.value.length !== 0 && !isReadonly}" [readonly]="isReadonly">
                 <label for="name">Name</label>
                 <div class="invalid-feedback">
-                  <p class="m-0" *ngIf="this.profileForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p class="m-0"
+                     *ngIf="this.profileForm.get('name')?.errors?.pattern">&#x2192; Only letters are allowed</p>
                   <p *ngIf="this.profileForm.get('name')?.errors?.minlength">&#x2192; Min length 2</p>
                 </div>
               </span>
             </div>
             <div class="sm:col-12 md:col-6 p-surname-col">
               <span class="p-float-label">
-                <input pInputText type="text" class="form-control w-full" placeholder="" name="surname" formControlName="surname"
-                [ngClass]="{'is-valid': this.profileForm.controls.surname.status === 'VALID' && !isReadonly,
+                <input pInputText type="text" class="form-control w-full" placeholder="" name="surname"
+                       formControlName="surname"
+                       [ngClass]="{'is-valid': this.profileForm.controls.surname.status === 'VALID' && !isReadonly,
                 'is-invalid': this.profileForm.controls.surname.status === 'INVALID' && this.profileForm.controls.surname.touched
                 && this.profileForm.controls.surname.value.length !== 0 && !isReadonly}" [readonly]="isReadonly"
                 >
@@ -79,16 +82,16 @@
             <div class="sm:col-12 md:col-4 padding-with-offset">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="email" formControlName="email"
-                [ngClass]="{'is-valid': this.profileForm.controls.email.status === 'VALID' && !isReadonly,
+                       [ngClass]="{'is-valid': this.profileForm.controls.email.status === 'VALID' && !isReadonly,
                 'is-invalid': this.profileForm.controls.email.status === 'INVALID' && this.profileForm.controls.email.touched
                 && this.profileForm.controls.email.value.length !== 0 && !isReadonly}" readonly>
                 <label for="email">Email</label>
               </span>
             </div>
-            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'Developer'">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="country" formControlName="country"
-                [ngClass]="{'is-valid': this.profileForm.controls.country.status === 'VALID' && this.profileForm.controls.country.value.length && !isReadonly,
+                       [ngClass]="{'is-valid': this.profileForm.controls.country.status === 'VALID' && this.profileForm.controls.country.value.length && !isReadonly,
                 'is-invalid': this.profileForm.controls.country.status === 'INVALID' && this.profileForm.controls.country.touched && !isReadonly
                 && this.profileForm.controls.country.value.length !== 0}" [readonly]="isReadonly">
                 <label for="name">Country</label>
@@ -98,58 +101,67 @@
                 </div>
               </span>
             </div>
-            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'Developer'">
               <span class="p-float-label">
                 <input pInputText type="text" class="w-full" placeholder="" name="city" formControlName="city"
-                [ngClass]="{'is-valid': this.profileForm.controls.city.status === 'VALID' && this.profileForm.controls.city.value.length && !isReadonly,
+                       [ngClass]="{'is-valid': this.profileForm.controls.city.status === 'VALID' && this.profileForm.controls.city.value.length && !isReadonly,
                 'is-invalid': this.profileForm.controls.city.status === 'INVALID' && this.profileForm.controls.city.touched && !isReadonly
                 && this.profileForm.controls.city.value.length !== 0}" [readonly]="isReadonly">
                 <label for="name">City</label>
                 <div class="invalid-feedback">
-                  <p class="m-0" *ngIf="this.profileForm.get('city')?.errors?.pattern">&#x2192; Only letters are allowed</p>
+                  <p class="m-0"
+                     *ngIf="this.profileForm.get('city')?.errors?.pattern">&#x2192; Only letters are allowed</p>
                   <p *ngIf="this.profileForm.get('city')?.errors?.minlength">&#x2192; Min length 2</p>
                 </div>
               </span>
             </div>
 
-            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'Hunter'">
               <span class="p-float-label">
-                <input pInputText type="text" class="w-full" placeholder="" name="companyName" formControlName="companyName" [readonly]="isReadonly">
+                <input pInputText type="text" class="w-full" placeholder="" name="companyName"
+                       formControlName="companyName" [readonly]="isReadonly">
                 <label for="companyName">Name of Company</label>
               </span>
             </div>
-            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'HUNTER'">
+            <div class="sm:col-12 md:col-4 padding-with-offset" *ngIf="this.userProfile.role === 'Hunter'">
               <span class="p-float-label">
-                <input pInputText type="text" class="w-full" placeholder="" name="businessOffice" formControlName="businessOffice" [readonly]="isReadonly">
+                <input pInputText type="text" class="w-full" placeholder="" name="businessOffice"
+                       formControlName="businessOffice" [readonly]="isReadonly">
                 <label for="businessOffice">Business Office</label>
               </span>
             </div>
 
             <div class="col-12 pt-4">
               <span class="p-float-label">
-                <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3" formControlName="bio" [readonly]="isReadonly"></textarea>               
+                <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3" formControlName="bio"
+                          [readonly]="isReadonly"></textarea>
                 <label class="reversed-label" for="bio">Few sentences about you.</label>
               </span>
             </div>
 
-            <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.userProfile.role === 'Developer'">
               <span class="p-float-label">
-                <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3" formControlName="technologies" [readonly]="isReadonly"></textarea>  
+                <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3"
+                          formControlName="technologies" [readonly]="isReadonly"></textarea>
                 <label class="normal-label" for="technologies">Technologies*</label>
               </span>
             </div>
-            <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.userProfile.role === 'DEVELOPER'">
+            <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.userProfile.role === 'Developer'">
               <span class="p-float-label">
-                <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3" formControlName="hobbies" [readonly]="isReadonly"></textarea>  
+                <textarea pInputTextarea class="w-full" id="exampleFormControlTextarea1" rows="3"
+                          formControlName="hobbies" [readonly]="isReadonly"></textarea>
                 <label class="normal-label" for="hobbies">Hobbies*</label>
               </span>
             </div>
           </div>
-          
-          <div class="col-12 padding-with-offset d-flex flex-row justify-content-center" *ngIf="this.userProfile.role === 'HUNTER'">
+
+          <div class="col-12 padding-with-offset d-flex flex-row justify-content-center"
+               *ngIf="this.userProfile.role === 'Hunter'">
             <div class="form-label-group d-flex flex-column w-full">
-              <p-dropdown [options]="sizesOfCompany" placeholder="Size of Company" formControlName="sizeOfCompany" styleClass="w-full"
-              optionLabel="name" [showClear]="true" [readonly]="isReadonly" #dropdownSizeCompany></p-dropdown>
+              <p-dropdown [options]="sizesOfCompany" placeholder="Size of Company" formControlName="sizeOfCompany"
+                          styleClass="w-full"
+                          optionLabel="name" [showClear]="true" [readonly]="isReadonly"
+                          #dropdownSizeCompany></p-dropdown>
             </div>
           </div>
         </ng-template>

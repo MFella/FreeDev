@@ -12,6 +12,9 @@ export class DirectMessageToSendDto {
     receiverId: string;
 
     @IsString()
+    receiverRole: string;
+
+    @IsString()
     content: string;
 
     @IsString()

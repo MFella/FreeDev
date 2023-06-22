@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { io } from 'socket.io-client';
 import { environment as env } from '../../environments/environment';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
 import { MessageToCreateDto } from '../dtos/messages/messageToCreateDto';
 import { CurrentLoggedUser } from '../types/logged-users/currentLoggedUser';
+import { CancellationCallMessage } from '../types/call/cancellationCallMessage';
+import { IncomingCallAnswer } from '../types/call/incomingCallAnswer';
 
 @Injectable({
   providedIn: 'root',
@@ -31,16 +33,28 @@ export class WsService {
   }
 
   observePrivateMessage(): Observable<MessageResponseDto> {
-    return Observable.create((observer: any) => {
+    return new Observable((observer: any) => {
       this.socket.on('privateResponse', (message: MessageResponseDto) => {
         observer.next(message);
       });
     });
   }
 
-  observeIncomingCall(): Observable<string> {
-    return Observable.create((observer: any) => {
-      this.socket.on('callAnswer', (key: string) => {
+  observeIncomingCall(): Observable<IncomingCallAnswer> {
+    return new Observable((observer: Observer<IncomingCallAnswer>) => {
+      this.socket.on('callAnswer', (key: IncomingCallAnswer) => {
+        observer.next(key);
+      });
+    });
+  }
+
+  sendCancellationOfCall(sourceUserId: string, targetUserId: string): void {
+    this.socket.emit('cancelCall', { sourceUserId, targetUserId });
+  }
+
+  observeCancellationOfCall(): Observable<CancellationCallMessage> {
+    return new Observable((observer: Observer<CancellationCallMessage>) => {
+      this.socket.on('onCallCancelled', (key: CancellationCallMessage) => {
         observer.next(key);
       });
     });
@@ -50,8 +64,8 @@ export class WsService {
     this.socket.emit('joinPrivateRoom', { key });
   }
 
-  startMediaCall(key: string): void {
-    this.socket.emit('subscribeIncomingCall', { key });
+  startMediaCall(targetUserId: string, sourceUserId: string): void {
+    this.socket.emit('subscribeIncomingCall', { targetUserId, sourceUserId });
   }
 
   observeLoggedInUsers(): Observable<Array<CurrentLoggedUser>> {

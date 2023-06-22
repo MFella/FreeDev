@@ -101,14 +101,16 @@
       
           <div class="sm:col-12 md:col-6 padding-with-offset" *ngIf="this.isContractJob()">
             <span class="p-float-label">
-              <input type="text" pInputText class="form-control w-full" placeholder="" name="originCountry" formControlName="originCountry"
+              <p-autoComplete formControlName="originCountry" [suggestions]="filteredCountries" [dropdown]="true"
+              (completeMethod)="applyFilterForCountries($event)"
+              (onSelect)="countrySelected()" field="name"></p-autoComplete>
+              <!-- <input type="text" pInputText class="form-control w-full" placeholder="" name="originCountry" formControlName="originCountry"
               [ngClass]="{'is-valid': this.registerForm.controls.originCountry.status === 'VALID' && this.registerForm.controls.originCountry.value.length,
               'is-invalid': this.registerForm.controls.originCountry.status === 'INVALID' && this.registerForm.controls.originCountry.touched
-              && this.registerForm.controls.originCountry.value.length !== 0}">
+              && this.registerForm.controls.originCountry.value.length !== 0}"> -->
               <label for="name">Country*</label>
               <div class="invalid-feedback">
-                <p class="m-0" *ngIf="this.registerForm.get('originCountry')?.errors?.pattern">&#x2192; Only letters are allowed</p>
-                <p *ngIf="this.registerForm.get('originCountry')?.errors?.minlength">&#x2192; Min length 2</p>
+                <p *ngIf="this.registerForm.get('originCountry')?.dirty && this.registerForm.get('originCountry')?.errors?.wrongCountry">&#x2192; Country is not allowed</p>
               </div>
             </span>
           </div>
