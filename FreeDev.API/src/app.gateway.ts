@@ -11,9 +11,9 @@ import { Server, Socket } from 'socket.io';
 import { MessageToCreateDto } from './dtos/websocket-message/messageToCreateDto';
 import { MessageToRoom } from './types/messageToRoom';
 import { UsersService } from './users/users.service';
-import { MessageAnswerCall } from './types/messageAnswerCall';
 import { CancellationCallMessage } from './types/cancellationCallMessage';
 import { IncomingCallPayload } from './types/incomingCallPayload';
+import { ConfigService } from '@nestjs/config';
 @WebSocketGateway(443, { cors: true })
 export class AppGateway {
   connectedUsers: Array<any> = [];
@@ -21,6 +21,7 @@ export class AppGateway {
   constructor(
     private readonly userServ: UsersService,
     private readonly messageServ: WebSocketMessageService,
+    private readonly configService: ConfigService,
   ) {}
 
   @WebSocketServer()
@@ -91,8 +92,15 @@ export class AppGateway {
     const sourceUserFromDb = await this.userServ.findUserById(
       incomingCallPayload.sourceUserId,
     );
-    console.log(sourceUserFromDb);
-    this.server.emit('callAnswer', incomingCallPayload);
+
+    this.server.emit('callAnswer', {
+      imageUrl:
+        sourceUserFromDb?.avatar?.url ??
+        this.configService.get<string>('DEFAULT_USER_IMAGE_URL'),
+      name: sourceUserFromDb?.name,
+      surname: sourceUserFromDb?.surname,
+      ...incomingCallPayload,
+    });
   }
 
   @SubscribeMessage('cancelCall')

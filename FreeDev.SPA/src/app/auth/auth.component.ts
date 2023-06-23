@@ -43,7 +43,7 @@ export class AuthComponent implements OnInit {
         this.loginForm.reset();
         this.noty.success('You have been logged in successfully!');
         this.router.navigate(['/home']);
-        this.authService.loginAction$.next();
+        this.authService.emitAuthAction('login');
       },
       (error: HttpErrorResponse) => {
         this.noty.error(error.error.message);

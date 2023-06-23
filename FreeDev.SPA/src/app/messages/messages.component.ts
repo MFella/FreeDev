@@ -9,6 +9,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -25,8 +26,15 @@ import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { ResolverPagination } from '../types/resolvedPagination';
 import { UsersService } from '../services/users.service';
 import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
-import { debounceTime, filter, map, switchMap, take } from 'rxjs/operators';
-import { timer } from 'rxjs';
+import {
+  debounceTime,
+  filter,
+  map,
+  switchMap,
+  take,
+  takeUntil,
+} from 'rxjs/operators';
+import { Subject, timer } from 'rxjs';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { DecisionCallComponent } from '../decision-call/decision-call.component';
 import { VisibleUserActiveTimeCalculator } from '../utils/visibleUserActiveTimeCalculator';
@@ -47,7 +55,7 @@ import { IncomingCallAnswer } from '../types/call/incomingCallAnswer';
   styleUrls: ['./messages.component.scss'],
   providers: [DialogService],
 })
-export class MessagesComponent implements OnInit, AfterViewInit {
+export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paginator')
   paginator!: any;
 
@@ -56,6 +64,8 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
   @ViewChild('rightClickUserContextMenu')
   rightClickUserContextMenu!: ElementRef;
+
+  private destroy$: Subject<void> = new Subject<void>();
 
   private static readonly SCROLL_TIME_OFFSET = 20;
 
@@ -138,11 +148,11 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     });
 
     this.observePrivateMessage();
-    this.observeIncomingCall();
     this.observeCallCancelled();
     this.observeDialogClosed();
     this.observeLoggedInUsers();
     this.observeRightClickDropdownItems();
+    this.resolveSelectedUserFromLocalStorage();
   }
 
   ngAfterViewInit(): void {
@@ -150,14 +160,22 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     setTimeout(() => this.paginator.changePage(this.pagination.currentPage), 0);
   }
 
-  getUserRoomKey(userId: string): void {
-    if (this.selectedUser?._id === userId) {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+  }
+
+  observeUserRoomKey(
+    userId: string,
+    eventSource: 'localStorage' | 'click'
+  ): void {
+    if (this.selectedUser?._id === userId && eventSource === 'click') {
       return;
     }
 
     this.usersServ
       .getUserChatKeyRoom(userId)
       .pipe(
+        take(1),
         switchMap((response: { key: string }) => {
           this.receiverId = userId;
           this.wsServ.joinUserRoom(response.key);
@@ -171,9 +189,15 @@ export class MessagesComponent implements OnInit, AfterViewInit {
           );
         })
       )
-      .subscribe((response: Array<any>) => {
+      .subscribe((response: Array<MessageResponseDto>) => {
         this.messages = response;
         this.selectedUser = this.userList.find((user) => user._id === userId);
+        if (this.selectedUser) {
+          this.lsServ.setMessagesSelectedUserId(
+            MessagesComponent.MESSAGE_LS_PREFIX,
+            userId
+          );
+        }
         this.scrollToBottom();
       });
   }
@@ -354,6 +378,12 @@ export class MessagesComponent implements OnInit, AfterViewInit {
     );
   }
 
+  getStreamActionTooltip(streamAction: 'call' | 'video'): string {
+    return this.isStreamingActionDisabled()
+      ? `Can't start ${streamAction} right now`
+      : `Start ${streamAction}`;
+  }
+
   private observeCloseOfConnection(ref: DynamicDialogRef): void {
     ref.onClose.subscribe((response: any) => {});
   }
@@ -397,6 +427,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   private observePrivateMessage(): void {
     this.wsServ
       .observePrivateMessage()
+      .pipe(takeUntil(this.destroy$))
       .pipe(
         map((response: any) => {
           const newResponse = {
@@ -412,35 +443,10 @@ export class MessagesComponent implements OnInit, AfterViewInit {
       });
   }
 
-  private observeIncomingCall(): void {
-    this.wsServ
-      .observeIncomingCall()
-      .subscribe((response: IncomingCallAnswer) => {
-        console.log('responsedasdas', response);
-        if (
-          (response.sourceUserId === this.authServ?.storedUser?._id ||
-            response.targetUserId === this.authServ?.storedUser?._id) &&
-          !this.storedCallModalRef
-        ) {
-          this.storedCallRequestModalRef = this.dialogService.open(
-            DecisionCallComponent,
-            {
-              data: {
-                guestAvatarUrl: this.selectedUser?.avatar?.url,
-                guestId: this.selectedUser?._id,
-                yourAvatarUrl: this.authServ.storedUser?.userAvatar,
-              },
-              showHeader: false,
-              width: '90%',
-            }
-          );
-        }
-      });
-  }
-
   private observeCallCancelled(): void {
     this.wsServ
       .observeCancellationOfCall()
+      .pipe(takeUntil(this.destroy$))
       .pipe(
         filter(
           (cancellationCallMessage: CancellationCallMessage) =>
@@ -466,6 +472,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   private observeLoggedInUsers(): void {
     this.wsServ
       .observeLoggedInUsers()
+      .pipe(takeUntil(this.destroy$))
       .subscribe((loggedInUsers: Array<any>) => {
         this.visibleLoggedInUsers = loggedInUsers;
       });
@@ -474,7 +481,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   private observeDialogClosed(): void {
     this.callServ
       .getIsCallEnded()
-      .pipe(debounceTime(450))
+      .pipe(debounceTime(450), takeUntil(this.destroy$))
       .subscribe(() => {
         this.clearDynamicDialogRefs();
       });
@@ -495,7 +502,7 @@ export class MessagesComponent implements OnInit, AfterViewInit {
   private observeRightClickDropdownItems(): void {
     this.messagesUserListRightClickItemsResolver
       .getItemList(this.getPossibleRightClickDropdownItems(true))
-      .pipe(take(1))
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe((dropdownRightClickItems: Array<DropdownItem>) => {
         this.dropdownRightClickItems = dropdownRightClickItems;
       });
@@ -535,12 +542,32 @@ export class MessagesComponent implements OnInit, AfterViewInit {
 
     this.mailService
       .sendDirectMailMessage(messageToSendDto)
-      .pipe(take(1))
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe((isSaved: boolean) => {
         if (isSaved) {
           this.friendIds.add(this.lastRightClickUserId);
           this.notyService.success('Invitation has been sent');
         }
       });
+  }
+
+  private resolveSelectedUserFromLocalStorage(): void {
+    const selectedUserId: string = this.lsServ.getMessagesSelectedUserId(
+      MessagesComponent.MESSAGE_LS_PREFIX
+    );
+
+    const userFromList = this.userList.find(
+      (user) => user._id === selectedUserId
+    );
+
+    if (userFromList) {
+      this.selectedUser = userFromList;
+      this.observeUserRoomKey(this.selectedUser?._id, 'localStorage');
+      return;
+    }
+
+    this.lsServ.removeMessagesSelectedUserId(
+      MessagesComponent.MESSAGE_LS_PREFIX
+    );
   }
 }

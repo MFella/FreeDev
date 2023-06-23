@@ -30,26 +30,57 @@ export class LocalStorageService extends LocalStorageBaseService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem(LocalStorageKeyNames.TOKEN);
   }
 
   getUser(): any {
-    const userFromLS = localStorage?.getItem('user');
+    const userFromLS = localStorage?.getItem(LocalStorageKeyNames.USER);
     if (!userFromLS) return null;
     return JSON.parse(userFromLS ?? '');
   }
 
   setPagination(prefix_key: string, pagination: Pagination): void {
-    localStorage.setItem(prefix_key + 'pagination', JSON.stringify(pagination));
+    localStorage.setItem(
+      prefix_key + LocalStorageKeyNames.PAGINATION,
+      JSON.stringify(pagination)
+    );
   }
 
   getPagination(prefix_key: string): Pagination {
     const itemFromStorage =
-      localStorage.getItem(prefix_key + 'pagination') ??
+      localStorage.getItem(prefix_key + LocalStorageKeyNames.PAGINATION) ??
       JSON.stringify({
         itemsPerPage: 2,
         currentPage: 0,
       });
     return JSON.parse(itemFromStorage);
   }
+
+  setMessagesSelectedUserId(prefix_key: string, selectedUserId: string): void {
+    localStorage.setItem(
+      prefix_key + LocalStorageKeyNames.MESSAGES_SELECTED_USER_ID,
+      selectedUserId
+    );
+  }
+
+  getMessagesSelectedUserId(prefix_key: string): string {
+    return (
+      localStorage.getItem(
+        prefix_key + LocalStorageKeyNames.MESSAGES_SELECTED_USER_ID
+      ) ?? ''
+    );
+  }
+
+  removeMessagesSelectedUserId(prefix_key: string): void {
+    localStorage.removeItem(
+      prefix_key + LocalStorageKeyNames.MESSAGES_SELECTED_USER_ID
+    );
+  }
+}
+
+enum LocalStorageKeyNames {
+  PAGINATION = 'pagination',
+  USER = 'user',
+  TOKEN = 'token',
+  MESSAGES_SELECTED_USER_ID = 'messages-selected-user-id',
 }

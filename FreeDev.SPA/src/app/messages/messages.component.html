@@ -28,9 +28,9 @@
             </div>
             <p-contextMenu #cm [model]="dropdownRightClickItems"></p-contextMenu>
             <p-orderList [value]="userList" controlsPosition="none" class="p-orderlist-users" styleClass="mt-3"
-                         #rightClickUserContextMenu>
+                         #rightClickUserContextMenu [selection]="[selectedUser]">
               <ng-template let-user pTemplate="item">
-                <div class="flex justify-content-start p-orderlist-user" (click)="getUserRoomKey(user._id)"
+                <div class="flex justify-content-start p-orderlist-user" (click)="observeUserRoomKey(user._id, 'click')"
                      (contextmenu)="showRightClickMenu(cm, $event, user._id, user.role)">
                   <div class="user-avatar-container">
                     <img src="{{user.avatar.url}}"
@@ -78,12 +78,20 @@
               <h4 *ngIf="selectedUser" class="mb-0 pl-2">{{selectedUser.name + ' ' + selectedUser.surname}}</h4>
               <h4 *ngIf="!selectedUser" class="mb-0 pl-2">No user selected</h4>
               <div class="action-buttons-container">
-                <button pButton pRipple type="button" icon="pi pi-phone"
-                        class="p-button-rounded p-button-success p-button-icon-only mr-2"
-                        pTooltip="Start call" tooltipPosition="top" [disabled]="isStreamingActionDisabled()"
-                        (click)="startVoiceCall()"></button>
-                <button pButton pRipple type="button" icon="pi pi-video" class="p-button-rounded p-button-icon-only"
-                        pTooltip="Start video" tooltipPosition="top" [disabled]="isStreamingActionDisabled()"></button>
+                <div [pTooltip]="getStreamActionTooltip('call')" [tooltipPosition]="'left'" class="inline-block">
+                  <button pButton pRipple
+                  type="button"
+                  icon="pi pi-phone"
+                  class="p-button-rounded p-button-success p-button-icon-only mr-2"
+                  [disabled]="isStreamingActionDisabled()"
+                  (click)="startVoiceCall()"></button>
+                </div>
+
+                <div [pTooltip]="getStreamActionTooltip('video')" [tooltipPosition]="'left'" class="inline-block">
+                  <button pButton pRipple type="button" icon="pi pi-video" class="p-button-rounded p-button-icon-only"
+                   [disabled]="isStreamingActionDisabled()"></button>
+                </div>
+
               </div>
             </div>
 

@@ -78,7 +78,7 @@ export class NavComponent implements OnInit {
   }
 
   observeLoggedInAction(): void {
-    this.authServ.loginAction$.subscribe(() => this.setNavItems());
+    this.authServ.observeAuthAction().subscribe(() => this.setNavItems());
   }
 
   private setNavItems(): void {

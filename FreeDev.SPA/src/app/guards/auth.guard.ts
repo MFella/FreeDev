@@ -39,6 +39,7 @@ export class AuthGuard implements CanActivate {
       this.authServ.logout();
       this.noty.info('Session expired - login again');
       this.router.navigate(['home']);
+      this.authServ.emitAuthAction('logout');
       return false;
     }
 

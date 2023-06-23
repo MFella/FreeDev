@@ -13,6 +13,7 @@ import { DeveloperToCreateDto } from '../dtos/users/developerToCreateDto';
 import { HunterToCreateDto } from '../dtos/users/hunterToCreateDto';
 import { WsService } from './ws.service';
 import { CurrentLoggedUser } from '../types/logged-users/currentLoggedUser';
+import { AuthAction } from '../types/authAction';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,7 @@ export class AuthService {
     }
   }
 
-  loginAction$: Subject<void> = new Subject();
+  authAction$: Subject<AuthAction> = new Subject<AuthAction>();
 
   storedUser: any = null;
 
@@ -79,6 +80,14 @@ export class AuthService {
 
   getStoredUser(): any {
     return this.storedUser;
+  }
+
+  emitAuthAction(authAction: AuthAction): void {
+    this.authAction$.next(authAction);
+  }
+
+  observeAuthAction(): Observable<AuthAction> {
+    return this.authAction$.asObservable();
   }
 
   private createDeveloper(
