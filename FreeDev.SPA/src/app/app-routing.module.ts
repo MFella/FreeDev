@@ -20,6 +20,7 @@ import { UsersChatListResolver } from './resolvers/users-chat-list.resolver';
 import { OfferDetailsComponent } from './offer-details/offer-details.component';
 import { OfferDetailResolver } from './resolvers/offer-detail.resolver';
 import { OfferListResolver } from './resolvers/offer-list.resolver';
+import { FolderStructureResolver } from './resolvers/folder-structure.resolver';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -78,6 +79,7 @@ const routes: Routes = [
     path: 'notes',
     canActivate: [AuthGuard],
     component: ContactsComponent,
+    resolve: { foldersStructure: FolderStructureResolver },
   },
   { path: '**', redirectTo: 'home' },
 ];

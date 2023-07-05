@@ -12,6 +12,12 @@ import { UsersService } from '../users/users.service';
 import { DirectMessageToSendDto } from '../dtos/messages/directMessageToSendDto';
 import { IndirectMessageToSendDto } from '../dtos/messages/indirectMessageToSend';
 import { FolderType } from '../types/notes/folderType';
+import {
+  FolderStructure,
+  FolderStructureTypes,
+  FoldersStructure,
+} from 'src/types/notes/foldersStructure';
+import { GroupedMailStructure } from 'src/types/notes/groupedMailStructure';
 
 @Injectable()
 export class MailService {
@@ -213,5 +219,65 @@ export class MailService {
         senderBelongFolder: targetFolder,
       }));
     }
+  }
+
+  async getFoldersStructure(receiverId: string): Promise<FoldersStructure> {
+    const mailsStructure = await this.mailModel.find({ where: { receiverId } });
+
+    const groupedMailsStructure = this.getGroupedMailsStructure(
+      mailsStructure,
+      'receiverBelongFolder',
+    );
+
+    let folderTypes: FolderStructureTypes = this.getEmptyFolderStructureTypes();
+
+    for (const [key, value] of Object.entries(groupedMailsStructure)) {
+      folderTypes[key.toUpperCase()] = {
+        type: key,
+        totalCount: value.length,
+        readCount: value.filter((mail) => mail.isRead).length,
+      };
+    }
+
+    return { folderTypes };
+  }
+
+  private getGroupedMailsStructure(
+    mailsStructure: Array<Mail>,
+    criterion: keyof Mail,
+  ): GroupedMailStructure {
+    let resultGroupedMailsStructure: GroupedMailStructure = {};
+    for (let mail of mailsStructure) {
+      resultGroupedMailsStructure[criterion] = (
+        resultGroupedMailsStructure[criterion] ?? []
+      ).concat(mail);
+    }
+
+    return resultGroupedMailsStructure;
+    // return mailsStructure.reduce(
+    //   (
+    //     accumulator: Partial<{ [key in FolderType]: Array<Mail> }>,
+    //     currentValue: Mail,
+    //   ) => {
+    //     if (!currentValue[criterion]) return;
+    //     accumulator[currentValue[criterion] as FolderType[number]] = (
+    //       accumulator[currentValue[criterion] as FolderType] ?? []
+    //     ).push(currentValue);
+    //   },
+    //   {},
+    // );
+  }
+
+  private getEmptyFolderStructureTypes(): FolderStructureTypes {
+    let emptyFolderStructureTypes = {};
+
+    for (let folderType of Object.values(FolderType)) {
+      emptyFolderStructureTypes[folderType] = {
+        type: folderType,
+        totalCount: 0,
+        readCount: 0,
+      };
+    }
+    return emptyFolderStructureTypes as FolderStructureTypes;
   }
 }

@@ -1,5 +1,4 @@
 import { MessagesUserListRightClickItemsResolver } from '../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
-import { CurrentLoggedUser } from './../../../../FreeDev.API/dist/types/logged-users/currentLoggedUser.d';
 import { CallService } from '../services/call.service';
 import { CallComponent } from '../call/call.component';
 import { LocalStorageService } from '../services/local-storage.service';
@@ -48,6 +47,7 @@ import { MailService } from '../services/mail.service';
 import { Roles } from '../types/roles.enum';
 import { CancellationCallMessage } from '../types/call/cancellationCallMessage';
 import { IncomingCallAnswer } from '../types/call/incomingCallAnswer';
+import { CurrentLoggedUser } from '../types/logged-users/currentLoggedUser';
 
 @Component({
   selector: 'app-messages',

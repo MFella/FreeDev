@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WsService } from './services/ws.service';
-import { filter, takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { filter, switchMap, takeUntil } from 'rxjs/operators';
+import { Subject, Subscription, iif } from 'rxjs';
 import { IncomingCallAnswer } from './types/call/incomingCallAnswer';
 import { AuthService } from './services/auth.service';
 import { DecisionCallComponent } from './decision-call/decision-call.component';
 import { DialogService } from 'primeng/dynamicdialog';
+import { AuthAction } from './types/authAction';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   destroy$: Subject<void> = new Subject<void>();
 
+  callSubscription: Subscription | null = new Subscription();
+
   constructor(
     private readonly wsService: WsService,
     private readonly authService: AuthService,
@@ -25,16 +28,30 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.observeIncomingCall();
+    this.observeLogInActionFired();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
   }
 
+  private observeLogInActionFired(): void {
+    this.authService
+      .observeAuthAction()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((authAction: AuthAction) => {
+        if (authAction === 'login') {
+          this.observeIncomingCall();
+        } else {
+          this.callSubscription?.unsubscribe();
+          this.callSubscription = null;
+        }
+      });
+  }
+
   // todo: what is going on, when user is not logged in
   private observeIncomingCall(): void {
-    this.wsService
+    this.callSubscription = this.wsService
       .observeIncomingCall()
       .pipe(
         filter(
@@ -42,7 +59,12 @@ export class AppComponent implements OnInit, OnDestroy {
             incomingCallAnswer.targetUserId ===
             this.authService.getStoredUser()?._id
         ),
-        takeUntil(this.destroy$)
+        takeUntil(this.destroy$),
+        takeUntil(
+          this.authService
+            .observeAuthAction()
+            .pipe(filter((authAction: AuthAction) => authAction === 'logout'))
+        )
       )
       .subscribe((incomingCallAnswer: IncomingCallAnswer) => {
         console.log('responsedasdas', incomingCallAnswer);

@@ -64,6 +64,7 @@ import { MenuModule } from 'primeng/menu';
 import { PanelModule } from 'primeng/panel';
 import { UserNameExtractPipe } from './pipes/user-name-extract.pipe';
 import { TagModule } from 'primeng/tag';
+import { PrimalComponent } from './primal/primal.component';
 
 @NgModule({
   declarations: [

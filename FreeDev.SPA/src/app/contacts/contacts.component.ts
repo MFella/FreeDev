@@ -1,5 +1,5 @@
 import { LocalStorageService } from './../services/local-storage.service';
-import { FolderType } from './../types/contacts/folderType';
+import { FolderType } from '../types/mail/folderType';
 import {
   AfterViewInit,
   ChangeDetectorRef,
@@ -7,19 +7,24 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FolderOption } from '../types/contacts/folderOption';
+import { FolderOption } from '../types/mail/folderOption';
 import { NgModel } from '@angular/forms';
 import { ListBoxOptionChangedEvent } from '../types/events/listBoxOptionChangedEvent';
 import { MailService } from '../services/mail.service';
 import { take } from 'rxjs/operators';
 import { FolderMessageDto } from '../dtos/notes/folderMessageDto';
+import { ActivatedRoute } from '@angular/router';
+import { PrimalComponent } from '../primal/primal.component';
 
 @Component({
   selector: 'app-contacts',
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.scss'],
 })
-export class ContactsComponent implements OnInit, AfterViewInit {
+export class ContactsComponent
+  extends PrimalComponent
+  implements OnInit, AfterViewInit
+{
   @ViewChild('folderOptionsRef', { read: NgModel })
   listBoxFolderOptionsRef!: NgModel;
 
@@ -33,10 +38,14 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   constructor(
     private readonly lsServ: LocalStorageService,
     private readonly mailService: MailService,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly changeDetectorRef: ChangeDetectorRef
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit(): void {
+    this.observeResolvedFolderStructure();
     this.initFolderOptions();
   }
 
@@ -64,6 +73,14 @@ export class ContactsComponent implements OnInit, AfterViewInit {
     this.observeFolderMessages();
   }
 
+  private observeResolvedFolderStructure(): void {
+    this.activatedRoute.data
+      .pipe(this.takeUntilDestroyed())
+      .subscribe((folderType) => {
+        console.log(folderType);
+      });
+  }
+
   private observeFolderMessages(): void {
     !this.selectedFolder.isEqual(FolderType.NEW_MESSAGE) &&
       this.mailService
@@ -76,13 +93,9 @@ export class ContactsComponent implements OnInit, AfterViewInit {
   }
 
   private initFolderOptions(): void {
-    this.folders = [
-      new FolderOption(FolderType.INBOX),
-      new FolderOption(FolderType.SEND),
-      new FolderOption(FolderType.SPAM),
-      new FolderOption(FolderType.BIN),
-      new FolderOption(FolderType.NEW_MESSAGE),
-    ];
+    this.folders = Object.values(FolderType).map(
+      (folderType) => new FolderOption(folderType)
+    );
   }
 
   shouldDisplayNewMailForm(): boolean {

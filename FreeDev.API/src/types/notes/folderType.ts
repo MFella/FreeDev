@@ -1,7 +1,7 @@
 export enum FolderType {
-    INBOX = 'INBOX',
-    SEND = 'SEND',
-    SPAM = 'spam',
-    BIN = 'bin',
-    NEW_MESSAGE = 'NEW_MESSAGE'
+  INBOX = 'INBOX',
+  SEND = 'SEND',
+  SPAM = 'SPAM',
+  BIN = 'BIN',
+  NEW_MESSAGE = 'NEW_MESSAGE',
 }

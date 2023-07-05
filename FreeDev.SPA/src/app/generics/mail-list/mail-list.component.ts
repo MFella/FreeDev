@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { FolderType } from 'src/app/types/contacts/folderType';
+import { FolderType } from 'src/app/types/mail/folderType';
 import { take } from 'rxjs/operators';
 import { MailService } from '../../services/mail.service';
 import { FolderMessageDto } from '../../dtos/notes/folderMessageDto';
-import { MailMessageContentDto } from '../../types/contacts/mailMessageContentDto';
+import { MailMessageContentDto } from '../../types/mail/mailMessageContentDto';
 
 @Component({
   selector: 'mail-list',

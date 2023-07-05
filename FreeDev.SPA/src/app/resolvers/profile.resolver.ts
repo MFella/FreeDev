@@ -19,12 +19,10 @@ export class ProfileResolver implements Resolve<UserToProfileDto> {
   constructor(
     private readonly authServ: AuthService,
     private readonly noty: NotyService,
-    private router: Router
+    private readonly router: Router
   ) {}
-  resolve(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<UserToProfileDto> {
+
+  resolve(route: ActivatedRouteSnapshot): Observable<UserToProfileDto> {
     return this.authServ.getUserProfile(route.queryParams.id).pipe(
       catchError((error: HttpErrorResponse) => {
         this.noty.error(error.error.message);
