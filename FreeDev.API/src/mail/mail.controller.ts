@@ -33,6 +33,7 @@ export class MailController {
     return await this.mailService.tryToSaveDirectMessage(
       directMessageToSendDto,
       request?.user?.userId,
+      request?.user?.role,
     );
   }
 
@@ -96,11 +97,8 @@ export class MailController {
   }
 
   @Get('structure')
-  // @UseGuards(JwtAuthGuard)
-  async getFoldersStructure(
-    @Query() receiverQuery: FoldersStructureQuery,
-  ): Promise<FoldersStructure> {
-    console.log(receiverQuery);
-    return await this.mailService.getFoldersStructure(receiverQuery.receiverId);
+  @UseGuards(JwtAuthGuard)
+  async getFoldersStructure(@Req() request: any): Promise<FoldersStructure> {
+    return await this.mailService.getFoldersStructure(request?.user?.userId);
   }
 }

@@ -1,4 +1,9 @@
-import { Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+} from '@angular/core';
 import { FolderType } from 'src/app/types/mail/folderType';
 import { take } from 'rxjs/operators';
 import { MailService } from '../../services/mail.service';
@@ -9,20 +14,24 @@ import { MailMessageContentDto } from '../../types/mail/mailMessageContentDto';
   selector: 'mail-list',
   templateUrl: './mail-list.component.html',
   styleUrls: ['./mail-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MailListComponent {
   @Input()
   mailList!: Array<FolderMessageDto>;
 
   @Input()
-  folder!: FolderType;
+  folderType: FolderType | undefined;
 
   messagesContentMap: Map<string, MailMessageContentDto> = new Map<
     string,
     MailMessageContentDto
   >();
 
-  constructor(private readonly mailService: MailService) {}
+  constructor(
+    private readonly mailService: MailService,
+    private readonly changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   observeMessageContent(messageId: string | undefined): void {
     if (this.messagesContentMap.has(messageId ?? '')) {
@@ -34,8 +43,12 @@ export class MailListComponent {
       .pipe(take(1))
       .subscribe((messageContent: MailMessageContentDto) => {
         this.messagesContentMap.set(messageContent._id, messageContent);
-        // send, that message has been read ;p
-        this.tryChangeMessageReadStatus(messageContent._id);
+
+        if (this.folderType === FolderType.INBOX) {
+          this.tryChangeMessageReadStatus(messageContent._id);
+        }
+
+        this.changeDetectorRef.detectChanges();
       });
   }
 
@@ -44,7 +57,7 @@ export class MailListComponent {
   }
 
   shouldShowNewTag(mail: FolderMessageDto): boolean {
-    return this.folder !== FolderType.SEND && !mail.isRead;
+    return this.folderType === FolderType.INBOX && !mail.isRead;
   }
 
   private tryChangeMessageReadStatus(messageId: string): void {

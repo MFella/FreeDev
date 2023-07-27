@@ -10,12 +10,12 @@
         </ng-template>
         <ng-template pTemplate="body">
           <p-listbox #folderOptionsRef
-                     [options]="folders" [(ngModel)]="selectedFolder" optionLabel="name"
+                     [options]="folders" [(ngModel)]="selectedFolder" optionLabel="name" [dataKey]="'folderType'"
                      (onChange)="optionChanged($event)">
             <ng-template let-folder pTemplate="item">
               <div class="w-full flex justify-content-between align-items-center">
-                <span>{{folder.folderType | toCapitalize }}</span>
-                <span>{{ '/'}}</span>
+                <span>{{folder.getFolderType() | toCapitalize }}</span>
+                <span>{{ folder.getReadCount() + '/' + folder.getTotalCount()}}</span>
               </div>
             </ng-template>
           </p-listbox>
@@ -28,8 +28,10 @@
           <p-divider></p-divider>
         </ng-template>
         <ng-template pTemplate="body">
-          <create-mail *ngIf="shouldDisplayNewMailForm()"></create-mail>
-          <mail-list [mailList]="mailList" *ngIf="!shouldDisplayNewMailForm()"></mail-list>
+          <create-mail *ngIf="shouldDisplayNewMailForm(); else mailListRef;"></create-mail>
+          <ng-template #mailListRef>
+            <mail-list [mailList]="mailList" [folder]="selectedFolder?.getFolderType()" *ngIf="!shouldDisplayNewMailForm()"></mail-list>
+          </ng-template>
         </ng-template>
       </p-card>
     </div>

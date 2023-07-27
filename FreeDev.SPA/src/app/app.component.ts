@@ -49,7 +49,6 @@ export class AppComponent implements OnInit, OnDestroy {
       });
   }
 
-  // todo: what is going on, when user is not logged in
   private observeIncomingCall(): void {
     this.callSubscription = this.wsService
       .observeIncomingCall()

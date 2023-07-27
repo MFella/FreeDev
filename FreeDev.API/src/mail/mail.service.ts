@@ -1,3 +1,4 @@
+import { Roles } from 'src/types/roles';
 import {
   BadRequestException,
   ForbiddenException,
@@ -13,7 +14,6 @@ import { DirectMessageToSendDto } from '../dtos/messages/directMessageToSendDto'
 import { IndirectMessageToSendDto } from '../dtos/messages/indirectMessageToSend';
 import { FolderType } from '../types/notes/folderType';
 import {
-  FolderStructure,
   FolderStructureTypes,
   FoldersStructure,
 } from 'src/types/notes/foldersStructure';
@@ -41,7 +41,7 @@ export class MailService {
     }
 
     try {
-      await this.mailModel.create({
+      const result = await this.mailModel.create({
         content: indirectMessageToSendDto.content,
         title: indirectMessageToSendDto.title,
         type: indirectMessageToSendDto.messageType,
@@ -51,6 +51,7 @@ export class MailService {
         isRead: false,
       });
 
+      console.log('result of operation', result);
       return true;
     } catch (ex: any) {
       console.error(ex);
@@ -63,6 +64,7 @@ export class MailService {
   async tryToSaveDirectMessage(
     directMessageToSendDto: DirectMessageToSendDto,
     userId: string,
+    userRole: `${Roles}`,
   ): Promise<boolean> {
     const senderFromDb = await this.usersService.findUserById(userId);
     const receiverFromDb = await this.usersService.findUserById(
@@ -87,6 +89,8 @@ export class MailService {
       await this.mailModel.create({
         content: directMessageToSendDto.content,
         receiverRoleReference: directMessageToSendDto.receiverRole,
+        senderRoleReference:
+          userRole.charAt(0).toUpperCase() + userRole.slice(1).toLowerCase(),
         title: directMessageToSendDto.title,
         type: directMessageToSendDto.messageType,
         senderId: userId,
@@ -151,24 +155,26 @@ export class MailService {
     folderType: FolderType,
     userId: string,
   ): Promise<Array<Partial<Mail>>> {
-    const userAttributesToSelect = ['_id', 'name', 'surname'];
+    const userAttributesToSelect: Array<string> = ['_id', 'name', 'surname'];
     const messageAttributesNotToSelect = ['-senderId', '-title', '-content'];
     switch (folderType.toUpperCase()) {
       case FolderType.INBOX: {
-        return await this.mailModel
-          .find({
-            $or: [{ receiverId: userId.toString() }],
-            $and: [{ receiverBelongFolder: FolderType.INBOX }],
-          })
-          .populate('senderId', userAttributesToSelect)
-          .select(messageAttributesNotToSelect)
-          .exec();
+        const mailsWithinInbox = await this.mailModel.find({
+          receiverId: userId.toString(),
+          receiverBelongFolder: FolderType.INBOX,
+        });
+
+        mailsWithinInbox.forEach(async (entity) => {
+          await entity.populate('senderId', userAttributesToSelect.join(' '));
+        });
+
+        return mailsWithinInbox;
       }
       case FolderType.SEND: {
         return await this.mailModel
           .find({
-            $or: [{ senderId: userId.toString() }],
-            $and: [{ senderBelongFolder: FolderType.SEND }],
+            senderId: userId.toString(),
+            senderBelongFolder: FolderType.SEND,
           })
           .populate('receiverId', userAttributesToSelect)
           .select(messageAttributesNotToSelect)
@@ -221,51 +227,54 @@ export class MailService {
     }
   }
 
-  async getFoldersStructure(receiverId: string): Promise<FoldersStructure> {
-    const mailsStructure = await this.mailModel.find({ where: { receiverId } });
+  async getFoldersStructure(userId: string): Promise<FoldersStructure> {
+    const incomingMailsStructure = await this.mailModel.find({
+      receiverId: userId,
+    });
 
-    const groupedMailsStructure = this.getGroupedMailsStructure(
-      mailsStructure,
+    const sentMailsStructure = await this.mailModel.find({ senderId: userId });
+
+    const incomingGroupedMailsStructure = this.getIncomingGroupedMailsStructure(
+      incomingMailsStructure,
       'receiverBelongFolder',
     );
 
     let folderTypes: FolderStructureTypes = this.getEmptyFolderStructureTypes();
 
-    for (const [key, value] of Object.entries(groupedMailsStructure)) {
+    for (const [key, value] of Object.entries(incomingGroupedMailsStructure)) {
       folderTypes[key.toUpperCase()] = {
         type: key,
         totalCount: value.length,
-        readCount: value.filter((mail) => mail.isRead).length,
+        readCount:
+          key.toUpperCase() === FolderType.INBOX
+            ? value.filter((mail) => mail.isRead).length
+            : 0,
       };
     }
+
+    folderTypes[FolderType.SEND] = {
+      type: FolderType.SEND,
+      totalCount: sentMailsStructure.length,
+      readCount: 0,
+    };
 
     return { folderTypes };
   }
 
-  private getGroupedMailsStructure(
+  private getIncomingGroupedMailsStructure(
     mailsStructure: Array<Mail>,
     criterion: keyof Mail,
   ): GroupedMailStructure {
     let resultGroupedMailsStructure: GroupedMailStructure = {};
+
     for (let mail of mailsStructure) {
-      resultGroupedMailsStructure[criterion] = (
-        resultGroupedMailsStructure[criterion] ?? []
+      const folderType = mail[criterion] as FolderType;
+      resultGroupedMailsStructure[folderType] = (
+        resultGroupedMailsStructure[folderType] ?? []
       ).concat(mail);
     }
 
     return resultGroupedMailsStructure;
-    // return mailsStructure.reduce(
-    //   (
-    //     accumulator: Partial<{ [key in FolderType]: Array<Mail> }>,
-    //     currentValue: Mail,
-    //   ) => {
-    //     if (!currentValue[criterion]) return;
-    //     accumulator[currentValue[criterion] as FolderType[number]] = (
-    //       accumulator[currentValue[criterion] as FolderType] ?? []
-    //     ).push(currentValue);
-    //   },
-    //   {},
-    // );
   }
 
   private getEmptyFolderStructureTypes(): FolderStructureTypes {

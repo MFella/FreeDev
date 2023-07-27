@@ -1,6 +1,7 @@
 import { Pagination } from './../types/pagination';
 import { Injectable } from '@angular/core';
 import { LocalStorageBaseService } from './local-storage-base.service';
+import { FolderType } from '../types/mail/folderType';
 
 @Injectable({
   providedIn: 'root',
@@ -63,6 +64,25 @@ export class LocalStorageService extends LocalStorageBaseService {
     );
   }
 
+  setMailSelectedFolder(prefixKey: string, folderName: FolderType): void {
+    localStorage.setItem(
+      prefixKey + LocalStorageKeyNames.MAIL_SELECTED_FOLDER,
+      folderName
+    );
+  }
+
+  getMailSelectedFolder(prefixKey: string): FolderType | undefined {
+    const mailSelectedFolder = localStorage.getItem(
+      prefixKey + LocalStorageKeyNames.MAIL_SELECTED_FOLDER
+    );
+
+    if (mailSelectedFolder) {
+      return mailSelectedFolder as FolderType;
+    }
+
+    return;
+  }
+
   getMessagesSelectedUserId(prefix_key: string): string {
     return (
       localStorage.getItem(
@@ -83,4 +103,5 @@ enum LocalStorageKeyNames {
   USER = 'user',
   TOKEN = 'token',
   MESSAGES_SELECTED_USER_ID = 'messages-selected-user-id',
+  MAIL_SELECTED_FOLDER = 'mail-selected-folder',
 }

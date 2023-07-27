@@ -1,7 +1,11 @@
 import { FolderType } from './folderType';
 
 export type FoldersStructure = {
-  folderTypes: { [key in FolderType as Uppercase<key>]: FolderStructure };
+  folderTypes: FolderTypes;
+};
+
+export type FolderTypes = {
+  [key in FolderType as Uppercase<key>]: FolderStructure;
 };
 
 export type FolderStructure = {

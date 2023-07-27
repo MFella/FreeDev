@@ -2,6 +2,7 @@ import { LocalStorageService } from './../services/local-storage.service';
 import { FolderType } from '../types/mail/folderType';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
@@ -13,13 +14,15 @@ import { ListBoxOptionChangedEvent } from '../types/events/listBoxOptionChangedE
 import { MailService } from '../services/mail.service';
 import { take } from 'rxjs/operators';
 import { FolderMessageDto } from '../dtos/notes/folderMessageDto';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Data } from '@angular/router';
 import { PrimalComponent } from '../primal/primal.component';
+import { FolderTypes } from '../types/mail/foldersStructure';
 
 @Component({
   selector: 'app-contacts',
   templateUrl: './contacts.component.html',
   styleUrls: ['./contacts.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ContactsComponent
   extends PrimalComponent
@@ -33,7 +36,7 @@ export class ContactsComponent
   mailList: Array<FolderMessageDto> = [];
   folders: Array<FolderOption> = [];
 
-  selectedFolder: FolderOption = new FolderOption(FolderType.INBOX);
+  selectedFolder: FolderOption | undefined; // = new FolderOption(FolderType.INBOX);
 
   constructor(
     private readonly lsServ: LocalStorageService,
@@ -46,42 +49,60 @@ export class ContactsComponent
 
   ngOnInit(): void {
     this.observeResolvedFolderStructure();
-    this.initFolderOptions();
   }
 
   ngAfterViewInit(): void {
-    this.setLastSelectedListBoxFolderOption();
+    this.retrieveSelectedFolderOptionFromLs();
     this.observeFolderMessages();
   }
 
-  setLastSelectedListBoxFolderOption(): void {
-    const possibleLastSelectedFolderOption: FolderType = this.lsServ.get(
-      ContactsComponent.LAST_SAVED_OPTION_LS_KEY
-    );
+  retrieveSelectedFolderOptionFromLs(): void {
+    const possibleLastSelectedFolderOption: FolderType | undefined =
+      this.lsServ.getMailSelectedFolder(
+        ContactsComponent.LAST_SAVED_OPTION_LS_KEY
+      );
+
     if (possibleLastSelectedFolderOption) {
       this.selectedFolder = new FolderOption(possibleLastSelectedFolderOption);
+
+      this.listBoxFolderOptionsRef.control.setValue(this.selectedFolder, {
+        emitModelToViewChange: false,
+      });
       this.changeDetectorRef.detectChanges();
-      this.listBoxFolderOptionsRef.control.setValue(this.selectedFolder);
     }
   }
 
   optionChanged($event: ListBoxOptionChangedEvent<FolderOption>): void {
-    this.lsServ.set(
+    this.lsServ.setMailSelectedFolder(
       ContactsComponent.LAST_SAVED_OPTION_LS_KEY,
       $event.value.type
     );
     this.observeFolderMessages();
   }
 
+  shouldDisplayNewMailForm(): boolean {
+    return this.selectedFolder?.isEqual(FolderType.NEW_MESSAGE) ?? false;
+  }
+
   private observeResolvedFolderStructure(): void {
     this.activatedRoute.data
       .pipe(this.takeUntilDestroyed())
-      .subscribe((folderType) => {
-        console.log(folderType);
+      .subscribe((folderType: Data) => {
+        const folderTypes = Object.assign(
+          {},
+          folderType?.foldersStructure?.folderTypes
+        );
+
+        this.folders = this.convertFolderTypesToFolderOptions(folderTypes);
+        this.changeDetectorRef.detectChanges();
       });
   }
 
   private observeFolderMessages(): void {
+    if (!this.selectedFolder) {
+      return;
+    }
+
     !this.selectedFolder.isEqual(FolderType.NEW_MESSAGE) &&
       this.mailService
         .getFolderMessageList(this.selectedFolder.type)
@@ -92,13 +113,20 @@ export class ContactsComponent
         });
   }
 
-  private initFolderOptions(): void {
-    this.folders = Object.values(FolderType).map(
-      (folderType) => new FolderOption(folderType)
-    );
-  }
+  private convertFolderTypesToFolderOptions(
+    folderTypes: FolderTypes
+  ): Array<FolderOption> {
+    const targetFolderOptions = [];
 
-  shouldDisplayNewMailForm(): boolean {
-    return this.selectedFolder.isEqual(FolderType.NEW_MESSAGE);
+    for (const [_key, value] of Object.entries(folderTypes)) {
+      const folderOption = new FolderOption(
+        value.type,
+        value.totalCount,
+        value.readCount
+      );
+      targetFolderOptions.push(folderOption);
+    }
+
+    return targetFolderOptions;
   }
 }
