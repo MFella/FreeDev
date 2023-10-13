@@ -49,7 +49,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { AccordionModule } from 'primeng/accordion';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { environment } from '../environments/environment';
-import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
+import { MessagesUserListRightClickItemsResolver } from './infrastructure/right-click-menu/messagesUserListRightClickItemsResolver';
 import { ContactsComponent } from './contacts/contacts.component';
 import { HttpErrorResponseHandler } from './common/handlers/httpErrorResponseHandler';
 import { MailListComponent } from './generics/mail-list/mail-list.component';

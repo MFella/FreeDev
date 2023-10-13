@@ -14,6 +14,7 @@ import { UsersService } from './users/users.service';
 import { CancellationCallMessage } from './types/cancellationCallMessage';
 import { IncomingCallPayload } from './types/incomingCallPayload';
 import { ConfigService } from '@nestjs/config';
+import { InternalServerErrorException } from '@nestjs/common';
 @WebSocketGateway(443, { cors: true })
 export class AppGateway {
   connectedUsers: Array<any> = [];
@@ -63,26 +64,45 @@ export class AppGateway {
 
   @SubscribeMessage('privateMessage')
   async handlePrivateMessage(
-    @ConnectedSocket() connectedSocket,
     @MessageBody() data: MessageToRoom,
   ): Promise<void> {
-    const messageToResponse: any = {
-      message: data.content,
-      sender: data.sender,
-      sendTime: new Date(),
-    };
+    const replyMessage = await this.messageServ.getMessageById(
+      data.replyMessage,
+    );
 
-    this.server.to(data.key).emit('privateResponse', messageToResponse);
+    try {
+      const messageToCreate: MessageToCreateDto = {
+        content: data.content,
+        sender: data.sender,
+        receiver: data.receiver,
+        sendTime: new Date(),
+        key: data.key,
+        replyMessage: replyMessage ? data.replyMessage : undefined,
+      };
 
-    const messageToCreate: MessageToCreateDto = {
-      content: data.content,
-      sender: data.sender,
-      receiver: data.receiver,
-      sendTime: messageToResponse.sendTime,
-      key: data.key,
-    };
+      const createdMessage = await this.messageServ.createMessage(
+        messageToCreate,
+      );
 
-    await this.messageServ.createMessage(messageToCreate);
+      const messageToResponse = {
+        id: createdMessage?._id?.toString(),
+        content: data.content,
+        sender: data.sender,
+        sendTime: messageToCreate.sendTime,
+        replyMessage: createdMessage?.replyMessage,
+        ...(replyMessage ? { replyMessageContent: replyMessage.content } : {}),
+        ...(replyMessage
+          ? { amIReplyMessageOwner: replyMessage.sender === data.sender }
+          : {}),
+      };
+
+      this.server.to(data.key).emit('privateResponse', messageToResponse);
+    } catch (e: unknown) {
+      console.error(e);
+      throw new InternalServerErrorException(
+        'Error occured during saving chat message',
+      );
+    }
   }
 
   @SubscribeMessage('subscribeIncomingCall')

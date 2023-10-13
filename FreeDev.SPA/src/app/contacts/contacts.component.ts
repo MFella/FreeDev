@@ -17,6 +17,7 @@ import { FolderMessageDto } from '../dtos/notes/folderMessageDto';
 import { ActivatedRoute, Data } from '@angular/router';
 import { PrimalComponent } from '../primal/primal.component';
 import { FolderTypes } from '../types/mail/foldersStructure';
+import { Pagination } from '../types/pagination';
 
 @Component({
   selector: 'app-contacts',
@@ -31,12 +32,20 @@ export class ContactsComponent
   @ViewChild('folderOptionsRef', { read: NgModel })
   listBoxFolderOptionsRef!: NgModel;
 
+  private static readonly MAIL_LIST_ITEMS_PER_PAGE: number = 10;
+
   private static readonly LAST_SAVED_OPTION_LS_KEY =
     'last-selected-folder-option';
+
+  pagination: Pagination | undefined = {
+    currentPage: 1,
+    itemsPerPage: ContactsComponent.MAIL_LIST_ITEMS_PER_PAGE,
+  };
+
   mailList: Array<FolderMessageDto> = [];
   folders: Array<FolderOption> = [];
 
-  selectedFolder: FolderOption | undefined; // = new FolderOption(FolderType.INBOX);
+  selectedFolder: FolderOption | undefined;
 
   constructor(
     private readonly lsServ: LocalStorageService,
@@ -64,6 +73,13 @@ export class ContactsComponent
 
     if (possibleLastSelectedFolderOption) {
       this.selectedFolder = new FolderOption(possibleLastSelectedFolderOption);
+
+      const possiblePagination: Pagination | undefined =
+        this.lsServ.getMailFolderPagination(possibleLastSelectedFolderOption);
+
+      if (possiblePagination) {
+        this.pagination = possiblePagination;
+      }
 
       this.listBoxFolderOptionsRef.control.setValue(this.selectedFolder, {
         emitModelToViewChange: false,
@@ -99,18 +115,24 @@ export class ContactsComponent
   }
 
   private observeFolderMessages(): void {
-    if (!this.selectedFolder) {
+    if (
+      !this.selectedFolder ||
+      this.selectedFolder?.isEqual(FolderType.NEW_MESSAGE)
+    ) {
       return;
     }
 
-    !this.selectedFolder.isEqual(FolderType.NEW_MESSAGE) &&
-      this.mailService
-        .getFolderMessageList(this.selectedFolder.type)
-        .pipe(take(1))
-        .subscribe((folderMessages: Array<FolderMessageDto>) => {
-          this.mailList = folderMessages;
-          this.changeDetectorRef.detectChanges();
-        });
+    this.mailService
+      .getFolderMessageList(
+        this.selectedFolder.type,
+        this.pagination?.currentPage,
+        this.pagination?.itemsPerPage
+      )
+      .pipe(take(1))
+      .subscribe((folderMessages: Array<FolderMessageDto>) => {
+        this.mailList = folderMessages;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   private convertFolderTypesToFolderOptions(

@@ -83,6 +83,30 @@ export class LocalStorageService extends LocalStorageBaseService {
     return;
   }
 
+  getMailFolderPagination(
+    selectedFolderType: FolderType
+  ): Pagination | undefined {
+    const mailFolderPagination = localStorage.getItem(
+      LocalStorageKeyNames.MAIL_PAGINATION + '-' + selectedFolderType
+    );
+
+    if (mailFolderPagination) {
+      return JSON.parse(mailFolderPagination) as Pagination;
+    }
+
+    return;
+  }
+
+  setMailFolderPagination(
+    selectedFolderType: FolderType,
+    pagination: Pagination
+  ): void {
+    localStorage.setItem(
+      LocalStorageKeyNames.MAIL_PAGINATION + '-' + selectedFolderType,
+      JSON.stringify(pagination)
+    );
+  }
+
   getMessagesSelectedUserId(prefix_key: string): string {
     return (
       localStorage.getItem(
@@ -104,4 +128,5 @@ enum LocalStorageKeyNames {
   TOKEN = 'token',
   MESSAGES_SELECTED_USER_ID = 'messages-selected-user-id',
   MAIL_SELECTED_FOLDER = 'mail-selected-folder',
+  MAIL_PAGINATION = 'saved-mail-pagination',
 }

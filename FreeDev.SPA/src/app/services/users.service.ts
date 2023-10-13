@@ -18,12 +18,36 @@ export type CountryFilePayload = {
   data: Array<CountrySelectItem>;
 };
 
+export type PartialMessage = {
+  id: string;
+  content: string;
+  sendTime: Date;
+  sendTimePretty: string;
+  sender: string;
+  amIOwner: boolean;
+  replyMessageContent: string;
+  amIReplyMessageOwner: boolean;
+};
+
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
   private static readonly COUNTRY_LIST_URL: string =
     '/assets/data/countries.json';
+
+  // should go to some util-calculator
+  private static readonly MS_IN_DAY: number = 1000 * 60 * 60 * 24;
+
+  private static readonly WEEK_DAYS: Array<string> = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
 
   constructor(
     private readonly http: HttpClient,
@@ -90,24 +114,33 @@ export class UsersService {
     messageNumberFrom: number,
     messageStep: number,
     roomKey: string
-  ): Observable<Array<any>> {
+  ): Observable<Array<PartialMessage>> {
     return this.http
-      .get<Array<any>>(
+      .get<Array<PartialMessage>>(
         this.getRestUrl() +
           `message/partials?messageFrom=${messageNumberFrom}&messageStep=${messageStep}&roomKey=${roomKey}`
       )
       .pipe(
         take(1),
         map((res: Array<any>) => {
-          const newResponse = res.map((element: any) => {
-            return {
-              message: element.content,
-              sendTime: element.sendTime,
-              sender: element.sender,
-              amIOwner: element.sender === this.authServ.storedUser._id,
-            };
-          });
-          return newResponse.reverse();
+          return res
+            .map((element: any) => {
+              return {
+                content: element.content,
+                id: element?._id,
+                sendTime: element.sendTime,
+                sendTimePretty: this.getElementSendTimePretty(
+                  new Date(element.sendTime)
+                ),
+                sender: element.sender,
+                amIOwner: element.sender === this.authServ.storedUser._id,
+                replyMessageContent: element?.replyMessage?.content,
+                amIReplyMessageOwner:
+                  element?.replyMessage?.sender ===
+                  this.authServ.storedUser?._id,
+              };
+            })
+            .reverse();
         })
       );
   }
@@ -120,6 +153,49 @@ export class UsersService {
 
   private getRestUrl(): string {
     return (env as any).backendUrl;
+  }
+
+  private getElementSendTimePretty(sendTime: Date): string {
+    const todayDate = new Date();
+    const todayDateUtc = Date.UTC(
+      todayDate.getFullYear(),
+      todayDate.getMonth(),
+      todayDate.getDate()
+    );
+    const sendDateUtc = Date.UTC(
+      sendTime.getFullYear(),
+      sendTime.getMonth(),
+      sendTime.getDate()
+    );
+
+    const diffInDays: number = Math.floor(
+      (todayDateUtc - sendDateUtc) / UsersService.MS_IN_DAY
+    );
+    const clockFullMinutes =
+      (sendTime.getMinutes() < 10 ? '0' : '') + sendTime.getMinutes();
+    const fullHour: string = sendTime.getHours() + ':' + clockFullMinutes;
+
+    if (diffInDays === 0) {
+      return 'Today, ' + fullHour;
+    } else if (diffInDays === 1) {
+      return 'Yesterday, ' + fullHour;
+    }
+
+    if (diffInDays < 7) {
+      return (
+        sendTime.toLocaleString('en-us', { weekday: 'long' }) + ', ' + fullHour
+      );
+    }
+
+    return (
+      sendTime.getDate() +
+      ' ' +
+      sendTime.toLocaleString('en-us', { month: 'short' }) +
+      ' ' +
+      sendTime.getFullYear() +
+      ' ' +
+      fullHour
+    );
   }
 }
 

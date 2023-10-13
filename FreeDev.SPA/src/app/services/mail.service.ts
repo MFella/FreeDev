@@ -8,6 +8,7 @@ import { FolderType } from '../types/mail/folderType';
 import { FolderMessageDto } from '../dtos/notes/folderMessageDto';
 import { MailMessageContentDto } from '../types/mail/mailMessageContentDto';
 import { FoldersStructure } from '../types/mail/foldersStructure';
+import { Pagination } from '../types/pagination';
 
 @Injectable()
 export class MailService {
@@ -38,10 +39,12 @@ export class MailService {
   }
 
   getFolderMessageList(
-    folderType: FolderType
+    folderType: FolderType,
+    currentPage?: number,
+    itemsPerPage?: number
   ): Observable<Array<FolderMessageDto>> {
     return this.http.get<Array<FolderMessageDto>>(
-      `${this.getRestUrl()}folder?folderType=${folderType.toLocaleLowerCase()}`
+      `${this.getRestUrl()}folder?folderType=${folderType.toLocaleLowerCase()}&currentPage=${currentPage}$itemsPerPage=${itemsPerPage}`
     );
   }
 

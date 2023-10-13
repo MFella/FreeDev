@@ -3,4 +3,5 @@ export interface MessageToCreateDto {
   sender: string;
   receiver: string;
   key: string;
+  replyMessage: string | undefined;
 }

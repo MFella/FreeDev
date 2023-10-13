@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
 
 export type WebSocketMessageDocument = WebSocketMessage & Document;
 
@@ -18,6 +19,13 @@ export class WebSocketMessage {
 
   @Prop({ required: true })
   key: string;
+
+  @Prop({
+    required: false,
+    type: MongooseSchema.Types.ObjectId,
+    ref: WebSocketMessage.name,
+  })
+  replyMessage: string;
 }
 
 export const WebSocketMessageSchema =

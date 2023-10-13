@@ -1,16 +1,20 @@
-import { MessagesUserListRightClickItemsResolver } from '../infrastructure/right-click-dropdown/messagesUserListRightClickItemsResolver';
+import { MessagesUserListRightClickItemsResolver } from '../infrastructure/right-click-menu/messagesUserListRightClickItemsResolver';
 import { CallService } from '../services/call.service';
 import { CallComponent } from '../call/call.component';
 import { LocalStorageService } from '../services/local-storage.service';
 import { Pagination } from '../types/pagination';
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
   OnDestroy,
   OnInit,
+  QueryList,
+  Renderer2,
   ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import {
   faPaperPlane,
@@ -23,8 +27,7 @@ import { AuthService } from '../services/auth.service';
 import { ActivatedRoute, Data, Router } from '@angular/router';
 import { UserToMessageListDto } from '../dtos/users/userToMessageListDto';
 import { ResolverPagination } from '../types/resolvedPagination';
-import { UsersService } from '../services/users.service';
-import { MessageResponseDto } from '../dtos/messages/messageResponseDto';
+import { PartialMessage, UsersService } from '../services/users.service';
 import {
   debounceTime,
   filter,
@@ -46,14 +49,20 @@ import { NotyService } from '../services/noty.service';
 import { MailService } from '../services/mail.service';
 import { Roles } from '../types/roles.enum';
 import { CancellationCallMessage } from '../types/call/cancellationCallMessage';
-import { IncomingCallAnswer } from '../types/call/incomingCallAnswer';
 import { CurrentLoggedUser } from '../types/logged-users/currentLoggedUser';
+
+type ReplyMessage = {
+  content: string;
+  replier: string;
+  id: string;
+};
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.scss'],
   providers: [DialogService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paginator')
@@ -62,8 +71,23 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('messagesContainer')
   messagesContainer!: ElementRef;
 
-  @ViewChild('rightClickUserContextMenu')
-  rightClickUserContextMenu!: ElementRef;
+  @ViewChild('messagesWrapper')
+  messagesWrapper!: ElementRef;
+
+  @ViewChildren('messageRef')
+  messageRefs!: QueryList<ElementRef>;
+
+  @ViewChild('userItemContextMenu')
+  userItemContextMenu!: ContextMenu;
+
+  @ViewChild('messageItemContextMenu')
+  messageItemContextMenu!: ContextMenu;
+
+  @ViewChild('replyMessageContainer')
+  replyMessageContainer: ElementRef | undefined;
+
+  private openedMessageItemContextMenu!: ContextMenu | null;
+  private openedUserItemContextMenu!: ContextMenu | null;
 
   private destroy$: Subject<void> = new Subject<void>();
 
@@ -71,7 +95,10 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private static readonly MESSAGE_LS_PREFIX: string = 'messages_user_list_';
 
-  messages: Array<MessageResponseDto> = [];
+  private static readonly CONTEXT_MENU_SHOWED_CSS_CLASS: string =
+    'context-menu-showed';
+
+  messages: Array<PartialMessage> = [];
 
   icons: Array<IconDefinition> = [faSearch, faPaperPlane];
 
@@ -109,6 +136,8 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   lastRightClickUserRole: Roles = Roles.NONE;
 
+  areMessagesLoading: boolean = true;
+
   searchRolesNames: Array<{ name: string }> = [
     { name: 'Both' },
     { name: 'Developer' },
@@ -116,8 +145,12 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
   ];
 
   dropdownRightClickItems: Array<MenuItem> = [];
+  messageMoreMenuLeftClickItems: Array<MenuItem> = [];
 
   friendIds: Set<string> = new Set<string>();
+
+  selectedReplyMessage!: ReplyMessage | null;
+  shouldDisplaySelectedReplyMessage: boolean = false;
 
   constructor(
     private readonly wsServ: WsService,
@@ -189,8 +222,9 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
           );
         })
       )
-      .subscribe((response: Array<MessageResponseDto>) => {
+      .subscribe((response: Array<PartialMessage>) => {
         this.messages = response;
+        this.areMessagesLoading = false;
         this.selectedUser = this.userList.find((user) => user._id === userId);
         if (this.selectedUser) {
           this.lsServ.setMessagesSelectedUserId(
@@ -198,24 +232,34 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
             userId
           );
         }
+        this.changeDetectorRef.detectChanges();
         this.scrollToBottom();
       });
   }
 
   fetchMessagesOnScroll(): void {
-    if (!this.messagesContainer.nativeElement.scrollTop) {
-      // zaciagnij dodatkowe wiadomosci
-      this.messageNumberFrom += this.messagesToFetchStep;
-      this.usersServ
-        .fetchPartialMessages(
-          this.messageNumberFrom,
-          this.messagesToFetchStep,
-          this.privateRoomKey
-        )
-        .subscribe((response: Array<MessageResponseDto>) => {
-          this.messages = [...response, ...this.messages];
-        });
+    // close message item context menu
+    this.closeVisibleDropdowns();
+
+    if (this.messagesContainer.nativeElement?.scrollTop) {
+      return;
     }
+
+    // zaciagnij dodatkowe wiadomosci
+    this.messageNumberFrom += this.messagesToFetchStep;
+    this.areMessagesLoading = true;
+    this.usersServ
+      .fetchPartialMessages(
+        this.messageNumberFrom,
+        this.messagesToFetchStep,
+        this.privateRoomKey
+      )
+      .subscribe((response: Array<PartialMessage>) => {
+        // TODO: Dont scroll if new messages arrived
+        this.areMessagesLoading = false;
+        this.messages = [...response, ...this.messages];
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   pageChanged(resolvedPagination: ResolverPagination): void {
@@ -248,7 +292,7 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
         this.messagesToFetchStep,
         this.privateRoomKey
       )
-      .subscribe((messages: Array<MessageResponseDto>) => {
+      .subscribe((messages: Array<PartialMessage>) => {
         this.messages = [...messages, ...this.messages];
       });
   }
@@ -278,9 +322,12 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
       sender: this.authServ.storedUser?._id,
       receiver: this.receiverId,
       key: this.privateRoomKey,
+      replyMessage: this.selectedReplyMessage?.id,
     };
     this.wsServ.sendPrivateMessage(messageToCreateDto);
     this.userMessage = '';
+
+    this.clearSelectedReplyMessage();
   }
 
   startVoiceCall(): void {
@@ -365,9 +412,11 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
   ): void {
     this.lastRightClickUserId = selectedUserId;
     this.lastRightClickUserRole = userRole;
-    this.dropdownRightClickItems = this.getPossibleRightClickDropdownItems(
+    this.dropdownRightClickItems = this.getUserRightClickDropdownItems(
       this.friendIds.has(this.lastRightClickUserId)
     );
+
+    this.openedUserItemContextMenu = contextMenu;
     contextMenu.show(event);
     event.stopPropagation();
   }
@@ -382,6 +431,71 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.isStreamingActionDisabled()
       ? `Can't start ${streamAction} right now`
       : `Start ${streamAction}`;
+  }
+
+  onMessageContextMenuHide(): void {
+    const visibleMessageMoreButtons = document.querySelectorAll(
+      '.' + MessagesComponent.CONTEXT_MENU_SHOWED_CSS_CLASS
+    );
+
+    if (!visibleMessageMoreButtons.length) {
+      return;
+    }
+
+    visibleMessageMoreButtons.forEach((button) =>
+      button.classList.remove(MessagesComponent.CONTEXT_MENU_SHOWED_CSS_CLASS)
+    );
+    this.changeDetectorRef.detectChanges();
+  }
+
+  showLeftClickMoreContextMenu(
+    contextMenu: ContextMenu,
+    event: MouseEvent,
+    message: PartialMessage
+  ): void {
+    if (this.openedMessageItemContextMenu) {
+      this.openedMessageItemContextMenu.hide();
+    }
+    this.openedMessageItemContextMenu = contextMenu;
+    this.messageMoreMenuLeftClickItems =
+      this.getMessageLeftClickDropdownItems();
+    contextMenu.show(event);
+    event.stopPropagation();
+
+    const eventTarget = event.target as Element;
+    if (eventTarget) {
+      const messageMoreButton = eventTarget.closest('button');
+      messageMoreButton?.classList?.add(
+        MessagesComponent.CONTEXT_MENU_SHOWED_CSS_CLASS
+      );
+    }
+
+    this.selectedReplyMessage = {
+      content: message.content,
+      replier: message.amIOwner
+        ? 'You'
+        : this.selectedUser?.name + ' ' + this.selectedUser?.surname,
+      id: message.id,
+    };
+  }
+
+  trackByMessageId(_index: number, message: PartialMessage): string {
+    return message.content;
+  }
+
+  closeSelectedReplyMessage(): void {
+    this.replyMessageContainer?.nativeElement?.classList?.add(
+      'slide-down-animation'
+    );
+    setTimeout(() => {
+      this.clearSelectedReplyMessage();
+      this.changeDetectorRef.detectChanges();
+    }, 100);
+  }
+
+  private clearSelectedReplyMessage(): void {
+    this.shouldDisplaySelectedReplyMessage = false;
+    this.selectedReplyMessage = null;
   }
 
   private observeCloseOfConnection(ref: DynamicDialogRef): void {
@@ -427,19 +541,20 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
   private observePrivateMessage(): void {
     this.wsServ
       .observePrivateMessage()
-      .pipe(takeUntil(this.destroy$))
       .pipe(
         map((response: any) => {
-          const newResponse = {
+          return {
             amIOwner: this.authServ.storedUser._id === response.sender,
+            sendTimePretty: '',
             ...response,
           };
-          return newResponse;
-        })
+        }),
+        takeUntil(this.destroy$)
       )
-      .subscribe((response: MessageResponseDto) => {
+      .subscribe((response: PartialMessage) => {
         this.messages.push(response);
         this.scrollToBottom();
+        this.changeDetectorRef.detectChanges();
       });
   }
 
@@ -501,14 +616,14 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private observeRightClickDropdownItems(): void {
     this.messagesUserListRightClickItemsResolver
-      .getItemList(this.getPossibleRightClickDropdownItems(true))
+      .getItemList(this.getUserRightClickDropdownItems(true))
       .pipe(take(1), takeUntil(this.destroy$))
       .subscribe((dropdownRightClickItems: Array<DropdownItem>) => {
         this.dropdownRightClickItems = dropdownRightClickItems;
       });
   }
 
-  private getPossibleRightClickDropdownItems(
+  private getUserRightClickDropdownItems(
     areFriends: boolean
   ): Array<DropdownItem> {
     return [
@@ -522,6 +637,21 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
         areFriends
       ),
     ];
+  }
+
+  private getMessageLeftClickDropdownItems(): Array<DropdownItem> {
+    return [
+      new DropdownItem(
+        'Reply',
+        'pi pi-reply',
+        this.setShouldDisplaySelectedReplyMessage.bind(this)
+      ),
+      new DropdownItem('Delete', 'pi pi-trash', () => {}),
+    ];
+  }
+
+  private setShouldDisplaySelectedReplyMessage(): void {
+    this.shouldDisplaySelectedReplyMessage = true;
   }
 
   private navigateToUserProfile(): void {
@@ -544,10 +674,11 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
       .sendDirectMailMessage(messageToSendDto)
       .pipe(take(1), takeUntil(this.destroy$))
       .subscribe((isSaved: boolean) => {
-        if (isSaved) {
-          this.friendIds.add(this.lastRightClickUserId);
-          this.notyService.success('Invitation has been sent');
+        if (!isSaved) {
+          return;
         }
+        this.friendIds.add(this.lastRightClickUserId);
+        this.notyService.success('Invitation has been sent');
       });
   }
 
@@ -569,5 +700,12 @@ export class MessagesComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lsServ.removeMessagesSelectedUserId(
       MessagesComponent.MESSAGE_LS_PREFIX
     );
+  }
+
+  private closeVisibleDropdowns(): void {
+    this.openedMessageItemContextMenu?.hide();
+    this.openedUserItemContextMenu?.hide();
+    this.openedMessageItemContextMenu = null;
+    this.openedUserItemContextMenu = null;
   }
 }

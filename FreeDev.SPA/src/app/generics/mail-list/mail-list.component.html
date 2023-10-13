@@ -1,10 +1,12 @@
 <div class="container-fluid p-4">
   <div class="grid">
-    <div class="md:col-12">
+    <div class="md:col-12 header-panel-container">
       <p-panel class="header-panel">
         <ng-template pTemplate="header">
-          <p-paginator class="mail-list__header-paginator" styleClass="w-max" [rows]="10" [totalRecords]="100"
-                       [pageLinkSize]="3"></p-paginator>
+          <p-paginator class="mail-list__header-paginator" styleClass="w-max" [rows]="4" [totalRecords]="100"
+                       [pageLinkSize]="1"></p-paginator>
+                       <!-- <p-paginator [first]="first" [rows]="1" [totalRecords]="100" (onPageChange)="onPageChange($event)"
+                       [showJumpToPageDropdown]="true" [showPageLinks]="false"></p-paginator> -->
         </ng-template>
       </p-panel>
       <div *ngFor="let mail of mailList">

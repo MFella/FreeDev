@@ -1,6 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { MessageToCreateDto } from 'src/dtos/websocket-message/messageToCreateDto';
 import {
   WebSocketMessage,
@@ -13,9 +13,13 @@ export class WebSocketMessageService {
     private readonly messageModel: Model<WebSocketMessageDocument>,
   ) {}
 
-  async createMessage(messageToCreateDto: MessageToCreateDto): Promise<void> {
+  async createMessage(
+    messageToCreateDto: MessageToCreateDto,
+  ): Promise<WebSocketMessage & { _id: ObjectId }> {
     try {
-      await this.messageModel.create(messageToCreateDto);
+      return await (
+        await this.messageModel.create(messageToCreateDto)
+      ).populate('replyMessage');
     } catch (error) {
       throw new InternalServerErrorException(
         'Error occured during saving data.',
@@ -42,19 +46,30 @@ export class WebSocketMessageService {
     roomKey: string,
   ): Promise<any> {
     try {
+      const replyMessageAttributesToSelect: Array<keyof WebSocketMessage> = [
+        'sender',
+        'content',
+      ];
       const messagesFromDb = await this.messageModel
         .find({
           key: roomKey,
         })
         .sort({ sendTime: -1 })
         .skip(messageFrom)
-        .limit(messageStep);
+        .limit(messageStep)
+        .populate('replyMessage', replyMessageAttributesToSelect);
 
+      console.log(messagesFromDb);
       return messagesFromDb;
     } catch (error: unknown) {
+      console.log(error);
       throw new InternalServerErrorException(
         'Error occured during fetching partial data.',
       );
     }
+  }
+
+  async getMessageById(messageId: string): Promise<any> {
+    return this.messageModel.findById(messageId);
   }
 }

@@ -1,4 +1,4 @@
-import { IsDate, IsString } from 'class-validator';
+import { IsDate, IsOptional, IsString } from 'class-validator';
 
 export class MessageToCreateDto {
   @IsString()
@@ -15,4 +15,8 @@ export class MessageToCreateDto {
 
   @IsDate()
   sendTime: Date = new Date();
+
+  @IsOptional()
+  @IsString()
+  replyMessage: string;
 }

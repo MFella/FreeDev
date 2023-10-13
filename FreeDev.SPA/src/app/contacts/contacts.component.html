@@ -23,10 +23,7 @@
       </p-card>
     </div>
     <div class="md:col-8 sm:col-12">
-      <p-card styleClass="bg-secondary ">
-        <ng-template pTemplate="header">
-          <p-divider></p-divider>
-        </ng-template>
+      <p-card styleClass="bg-secondary mail-wrapper">
         <ng-template pTemplate="body">
           <create-mail *ngIf="shouldDisplayNewMailForm(); else mailListRef;"></create-mail>
           <ng-template #mailListRef>
